@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # installed packages
     'rest_framework',
-    'rest_auth',
     # apps
     'api',
 ]
