@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div align="center">
     <h1>Web Player</h1>
     <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/>
@@ -6,10 +5,8 @@
     <img alt="Typescript" src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>&nbsp;
     <img alt="React" src="https://img.shields.io/badge/react%20-%2320232a.svg?&style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
     <img alt="Spotify" src="https://img.shields.io/badge/Spotify-1ED760?style=for-the-badge&logo=spotify&logoColor=white" />
+    <p>Spotify Clone with Django as a backend and React as a frontend.</p>
 </div>
-
-## Description:
-Spotify Clone with Django as a backend and React as a frontend.
 
 ## Used frameworks, libraries and tools:
 
