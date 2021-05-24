@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -10,6 +11,8 @@ const SpotifyCallback: FC = () => {
   let query = useQuery();
   let history = useHistory();
 
+  const [token, setToken] = useLocalStorage('token');
+
   const [code] = useState<string | null>(query.get("code"));
   const [error] = useState<string | null>(query.get("error"));
 
@@ -17,7 +20,7 @@ const SpotifyCallback: FC = () => {
   const [receivedAuthToken, setReceivedAuthToken] = useState<boolean>(false);
 
   useEffect(() => {
-    if (code && !localStorage.hasOwnProperty("token")) (async () => {
+    if (code && !token) (async () => {
       const token_response = await axios.post('http://localhost:8000/api/auth/spotify-token', {
         code: code,
       })
@@ -32,13 +35,13 @@ const SpotifyCallback: FC = () => {
 
       await setReceivedAuthToken(true);
 
-      localStorage.setItem("token", auth_response.data.key);
-      history.push("/");
+      setToken(auth_response.data.key);
+      history.push("/home");
     })()
     else {
       history.push("/");
     }
-  }, [code, error, history])
+  }, [token, setToken, code, error, history])
 
   return (
     <div>
