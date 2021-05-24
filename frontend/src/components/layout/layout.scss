@@ -1,0 +1,104 @@
+$full-height: 100vh;
+$footer-height: 95px;
+$header-height: 50px;
+$content-height: calc(#{$full-height} - #{$footer-height});
+
+$spotify-gray: #191414;
+$black: #000000;
+$gray-font: #f6f6f6;
+$gray-border: #262626;
+
+body {
+  height: $full-height;
+}
+
+.header {
+  background: $black;
+  padding-left: 25px;
+  color: white;
+  font-weight: bold;
+  height: $header-height;
+
+  .header__left {
+
+    .header__back, .header__forward {
+      color: #f6f6f6;
+      background: #373636;
+      padding: 3px;
+      border-radius: 15px;
+      margin-top: 10px;
+    }
+
+    .header__back {
+      margin-right: 10px;
+    }
+  }
+
+  .header__right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+    // image
+    .MuiAvatar-root {
+      margin-right: 5px;
+      width: 30px;
+      height: 30px;
+    }
+
+    // text
+    span {
+
+    }
+  }
+}
+
+.main {
+  height: $content-height;
+  background: $spotify-gray;
+}
+
+.sidebar {
+  height: $content-height;
+  padding: 0 6px;
+  background: $black;
+  color: $gray-font;
+
+  .playlists {
+
+  }
+
+}
+
+.content {
+  margin-left: 25px;
+  background: $spotify-gray; // temporary
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  color: white;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.footer {
+  height: $footer-height;
+  background: $spotify-gray;
+  color: $gray-font;
+  border: 1px solid $gray-border;
+}

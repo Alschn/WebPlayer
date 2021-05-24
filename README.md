@@ -12,12 +12,15 @@
 
 #### Backend:
 - Django + Django Rest Framework
+- django-all-auth, django-rest-auth
 
 #### Frontend:
 - React
+- React-router-dom
 - Typescript
 - Sass
 - Axios
+- UI library to be selected (probably Material UI)
 
 #### External APIs:
 - Spotify Web API
@@ -36,12 +39,25 @@ venv\Scripts\activate
 
 pip install -r requirements.txt  
 ```
+Create `.env` file in `backend` directory and set following variables in plain text
+```shell script
+CLIENT_ID='id from spotify dashboard'
+CLIENT_SECRET='secret from spotify dashboard'
+REDIRECT_URI='redirect uri set in spotify dashboard (port 8000)'
+REDIRECT_URI_DEV='other direct uri for development (port 3000)'
+```
+
 Run migrations and create superuser:
 ```shell script
+python manage.py makemigrations
+
 python manage.py migrate  
 
 python manage.py createsuperuser  
 ```
+Run server, go to admin page and log in with superuser's credentials. 
+Create new Social Account with **Provider** - Spotify, any **Name**, 
+**client_id** from Spotify Dashboard and select default **Site**. 
 
 ### React Setup
 Install all dependencies:
@@ -59,7 +75,8 @@ First build React files
 npm run build
 ```
 
-Then collect all static files with Django
+Then collect all static files with Django. 
+If you want to avoid user prompt use one following flags: `--noinput`, `--no-input` with a command below.
 ```shell script
 python manage.py collectstatic
 ```
@@ -70,12 +87,14 @@ python manage.py runserver
 ```
 
 #### Local development
-Set DEBUG=False in Django settings. Server's port is 8000 and client's port is 3000.
+Client in development mode runs on port 3000. In order to access API, server has to be running as well, 
+otherwise any request fired at localhost will fail.
 ```shell script
 cd frontend
 npm start
 ```
 
+Set DEBUG=True in Django's settings. Server by default runs on port 8000.
 ```shell script
 cd backend
 python manage.py runserver
