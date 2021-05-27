@@ -7,6 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import {Grid} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
+import SidebarPlaylists from "./Playlists";
 
 interface SidebarProps {
 
@@ -19,15 +20,16 @@ const Sidebar: FC<SidebarProps> = () => {
   };
 
   const handleGoToRoute = (route: string): void => {
-    console.log(route);
-    // history.push(route);
+    history.push(route);
   }
 
   return (
     <div className="sidebar__inner">
       <div className="sidebar__top">
         <p><MoreHorizIcon onClick={handleSettingsOnClick}/></p>
-        <Grid container className="sidebar-navtab" key="/home">
+        <Grid container className="sidebar-navtab"
+              key="/home" onClick={() => handleGoToRoute("/home")}
+        >
           <Grid item xs={2}>
             <HomeOutlinedIcon/>
           </Grid>
@@ -89,10 +91,7 @@ const Sidebar: FC<SidebarProps> = () => {
         <hr/>
       </div>
 
-      <Grid className="playlists">
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-          21, 22, 23, 24, 25, 26].map((i) => (<p key={`playlist${i}`}>Playlist name {i}</p>))}
-      </Grid>
+      <SidebarPlaylists />
     </div>
   );
 };
