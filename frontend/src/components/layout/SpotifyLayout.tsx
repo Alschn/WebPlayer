@@ -19,7 +19,7 @@ const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
 
         <Grid item xs={9} lg={10}>
           <Header/>
-          <div className="content">
+          <div className="content" id="content">
             {children}
           </div>
         </Grid>

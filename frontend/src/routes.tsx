@@ -7,6 +7,7 @@ import Home from "./components/main/Home";
 import Profile from "./components/main/Profile";
 import PageNotFound from "./components/PageNotFound";
 import SpotifyLayout from "./components/layout/SpotifyLayout";
+import Playlist from "./components/main/Playlist";
 
 interface PrivateRouteProps {
   component: ComponentType,
@@ -41,6 +42,7 @@ const Router: FC = () => {
 
         <PrivateRoute path="/home" component={Home}/>
         <PrivateRoute path="/profile" component={Profile}/>
+        <PrivateRoute path="/playlists/:id" component={Playlist}/>
 
         <Route exact path="/" render={
           () => (isAuthenticated ? <Redirect to="/home"/> : <Welcome/>)

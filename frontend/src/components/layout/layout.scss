@@ -158,6 +158,15 @@ $gray-border: #262626;
     &::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+
+    .playlist-item {
+      cursor: default;
+      text-wrap: none;
+
+      &:hover {
+        color: white;
+      }
+    }
   }
 }
 
@@ -187,8 +196,33 @@ $gray-border: #262626;
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  .playlist__root {
+    padding: 30px 0 20px 0;
+
+    .playlist__info-left {
+      padding: 0 20px 20px 0;
+    }
+
+    .playlist__info-right {
+      padding-bottom: 20px;
+    }
+
+    .playlist__track-image {
+      padding-right: 15px;
+    }
+  }
 }
 
+// Playlists view table
+.MuiTableCell-root {
+  border-bottom: none !important;
+  color: #bebebe !important;
+}
+
+.MuiTableHead-root {
+  border-bottom: 1.25px solid $gray-border !important;
+}
 
 /*
   Footer at the bottom
