@@ -32,7 +32,7 @@ const Header: FC<HeaderProps> = () => {
       <Grid item xs={8}/>
 
       <Grid item xs={2} className="header__right">
-        <Avatar alt="avatar" src={imageURL}/>
+        {imageURL && <Avatar alt="avatar" src={imageURL}/>}
         {username && <span>{username}</span>}
       </Grid>
     </Grid>

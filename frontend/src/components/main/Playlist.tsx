@@ -1,8 +1,8 @@
 import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
 import React, {FC, useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import AxiosClient from "../../utils/axiosClient";
-import {getArtistsString, getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
+import {getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
@@ -11,6 +11,7 @@ import {
   SpotifyImageObject,
   SpotifyPublicUserObject
 } from "../../types/spotify";
+import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 
 
 interface Parameters {
@@ -58,7 +59,6 @@ const Playlist: FC = () => {
   useEffect(() => {
     AxiosClient.get(`http://localhost:8000/api/spotify/playlists/${id}`).then(res => {
       const {tracks: {items, next, total}, ...rest} = res.data;
-      // console.log(items)
       setTracks(items);
       setNext(next);
       setTotalCount(total);
@@ -93,11 +93,6 @@ const Playlist: FC = () => {
     return '';
   }
 
-  const getTrackImage = (images: any): string | undefined => {
-    if (images.length === 3) return images[2].url;
-    return undefined;
-  }
-
   return (
     <div className="playlist__root">
       {playlistInfo && <Grid container alignItems="flex-end">
@@ -108,8 +103,11 @@ const Playlist: FC = () => {
         <Grid item className="playlist__info-right">
           <h4>PLAYLIST</h4>
           <h1>{playlistInfo.name}</h1>
-          <p>{playlistInfo.description}</p>
-          <p>{playlistInfo.followers.total} likes - {totalCount} tracks, {getPlaylistLength()}</p>
+          <p className="playlist__info-right__description">{playlistInfo.description}</p>
+          <p className="playlist__info-right__stats">
+            <Link to="/">{playlistInfo.owner.display_name}</Link> · {playlistInfo.followers.total} likes
+            · {totalCount} tracks, {getPlaylistLength()}
+          </p>
         </Grid>
       </Grid>}
 
@@ -135,10 +133,18 @@ const Playlist: FC = () => {
               <TableBody>
                 {tracks.map(
                   (
-                    {added_at, track: {track_number, name, duration_ms, album: {name: album_name, images}, artists}},
+                    {
+                      added_at,
+                      track: {
+                        track_number, name, duration_ms, album: {
+                          name: album_name,
+                          id: album_id, images
+                        }, artists
+                      }
+                    },
                     index
                   ) => (
-                    <TableRow key={`track-${index}`}>
+                    <TableRow key={`track-${index}`} className="playlist__track-row">
                       <TableCell component="th" scope="row">{index + 1}</TableCell>
                       <TableCell align="left">
                         <Grid container alignItems="center">
@@ -146,16 +152,16 @@ const Playlist: FC = () => {
                             <img src={getTrackImage(images)} width={40} height={40} alt=""/>
                           </Grid>
                           <Grid item>
-                            <Grid item>
-                              {name}
+                            <Grid item className="playlist__track-title">
+                              <span>{name}</span>
                             </Grid>
-                            <Grid item>
-                              {getArtistsString(artists)}
+                            <Grid item className="playlist__track-artists">
+                              {getArtistsWithLinks(artists)}
                             </Grid>
                           </Grid>
                         </Grid>
                       </TableCell>
-                      <TableCell align="left">{album_name}</TableCell>
+                      <TableCell align="left"><Link to={`/albums/${album_id}`}>{album_name}</Link></TableCell>
                       <TableCell align="left">{getTimePassedSinceAdded(added_at)}</TableCell>
                       <TableCell align="left">{getMsToTime(duration_ms, true)}</TableCell>
                     </TableRow>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import {SpotifyArtistObject} from "../types/spotify";
 
 export const getArtistsWithLinks = (artists: SpotifyArtistObject[]): JSX.Element[] => {
@@ -10,3 +10,8 @@ export const getArtistsWithLinks = (artists: SpotifyArtistObject[]): JSX.Element
     return <><Link to={`/artists/${id}`} key={name}>{name}</Link>{separator}</>
   });
 };
+
+export const getTrackImage = (images: any): string | undefined => {
+  if (images.length === 3) return images[2].url;
+  return undefined;
+}

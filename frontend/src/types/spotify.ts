@@ -49,10 +49,10 @@ export interface SpotifyArtistObject {
 export interface SpotifyPublicUserObject {
   display_name: string;
   external_urls: SpotifyExternalUrlObject;
-  followers: SpotifyFollowersObject;
+  followers?: SpotifyFollowersObject;
   href: string;
   id: string;
-  images: SpotifyImageObject[];
+  images?: SpotifyImageObject[];
   type: string;
   uri: string;
 }
