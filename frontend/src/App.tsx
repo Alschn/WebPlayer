@@ -1,21 +1,18 @@
 import React, {FC, Fragment} from 'react';
 import './App.scss';
-import AuthContext from "./context/authContext";
-import useLocalStorage from "./hooks/useLocalStorage";
+import {AuthContextProvider} from "./context/authContext";
 import Router from "./routes";
+import {UserContextProvider} from "./context/userContext";
 
 
 const App: FC = () => {
-  const [token] = useLocalStorage('token');
-
   return (
     <Fragment>
-      <AuthContext.Provider value={{
-        isAuthenticated: token != null,
-        token: token,
-      }}>
-        <Router/>
-      </AuthContext.Provider>
+      <AuthContextProvider>
+        <UserContextProvider>
+          <Router/>
+        </UserContextProvider>
+      </AuthContextProvider>
     </Fragment>
   );
 }

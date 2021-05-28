@@ -140,6 +140,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Authentication
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        ('rest_framework.permissions.AllowAny', )
+    ),
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        ('rest_framework.authentication.TokenAuthentication', )
+    ),
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
