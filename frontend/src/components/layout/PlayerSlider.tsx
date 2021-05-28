@@ -1,10 +1,11 @@
 import React, {FC, useState} from 'react';
 import Grid from '@material-ui/core/Grid';
-import Slider from '@material-ui/core/Slider';
+import {getMsToTime} from "../../utils/dataFormat";
+import SpotifySlider from './SpotifySlider';
 
 interface PlayerSliderProps {
-  position?: number | string;
-  duration?: number | string;
+  position: number;
+  duration: number;
 }
 
 enum RepeatMode {
@@ -13,7 +14,8 @@ enum RepeatMode {
   repeatOnce,
 }
 
-const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
+
+const PlayerSlider: FC<PlayerSliderProps> = ({position = 0, duration = 0}) => {
   const [value, setValue] = useState(50);
 
   const [repeat, setRepeat] = useState<RepeatMode>(RepeatMode.noRepeat);
@@ -23,26 +25,20 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
     setValue(newValue);
   };
 
-  const getFormattedTime = (time_in_ms: number): string => {
-    return String(time_in_ms);
-  }
-
   return (
-    <div className="player-slider">
-      <Grid container>
-        <Grid item>
-          {position}
-        </Grid>
-
-        <Grid item xs>
-          <Slider value={value} onChange={handleChange} aria-labelledby="player-slider-slider"/>
-        </Grid>
-
-        <Grid item>
-          {duration}
-        </Grid>
+    <Grid container className="player-slider" justify="center">
+      <Grid item>
+        {getMsToTime(position, true)}
       </Grid>
-    </div>
+
+      <Grid item xs className="player-slider__root">
+        <SpotifySlider value={value} onChange={handleChange} aria-labelledby="player-slider-slider"/>
+      </Grid>
+
+      <Grid item>
+        {getMsToTime(duration, true)}
+      </Grid>
+    </Grid>
   );
 }
 

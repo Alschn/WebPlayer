@@ -296,12 +296,35 @@ $gray-border: #262626;
   color: $gray-font;
   border: 1px solid $gray-border;
 
-  .player-slider {
-    width: 70%;
+  .player__root {
+    width: 75%;
+    margin: auto;
+
+    .player__icons {
+      text-align: center;
+      margin-top: 20px;   // make it responsive later
+
+      * { // make it responsive later
+        padding: 0 10px;
+        font-size: 24px;
+      }
+    }
+
+    .player-slider {
+      .player-slider__root {
+        margin: 0 8px;
+      }
+    }
   }
 
-  .volume-slider {
-    max-width: 150px;
+  .volume-slider__root {
+    max-width: 250px;
+    padding-top: 15px;
+
+    .volume-slider {
+      max-width: 120px;
+      min-width: 80px;
+    }
 
     .volume-slider-icon {
       padding: 3px;
