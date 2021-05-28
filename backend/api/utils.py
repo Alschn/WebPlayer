@@ -124,3 +124,7 @@ def get_playlist(user, playlist_id):
 
 def get_next_items(user, href):
     return execute_spotify_api_call(user, endpoint="", other_base_url=href)
+
+
+def get_user_by_id(user, user_id):
+    return execute_spotify_api_call(user, endpoint=f"users/{user_id}", other_base_url=BASE_URL)

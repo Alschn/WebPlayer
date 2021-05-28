@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from allauth.socialaccount.models import SocialToken
+from allauth.socialaccount.models import SocialToken, SocialAccount
 from allauth.socialaccount.providers.spotify.views import SpotifyOAuth2Adapter
 # noinspection PyUnresolvedReferences
 from config import REDIRECT_URI, CLIENT_ID, CLIENT_SECRET, DOMAIN_URL
@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.api.permissions import HasSpotifyToken
-from backend.api.utils import get_user_playlists, get_next_items, get_playlist
+from backend.api.utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id
 
 SCOPES = [
     # listening history
@@ -196,4 +196,48 @@ class GetUserLibrary(APIView):
 
 
 class GetCurrentUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        social = SocialAccount.objects.filter(user=user)
+        if social.exists():
+            social_acc = social.first()
+            user_data = social_acc.extra_data
+            image = user_data.get('images')
+            try:
+                image = image[0].get('url')
+            except Exception:
+                pass
+            followers = user_data.get('followers').get('total')
+            return Response({
+                'username': user_data.get('display_name', None),
+                'imageURL': image,
+                'id': user_data.get('id', None),
+                'followers': followers,
+            }, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class GetUser(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, id):
+        sender = request.user
+        user_id = id
+        if user_id:
+            user = get_user_by_id(sender, user_id)
+            return Response(user, status=status.HTTP_200_OK)
+        return Response({'error': 'User id not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetArtist(APIView):
+    pass
+
+
+class GetTopTracks(APIView):
+    pass
+
+
+class GetTopArtists(APIView):
     pass
