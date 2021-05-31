@@ -13,8 +13,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from backend.api.permissions import HasSpotifyToken
-from backend.api.utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id
+from .permissions import HasSpotifyToken
+from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id
 
 SCOPES = [
     # listening history
@@ -36,7 +36,11 @@ SCOPES = [
 
 
 class GetSpotifyAuthURL(APIView):
+    """api/spotify-url"""
+
     def get(self, request):
+        """Client requests spotify url prepared by the backend."""
+
         scopes = ' '.join(SCOPES)
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,

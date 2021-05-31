@@ -18,15 +18,19 @@ export const getMsToTime = (ms: number, colon_separated = false): string => {
   const cutHours: number = hours > 24 ? hours - days * 24 : hours;
 
   const formatCutSeconds: string = cutSeconds < 10 ? `0${cutSeconds}` : String(cutSeconds);
+  const formatCutMinutes: string = cutMinutes < 10 ? `0${cutMinutes}` : String(cutMinutes);
+  const formatCutHours: string = cutHours < 10 ? `0${cutHours}` : String(cutHours);
 
   if (seconds < 60)
     return colon_separated ? `0:${formatCutSeconds}` : `${seconds} sec`;
   else if (minutes < 60)
-    return colon_separated ? `${minutes}:${formatCutSeconds}` : `${minutes} min ${formatCutSeconds} sec`;
+    return colon_separated ? `${minutes}:${formatCutSeconds}` : `${minutes} min ${cutSeconds} sec`;
   else if (hours < 24)
-    return colon_separated ? `${hours}:${cutMinutes}:${formatCutSeconds}` : `${hours} hrs ${cutMinutes} min`;
+    return colon_separated ? `${hours}:${formatCutMinutes}:${formatCutSeconds}` : `${hours} hrs ${cutMinutes} min`;
   else
-    return colon_separated ? `${days}:${cutHours}:${cutMinutes}:${formatCutSeconds}` : `${days} days ${cutHours} hrs`;
+    return colon_separated ?
+      `${days}:${formatCutHours}:${cutMinutes}:${formatCutSeconds}` :
+      `${days} days ${cutHours} hrs`;
 }
 
 export const getTimePassedSinceAdded = (added_at: string): string => {
