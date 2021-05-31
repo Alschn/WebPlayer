@@ -10,6 +10,10 @@ on:
     branches:
       - main
 
+defaults:
+  run:
+    working-directory: frontend
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,9 +30,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: |
-          cd frontend
-          npm install
+        run: npm install
       - name: Run build
         run: npm run build
       - name: Run tests
