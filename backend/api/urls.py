@@ -18,7 +18,7 @@ urlpatterns = [
     path('spotify/top/artists', GetTopArtists.as_view()),
     path('spotify/top/tracks', GetTopArtists.as_view()),
 
-    path('spotify/library', GetUserLibrary.as_view()),
+    path('spotify/saved', GetSavedItems.as_view()),
     path('spotify/recommendations', GetRecommendations.as_view()),
 
     path('spotify/play', PlaySong.as_view()),
