@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import HasSpotifyToken
-from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items
+from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album
 
 SCOPES = [
     # listening history
@@ -188,7 +188,7 @@ class GetUserPlaylists(APIView):
     def put(self, request):
         sender = request.user
         next_playlists = request.data.get('next', None)
-        if next:
+        if next_playlists:
             playlists = get_next_items(sender, href=next_playlists)
             return Response(playlists, status=status.HTTP_200_OK)
         return Response({'error': 'Next parameter not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
@@ -203,7 +203,7 @@ class GetSavedItems(APIView):
     def put(self, request):
         sender = request.user
         next_tracks = request.data.get('next', None)
-        if next:
+        if next_tracks:
             tracks = get_next_items(sender, href=next_tracks)
             return Response(tracks, status=status.HTTP_200_OK)
         return Response({'error': 'Next parameter not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
@@ -247,6 +247,15 @@ class GetUser(APIView):
 
 class GetArtist(APIView):
     pass
+
+
+class GetAlbum(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, id):
+        sender = request.user
+        saved_tracks = get_album(sender, id)
+        return Response(saved_tracks, status=status.HTTP_200_OK)
 
 
 class GetTopTracks(APIView):

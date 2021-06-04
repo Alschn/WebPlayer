@@ -26,6 +26,49 @@ export interface SpotifyDeviceObject {
   volume_percent: number;
 }
 
+export interface SpotifySimplifiedTrackObject {
+  artists: any,
+  available_markets: string[],
+  disc_number: number,
+  duration_ms: number,
+  explicit: boolean,
+  external_urls: SpotifyExternalUrlObject,
+  href: string,
+  id: string,
+  is_local: boolean,
+  is_playable: boolean,
+  linked_from: any, //
+  name: string,
+  preview_url: string,
+  restrictions: any,
+  track_number: number,
+  type: string,
+  uri: string
+}
+
+export interface SpotifyAlbumObject {
+  album_type: string;
+  artists: SpotifyArtistObject[],
+  available_markets: string[],
+  copyrights: any,  //
+  external_ids: any,  //
+  external_urls: SpotifyExternalUrlObject,
+  genres: string[],
+  href: string,
+  id: string,
+  images: string,
+  label: string,
+  name: string,
+  popularity: number,
+  release_date: string,
+  release_date_precision: string,
+  restrictions: any;  //
+  total_tracks: number,
+  tracks: SpotifySimplifiedTrackObject[],
+  type: string,
+  uri: string,
+}
+
 export interface SpotifyFollowersObject {
   href: string | null,
   total: number,

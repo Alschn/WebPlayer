@@ -132,3 +132,7 @@ def get_user_by_id(user, user_id):
 
 def get_saved_items(user):
     return execute_spotify_api_call(user, endpoint=f"tracks?limit=30")
+
+
+def get_album(user, album_id):
+    return execute_spotify_api_call(user, endpoint=f"albums/{album_id}", other_base_url=BASE_URL)

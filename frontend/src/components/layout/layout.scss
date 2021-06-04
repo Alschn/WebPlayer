@@ -236,7 +236,7 @@ $gray-border: #262626;
         font-weight: bold;
       }
 
-      #favourite-tracks-title {
+      #favourite-tracks-title, #album-title {
         padding: 0;
         font-size: 5em;
       }
@@ -281,6 +281,11 @@ $gray-border: #262626;
     .playlist__track-title {
       font-size: 110%;
       color: white;
+    }
+
+    .playlist__track-artists {
+      display: flex;
+      align-items: center;
     }
 
     .playlist__track-row {

@@ -7,6 +7,16 @@ export const getArtistsString = (artists: SpotifyArtistObject[]): string => {
   ), ``)
 };
 
+export const getPlaylistLength = (tracks: any[]): string => {
+  if (tracks) {
+    const length = tracks.reduce(((previousValue, currentValue) => (
+      previousValue + currentValue
+    )), 0)
+    return getMsToTime(length);
+  }
+  return '';
+}
+
 export const getMsToTime = (ms: number, colon_separated = false): string => {
   const seconds: number = Math.floor(ms / 1000);
   const minutes: number = Math.floor(ms / (1000 * 60));
