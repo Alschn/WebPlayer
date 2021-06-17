@@ -3,19 +3,18 @@ name: WebPlayer Tests frontend
 on:
   push:
     branches:
-      - main
       - dev
 
   pull_request:
     branches:
-      - main
+      - master
 
 defaults:
   run:
     working-directory: frontend
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     strategy:

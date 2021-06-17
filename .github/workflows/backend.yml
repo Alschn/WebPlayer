@@ -3,19 +3,18 @@ name: WebPlayer Backend Tests
 on:
   push:
     branches:
-      - main
       - dev
 
   pull_request:
     branches:
-      - main
+      - master
 
 defaults:
   run:
     working-directory: backend
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     services:
