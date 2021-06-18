@@ -339,6 +339,13 @@ $gray-border: #262626;
 .MuiTableCell-root {
   border-bottom: none !important;
   color: $lighter-gray-font !important;
+
+  // text overflow - requires some more work
+  max-width: 500px; // it should be column specific
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .MuiTableHead-root {

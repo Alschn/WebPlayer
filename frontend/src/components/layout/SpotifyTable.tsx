@@ -135,10 +135,10 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
                     <TableCell component="th" scope="row">{index + 1}</TableCell>
                     <TableCell align="left">
                       <Grid container alignItems="center">
-                        <Grid item className="playlist__track-image">
+                        <Grid item className="playlist__track-image" xs={2}>
                           <img src={getTrackImage(images)} alt=""/>
                         </Grid>
-                        <Grid item>
+                        <Grid item xs={10}>
                           <Grid item className="playlist__track-title">
                             <span>{name}</span>
                           </Grid>
