@@ -22,6 +22,15 @@ const Header: FC<HeaderProps> = () => {
     history.goForward();
   }
 
+  const getLocationBasedPart = (): JSX.Element | null => {
+    switch (history.location.pathname) {
+      case '/search':
+        return <p>Saved</p>
+      default:
+        return null;
+    }
+  }
+
   return (
     <Grid container className="header">
       <Grid item xs={2} className="header__left">
@@ -29,7 +38,9 @@ const Header: FC<HeaderProps> = () => {
         <ChevronRightIcon className="header__forward" onClick={pageForward}/>
       </Grid>
 
-      <Grid item xs={8}/>
+      <Grid item xs={8}>
+        {getLocationBasedPart()}
+      </Grid>
 
       <Grid item xs={2} className="header__right">
         {imageURL && <Avatar alt="avatar" src={imageURL}/>}

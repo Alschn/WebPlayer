@@ -78,10 +78,12 @@ const Sidebar: FC<SidebarProps> = () => {
         </Grid>
 
         <Grid container className="sidebar-tab"
-              key="/favourites" onClick={() => handleGoToRoute("/favourites")}
+              key="/favourites" onClick={() => handleGoToRoute("/saved")}
         >
-          <Grid item xs={2} className="icon-fav-bg">
-            <FavoriteIcon className="icon-fav"/>
+          <Grid item xs={2}>
+            <Grid item className="icon-fav-bg icon-fav-box">
+              <FavoriteIcon className="icon-fav"/>
+            </Grid>
           </Grid>
 
           <Grid item xs={10}>
@@ -91,7 +93,7 @@ const Sidebar: FC<SidebarProps> = () => {
         <hr/>
       </div>
 
-      <SidebarPlaylists />
+      <SidebarPlaylists/>
     </div>
   );
 };

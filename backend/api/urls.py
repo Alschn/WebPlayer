@@ -8,17 +8,20 @@ urlpatterns = [
     path('auth/spotify-token', GetSpotifyAccessToken.as_view()),
     path('auth/spotify-login', SpotifyLoginHandler.as_view()),
     path('auth/login', SpotifyLogin.as_view()),
+    # Spotify token used to initialize SDK
+    path('spotify/token', GetCurrentSpotifyToken.as_view()),
     # Spotify endpoints
     path('spotify/playlists', GetUserPlaylists.as_view()),
     path('spotify/playlists/<str:id>', GetPlaylist.as_view()),
     path('spotify/users', GetCurrentUser.as_view()),
     path('spotify/users/<str:id>', GetUser.as_view()),
     path('spotify/artists/<str:id>', GetArtist.as_view()),
+    path('spotify/albums/<str:id>', GetAlbum.as_view()),
 
     path('spotify/top/artists', GetTopArtists.as_view()),
     path('spotify/top/tracks', GetTopArtists.as_view()),
 
-    path('spotify/library', GetUserLibrary.as_view()),
+    path('spotify/saved', GetSavedItems.as_view()),
     path('spotify/recommendations', GetRecommendations.as_view()),
 
     path('spotify/play', PlaySong.as_view()),

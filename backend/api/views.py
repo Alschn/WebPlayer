@@ -13,8 +13,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from backend.api.permissions import HasSpotifyToken
-from backend.api.utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id
+from .permissions import HasSpotifyToken
+from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album, \
+    get_user_token
 
 SCOPES = [
     # listening history
@@ -36,7 +37,11 @@ SCOPES = [
 
 
 class GetSpotifyAuthURL(APIView):
+    """api/spotify-url"""
+
     def get(self, request):
+        """Client requests spotify url prepared by the backend."""
+
         scopes = ' '.join(SCOPES)
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
@@ -106,6 +111,16 @@ class SpotifyLogin(SocialLoginView):
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+
+class GetCurrentSpotifyToken(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        # permission granted, it means there is a token
+        user = request.user
+        token = get_user_token(user)
+        return Response({'token': token.token}, status=status.HTTP_200_OK)
 
 
 class PlaySong(APIView):
@@ -179,20 +194,30 @@ class GetUserPlaylists(APIView):
     def get(self, request):
         sender = request.user
         playlists = get_user_playlists(sender)
-
         return Response(playlists, status=status.HTTP_200_OK)
 
     def put(self, request):
         sender = request.user
-        next = request.data.get('next', None)
-        if next:
-            playlists = get_next_items(sender, href=next)
+        next_playlists = request.data.get('next', None)
+        if next_playlists:
+            playlists = get_next_items(sender, href=next_playlists)
             return Response(playlists, status=status.HTTP_200_OK)
         return Response({'error': 'Next parameter not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetUserLibrary(APIView):
-    pass
+class GetSavedItems(APIView):
+    def get(self, request):
+        sender = request.user
+        saved_tracks = get_saved_items(sender)
+        return Response(saved_tracks, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        sender = request.user
+        next_tracks = request.data.get('next', None)
+        if next_tracks:
+            tracks = get_next_items(sender, href=next_tracks)
+            return Response(tracks, status=status.HTTP_200_OK)
+        return Response({'error': 'Next parameter not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetCurrentUser(APIView):
@@ -233,6 +258,15 @@ class GetUser(APIView):
 
 class GetArtist(APIView):
     pass
+
+
+class GetAlbum(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, id):
+        sender = request.user
+        saved_tracks = get_album(sender, id)
+        return Response(saved_tracks, status=status.HTTP_200_OK)
 
 
 class GetTopTracks(APIView):

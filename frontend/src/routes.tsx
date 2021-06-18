@@ -11,6 +11,7 @@ import Playlist from "./components/main/Playlist";
 import Artist from "./components/main/Artist";
 import Album from "./components/main/Album";
 import Search from "./components/main/Search";
+import SavedTracks from "./components/main/Saved";
 
 interface PrivateRouteProps {
   component: ComponentType,
@@ -49,6 +50,7 @@ const Router: FC = () => {
         <PrivateRoute path="/artists/:id" component={Artist}/>
         <PrivateRoute path="/albums/:id" component={Album}/>
         <PrivateRoute path="/search" component={Search}/>
+        <PrivateRoute path="/saved" component={SavedTracks}/>
 
         <Route exact path="/" render={
           () => (isAuthenticated ? <Redirect to="/home"/> : <Welcome/>)
