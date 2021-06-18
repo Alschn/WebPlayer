@@ -3,6 +3,7 @@ import './App.scss';
 import {AuthContextProvider} from "./context/authContext";
 import Router from "./routes";
 import {UserContextProvider} from "./context/userContext";
+import WebPlayback from "./components/player/WebPlayback";
 
 
 const App: FC = () => {
@@ -10,7 +11,9 @@ const App: FC = () => {
     <Fragment>
       <AuthContextProvider>
         <UserContextProvider>
-          <Router/>
+          <WebPlayback>
+            <Router/>
+          </WebPlayback>
         </UserContextProvider>
       </AuthContextProvider>
     </Fragment>

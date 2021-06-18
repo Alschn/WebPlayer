@@ -14,7 +14,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import HasSpotifyToken
-from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album
+from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album, \
+    get_user_token
 
 SCOPES = [
     # listening history
@@ -110,6 +111,16 @@ class SpotifyLogin(SocialLoginView):
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+
+class GetCurrentSpotifyToken(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        # permission granted, it means there is a token
+        user = request.user
+        token = get_user_token(user)
+        return Response({'token': token.token}, status=status.HTTP_200_OK)
 
 
 class PlaySong(APIView):

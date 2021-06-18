@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Optional
 
 from allauth.socialaccount.models import SocialToken
 # noinspection PyUnresolvedReferences
@@ -10,7 +11,7 @@ BASE_URL = "https://api.spotify.com/v1/"
 BASE_URL_ME = "https://api.spotify.com/v1/me/"
 
 
-def get_user_token(user):
+def get_user_token(user) -> Optional[SocialToken]:
     """:returns SocialToken object || None"""
     user_tokens = SocialToken.objects.filter(account__user=user)
     if user_tokens.exists():
@@ -18,7 +19,7 @@ def get_user_token(user):
     return None
 
 
-def is_spotify_authenticated(user):
+def is_spotify_authenticated(user) -> bool:
     token = get_user_token(user)
     if token:
         expiry = token.expires_at
