@@ -1,17 +1,15 @@
-import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import React, {FC, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import AxiosClient from "../../utils/axiosClient";
-import {getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import InfiniteScroll from "react-infinite-scroll-component";
+import {getMsToTime} from "../../utils/dataFormat";
 import {
   SpotifyExternalUrlObject,
   SpotifyFollowersObject,
   SpotifyImageObject,
   SpotifyPublicUserObject
 } from "../../types/spotify";
-import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
+import SpotifyTable from "../layout/SpotifyTable";
 
 
 interface Parameters {
@@ -112,64 +110,12 @@ const Playlist: FC = () => {
       </Grid>}
 
       <Grid item xs={12} className="playlist__tracks">
-        <TableContainer>
-          <InfiniteScroll
-            next={loadMoreTracks}
-            hasMore={next != null}
-            loader={<h2>Loading more tracks ...</h2>}
-            dataLength={tracks.length}
-            scrollableTarget='content'
-          >
-            <Table aria-label="simple table" size="small">
-              <TableHead className="playlist__tracks-header">
-                <TableRow>
-                  <TableCell align="left">#</TableCell>
-                  <TableCell align="left">TITLE</TableCell>
-                  <TableCell align="left">ALBUM</TableCell>
-                  <TableCell align="left">ADDED</TableCell>
-                  <TableCell align="left"><AccessTimeIcon fontSize="small"/></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tracks.map(
-                  (
-                    {
-                      added_at,
-                      track: {
-                        track_number, name, duration_ms, album: {
-                          name: album_name,
-                          id: album_id, images
-                        }, artists
-                      }
-                    },
-                    index
-                  ) => (
-                    <TableRow key={`track-${index}`} className="playlist__track-row">
-                      <TableCell component="th" scope="row">{index + 1}</TableCell>
-                      <TableCell align="left">
-                        <Grid container alignItems="center">
-                          <Grid item className="playlist__track-image">
-                            <img src={getTrackImage(images)} width={40} height={40} alt=""/>
-                          </Grid>
-                          <Grid item>
-                            <Grid item className="playlist__track-title">
-                              <span>{name}</span>
-                            </Grid>
-                            <Grid item className="playlist__track-artists">
-                              {getArtistsWithLinks(artists)}
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </TableCell>
-                      <TableCell align="left"><Link to={`/albums/${album_id}`}>{album_name}</Link></TableCell>
-                      <TableCell align="left">{getTimePassedSinceAdded(added_at)}</TableCell>
-                      <TableCell align="left">{getMsToTime(duration_ms, true)}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </InfiniteScroll>
-        </TableContainer>
+        <SpotifyTable
+          tableType="playlist"
+          tracks={tracks}
+          next={next}
+          loadMore={loadMoreTracks}
+        />
       </Grid>
 
       {next &&

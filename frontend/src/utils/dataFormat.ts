@@ -9,12 +9,11 @@ export const getArtistsString = (artists: SpotifyArtistObject[]): string => {
 
 export const getPlaylistLength = (tracks: any[]): string => {
   if (tracks) {
-    const length = tracks.reduce(((previousValue, currentValue) => (
-      previousValue + currentValue
-    )), 0)
-    return getMsToTime(length);
-  }
-  return '';
+      let length = 0;
+      tracks.forEach(({duration_ms}) => length += duration_ms)
+      return getMsToTime(length);
+    }
+    return '';
 }
 
 export const getMsToTime = (ms: number, colon_separated = false): string => {
