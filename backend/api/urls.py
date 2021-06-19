@@ -28,7 +28,7 @@ urlpatterns = [
     path('spotify/pause', PauseSong.as_view()),
     path('spotify/skip', SkipSong.as_view()),
     path('spotify/volume', SetVolume.as_view()),
-    path('spotify/playback', SetPlaybackMode.as_view()),
+    path('spotify/shuffle', SetShuffle.as_view()),
     path('spotify/repeat', SetRepeatMode.as_view()),
     path('spotify/song', GetCurrentSong.as_view()),
 

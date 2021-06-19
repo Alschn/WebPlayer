@@ -1,11 +1,12 @@
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Dict, Union
 
 from allauth.socialaccount.models import SocialToken
 # noinspection PyUnresolvedReferences
 from config import CLIENT_ID, CLIENT_SECRET
+from django.contrib.auth.models import User
 from django.utils import timezone
-from requests import post, put, get
+from requests import post, put, get, Response
 
 BASE_URL = "https://api.spotify.com/v1/"
 BASE_URL_ME = "https://api.spotify.com/v1/me/"
@@ -29,7 +30,7 @@ def is_spotify_authenticated(user) -> bool:
     return False
 
 
-def update_user_token(user, access_token, expires_in, refresh_token):
+def update_user_token(user, access_token, expires_in, refresh_token) -> None:
     tokens = get_user_token(user)
     if not tokens:
         return
@@ -39,7 +40,7 @@ def update_user_token(user, access_token, expires_in, refresh_token):
     tokens.save(update_fields=['token', 'token_secret', 'expires_at'])
 
 
-def refresh_spotify_token(user):
+def refresh_spotify_token(user) -> None:
     refresh_token = get_user_token(user).token_secret
 
     response = post('https://accounts.spotify.com/api/token', data={
@@ -55,7 +56,8 @@ def refresh_spotify_token(user):
     update_user_token(user, access_token, expires_in, refresh_token)
 
 
-def execute_spotify_api_call(user, endpoint, post_=False, put_=False, other_base_url=None):
+def execute_spotify_api_call(user: User, endpoint: str, post_=False, put_=False, other_base_url=None) \
+        -> Union[Response, Dict[str, str]]:
     spotify_token = get_user_token(user).token
     headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
 
@@ -78,27 +80,35 @@ def execute_spotify_api_call(user, endpoint, post_=False, put_=False, other_base
         return {'Error': f"{e}"}
 
 
-def play_song(user):
+def play_song(user: User) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, "player/play", put_=True)
 
 
-def pause_song(user):
+def pause_song(user: User) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, "player/pause", put_=True)
 
 
-def prev_song(user):
+def prev_song(user: User) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, "player/previous", post_=True)
 
 
-def skip_song(user):
+def skip_song(user: User) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, "player/next", post_=True)
 
 
-def set_volume(user, value):
+def set_volume(user: User, value: int) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, f"player/volume?volume_percent={value}", put_=True)
 
 
-def search_for_items(user, query, types, limit=20):
+def set_shuffle(user: User, shuffle: bool) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, f"player/shuffle?state={shuffle}")
+
+
+def set_repeat_mode(user: User, mode: str) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, f"player/repeat?state={mode}", put_=True)
+
+
+def search_for_items(user: User, query: str, types: str, limit=20) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(
         user,
         endpoint=f"search?q={query}&type={types}&limit={limit}",
@@ -106,34 +116,37 @@ def search_for_items(user, query, types, limit=20):
     )
 
 
-def add_to_queue(user, uri):
+def add_to_queue(user: User, uri: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, f"player/queue?uri={uri}", post_=True)
 
 
-def get_recommendations(user, track_id, limit=20):
-    return execute_spotify_api_call(user, f"recommendations?seed_tracks={track_id}&limit={limit}",
-                                    other_base_url=BASE_URL)
+def get_recommendations(user: User, track_id: str, limit=20) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user,
+        endpoint=f"recommendations?seed_tracks={track_id}&limit={limit}",
+        other_base_url=BASE_URL
+    )
 
 
-def get_user_playlists(user, limit=20):
+def get_user_playlists(user: User, limit=20) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, f"playlists?limit={limit}")
 
 
-def get_playlist(user, playlist_id):
+def get_playlist(user: User, playlist_id: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint=f"playlists/{playlist_id}", other_base_url=BASE_URL)
 
 
-def get_next_items(user, href):
+def get_next_items(user: User, href: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint="", other_base_url=href)
 
 
-def get_user_by_id(user, user_id):
+def get_user_by_id(user: User, user_id: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint=f"users/{user_id}", other_base_url=BASE_URL)
 
 
-def get_saved_items(user):
+def get_saved_items(user: User) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint=f"tracks?limit=30")
 
 
-def get_album(user, album_id):
+def get_album(user: User, album_id: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint=f"albums/{album_id}", other_base_url=BASE_URL)

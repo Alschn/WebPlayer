@@ -14,8 +14,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import HasSpotifyToken
-from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album, \
-    get_user_token
+from .utils import (
+    get_user_playlists,
+    get_next_items,
+    get_playlist,
+    get_user_by_id,
+    get_saved_items,
+    get_album,
+    get_user_token,
+    set_repeat_mode,
+    set_shuffle,
+    prev_song,
+    skip_song,
+    pause_song,
+    play_song,
+)
 
 SCOPES = [
     # listening history
@@ -69,8 +82,7 @@ class GetSpotifyAccessToken(APIView):
                 'client_secret': CLIENT_SECRET
             }).json()
             return Response(response, status=status.HTTP_200_OK)
-        else:
-            return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SpotifyLoginHandler(APIView):
@@ -114,6 +126,7 @@ class SpotifyLogin(SocialLoginView):
 
 
 class GetCurrentSpotifyToken(APIView):
+    """api/spotify/token"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, *args, **kwargs):
@@ -124,27 +137,67 @@ class GetCurrentSpotifyToken(APIView):
 
 
 class PlaySong(APIView):
-    pass
+    """api/spotify/play"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        play_song(sender)
+        return Response({'Success': 'Playing song'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class PauseSong(APIView):
-    pass
+    """api/spotify/pause"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        pause_song(sender)
+        return Response({'Success': 'Paused song'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class SkipSong(APIView):
-    pass
+    """api/spotify/skip"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def post(self, request, *args, **kwargs):
+        sender = request.user
+        if request.data['forward'] is False:
+            prev_song(sender)
+            return Response({'Message': 'Skipped song'}, status.HTTP_204_NO_CONTENT)
+
+        skip_song(sender)
+        return Response({'Message': 'Skipped song'}, status.HTTP_204_NO_CONTENT)
 
 
 class SetVolume(APIView):
     pass
 
 
-class SetPlaybackMode(APIView):
-    pass
+class SetShuffle(APIView):
+    """api/spotify/shuffle"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        shuffle = request.data.get('shuffle', None)
+        if shuffle is not None:
+            set_shuffle(sender, shuffle)
+            return Response({'Message': 'Changed shuffle mode'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Shuffle not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetRepeatMode(APIView):
-    pass
+    """api/spotify/repeat"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        mode = request.data.get('mode', None)
+        if mode and mode in ['off', 'track', 'context']:
+            set_repeat_mode(sender, mode)
+            return Response({'Message': 'Changed repeat mode!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Mode not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetAvailableDevices(APIView):
