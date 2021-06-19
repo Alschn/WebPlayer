@@ -1,5 +1,6 @@
+import json
 from datetime import timedelta
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, List
 
 from allauth.socialaccount.models import SocialToken
 # noinspection PyUnresolvedReferences
@@ -56,17 +57,17 @@ def refresh_spotify_token(user) -> None:
     update_user_token(user, access_token, expires_in, refresh_token)
 
 
-def execute_spotify_api_call(user: User, endpoint: str, post_=False, put_=False, other_base_url=None) \
-        -> Union[Response, Dict[str, str]]:
+def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
+    -> Union[Response, Dict[str, str]]:
     spotify_token = get_user_token(user).token
     headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
 
     url = BASE_URL_ME if not other_base_url else other_base_url
 
     if post_:
-        response = post(url + endpoint, headers=headers)
+        response = post(url + endpoint, data=data, headers=headers)
     elif put_:
-        response = put(url + endpoint, headers=headers)
+        response = put(url + endpoint, data=data, headers=headers)
     else:
         response = get(url + endpoint, {}, headers=headers)
 
@@ -78,6 +79,14 @@ def execute_spotify_api_call(user: User, endpoint: str, post_=False, put_=False,
         return response.json()
     except Exception as e:
         return {'Error': f"{e}"}
+
+
+def play_song_with_uri(user: User, uris: List[str], context_uri=None) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user, f"player/play",
+        data=json.dumps({'uris': uris, 'context_uri': context_uri}),
+        put_=True
+    )
 
 
 def play_song(user: User) -> Union[Response, Dict[str, str]]:
@@ -101,11 +110,15 @@ def set_volume(user: User, value: int) -> Union[Response, Dict[str, str]]:
 
 
 def set_shuffle(user: User, shuffle: bool) -> Union[Response, Dict[str, str]]:
-    return execute_spotify_api_call(user, f"player/shuffle?state={shuffle}")
+    return execute_spotify_api_call(user, f"player/shuffle?state={shuffle}", put_=True)
 
 
 def set_repeat_mode(user: User, mode: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, f"player/repeat?state={mode}", put_=True)
+
+
+def seek_position(user: User, position_ms: int) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, f"player/seek?position_ms={position_ms}")
 
 
 def search_for_items(user: User, query: str, types: str, limit=20) -> Union[Response, Dict[str, str]]:

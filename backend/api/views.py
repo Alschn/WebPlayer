@@ -24,10 +24,13 @@ from .utils import (
     get_user_token,
     set_repeat_mode,
     set_shuffle,
+    set_volume,
+    play_song_with_uri,
     prev_song,
     skip_song,
     pause_song,
     play_song,
+    seek_position,
 )
 
 SCOPES = [
@@ -140,6 +143,19 @@ class PlaySong(APIView):
     """api/spotify/play"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
+    def post(self, request, *args, **kwargs):
+        sender = request.user
+        uris = request.data.get('uris', None)
+        context_uri = request.data.get('context_uri', None)
+        if not uris:
+            return Response({"error": 'Uri not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if context_uri:
+            play_song_with_uri(sender, uris)
+        else:
+            play_song_with_uri(sender, uris, context_uri)
+        return Response({'Success': f'Playing with uris: {str(uris)}'}, status=status.HTTP_204_NO_CONTENT)
+
     def put(self, request, *args, **kwargs):
         sender = request.user
         play_song(sender)
@@ -171,7 +187,16 @@ class SkipSong(APIView):
 
 
 class SetVolume(APIView):
-    pass
+    """api/spotify/volume"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        volume = request.data.get('volume', None)
+        if isinstance(volume, int) and 0 <= volume <= 100:
+            set_volume(sender, volume)
+            return Response({"Message": f"Changed volume to {volume}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": 'Invalid volume parameter'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetShuffle(APIView):
@@ -198,6 +223,19 @@ class SetRepeatMode(APIView):
             set_repeat_mode(sender, mode)
             return Response({'Message': 'Changed repeat mode!'}, status=status.HTTP_200_OK)
         return Response({'error': 'Mode not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SeekPosition(APIView):
+    """api/spotify/seek"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        position_ms = request.data.get('position_ms', None)
+        if isinstance(position_ms, int) and 0 <= position_ms:
+            seek_position(sender, position_ms)
+            return Response({'Message': f'Changed current position to {position_ms} [ms]!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Position_ms not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetAvailableDevices(APIView):
@@ -320,6 +358,15 @@ class GetAlbum(APIView):
         sender = request.user
         saved_tracks = get_album(sender, id)
         return Response(saved_tracks, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        sender = request.user
+        album_id = id
+        next_tracks = request.data.get('next', None)
+        if next_tracks and album_id:
+            more_tracks = get_next_items(sender, href=next_tracks)
+            return Response(more_tracks, status=status.HTTP_200_OK)
+        return Response({'error': 'Album id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetTopTracks(APIView):

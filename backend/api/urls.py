@@ -24,9 +24,12 @@ urlpatterns = [
     path('spotify/saved', GetSavedItems.as_view()),
     path('spotify/recommendations', GetRecommendations.as_view()),
 
+    # SDK performs these operations below faster
     path('spotify/play', PlaySong.as_view()),
     path('spotify/pause', PauseSong.as_view()),
     path('spotify/skip', SkipSong.as_view()),
+    path('spotify/seek', SeekPosition.as_view()),
+
     path('spotify/volume', SetVolume.as_view()),
     path('spotify/shuffle', SetShuffle.as_view()),
     path('spotify/repeat', SetRepeatMode.as_view()),
