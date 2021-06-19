@@ -7,18 +7,18 @@ import VolumeUpIcon from '@material-ui/icons/VolumeUp';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
 import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 import SpotifySlider from "./SpotifySlider";
+import {setVolume} from "../player/api";
 
 
 const VolumeSlider: FC = () => {
   const [value, setValue] = useState(30);
 
   const handleChange = (event: any, newValue: any): void => {
-    setValue(newValue);
+    handleSetVolume(newValue);
   };
 
-  const setVolume = (newVolume: number): void => {
-    // send request to api, then set volume
-    setValue(newVolume);
+  const handleSetVolume = (volume: number): void => {
+    setVolume(Math.floor(volume)).then(() => setValue(volume));
   }
 
   const getVolumeIcon = (): JSX.Element => {
@@ -38,7 +38,7 @@ const VolumeSlider: FC = () => {
         <ImportantDevicesIcon/>
       </Grid>
 
-      <Grid item className="volume-slider-icon" onClick={() => setVolume(0)}>
+      <Grid item className="volume-slider-icon" onClick={() => handleSetVolume(0)}>
         {getVolumeIcon()}
       </Grid>
       <Grid item xs className="volume-slider">

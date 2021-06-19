@@ -7,6 +7,8 @@ import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
 import {Link} from "react-router-dom";
 import useSingleAndDoubleClick from "../../hooks/useSingleAndDoubleClick";
+import {playSongWithUri} from "../player/api";
+import {usePlaybackState} from "react-spotify-web-playback-sdk";
 
 
 interface SpotifyTableProps {
@@ -20,9 +22,10 @@ type spotifyTableType = "album" | "playlist";
 
 const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}) => {
   const [selected, setSelected] = useState<Element | null>(null);
+  const playbackState = usePlaybackState();
 
-  const handleSingleClick = (row: number): void => {
-    const select = document.getElementById(`track-${row}`);
+  const handleSingleClick = (index: number): void => {
+    const select = document.getElementById(`track-${index}`);
     if (select && select !== selected) {
       setSelected(((prev: Element | null) => {
           if (prev) prev.classList.remove('Mui-selected');
@@ -33,9 +36,10 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
     }
   };
 
-  const handleDoubleClick = (row: number): void => {
+  const handleDoubleClick = (row: string): void => {
     if (selected) selected.classList.remove('Mui-selected');
-    console.log(`playing track with index ${row}`);
+    playSongWithUri(row, playbackState?.context.uri)
+      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`))
   }
 
   const handleClick = useSingleAndDoubleClick(handleSingleClick, handleDoubleClick);
@@ -63,12 +67,12 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
             </TableHead>
             <TableBody>
               {tracks.map(
-                ({artists, duration_ms, name, explicit}, index) => (
+                ({artists, duration_ms, name, explicit, uri}, index) => (
                   <TableRow
                     key={`track-${index}`}
                     className="playlist__track-row"
                     id={`track-${index + 1}`}
-                    onClick={() => handleClick(index + 1)}
+                    onClick={() => handleClick(uri, index + 1)}
                   >
                     <TableCell component="th" scope="row">{index + 1}</TableCell>
                     <TableCell align="left">
@@ -118,7 +122,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
                   {
                     added_at,
                     track: {
-                      track_number, name, duration_ms, album: {
+                      track_number, name, duration_ms, uri, album: {
                         name: album_name,
                         id: album_id, images
                       }, artists
@@ -130,7 +134,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
                     key={`track-${index + 1}`}
                     className="playlist__track-row"
                     id={`track-${index + 1}`}
-                    onClick={() => handleClick(index + 1)}
+                    onClick={() => handleClick(uri, index + 1)}
                   >
                     <TableCell component="th" scope="row">{index + 1}</TableCell>
                     <TableCell align="left">

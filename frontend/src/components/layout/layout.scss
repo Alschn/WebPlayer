@@ -369,6 +369,46 @@ $gray-border: #262626;
   color: $gray-font;
   border: 1px solid $gray-border;
 
+  .footer__left-container {
+    height: $footer-height - 2px;
+    padding: 15px;
+    overflow: hidden;
+
+    // make it responsive later
+
+    .footer_left-album {
+      & img {
+        height: 60px;
+        width: 60px;
+      }
+    }
+
+    .footer__left-desc {
+      .footer__left-title a {
+        font-size: 16px;
+        color: white;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .footer__left-artists {
+        font-size: 14px;
+
+        a {
+          text-decoration: none;
+          color: $lighter-gray-font;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
   .player__root {
     width: 75%;
     margin: auto;

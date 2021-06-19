@@ -9,16 +9,18 @@ import RepeatOneIcon from '@material-ui/icons/RepeatOne';
 import ShuffleIcon from '@material-ui/icons/Shuffle';
 import VolumeSlider from "./VolumeSlider";
 import PlayerSlider from "./PlayerSlider";
-import {usePlaybackState} from "react-spotify-web-playback-sdk";
-import {pauseSong, playSong, setRepeatMode, setShuffle, skipSong} from "../player/api";
+import {usePlaybackState, useSpotifyPlayer} from "react-spotify-web-playback-sdk";
+import {setRepeatMode, setShuffle} from "../player/api";
+import {getArtistsFromSDK, getTrackImage} from "../../utils/formatComponents";
+import { Link } from "react-router-dom";
 
 
 interface FooterProps {
-
 }
 
 const Footer: FC<FooterProps> = () => {
   const playbackState = usePlaybackState();
+  const player = useSpotifyPlayer();
 
   const isPlaying = (): boolean | undefined => playbackState?.paused;
 
@@ -51,10 +53,39 @@ const Footer: FC<FooterProps> = () => {
     }
   };
 
+  const getTrackInfo = () => {
+    const track = playbackState?.track_window.current_track;
+    if (track) {
+      // @ts-ignore
+      const artists = getArtistsFromSDK(track.artists);
+      const title = track.name;
+      const track_id = track.id // idk if it should be album or track id
+      const album = getTrackImage(track.album.images);
+      return (
+        <Grid container alignItems="center" className="footer__left-container">
+          <Grid item className="footer_left-album" xs={2}>
+            <img src={album} alt=""/>
+          </Grid>
+          <Grid item className="footer__left-desc" xs={10}>
+            <Grid container>
+              <Grid item xs={12} className="footer__left-title">
+                <Link to={`/tracks/${track_id}`}>{title}</Link>
+              </Grid>
+              <Grid item xs={12} className="footer__left-artists">
+                {artists}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      );
+    }
+    return null;
+  };
+
   return (
     <Grid container justify="space-between" alignItems="center">
       <Grid item xs={3} className="footer__left">
-        <p>Image, artists, heart icon</p>
+        {getTrackInfo()}
       </Grid>
 
       <Grid item xs={6} className="footer__center">
@@ -64,17 +95,17 @@ const Footer: FC<FooterProps> = () => {
               <ShuffleIcon onClick={() => setShuffle(false)} className="player__icons-green"/> :
               <ShuffleIcon onClick={() => setShuffle(true)} className="player__icons-hover"/>
             }
-            <SkipPreviousIcon onClick={() => skipSong(false)} className="player__icons-hover"/>
+            <SkipPreviousIcon onClick={() => player?.previousTrack()} className="player__icons-hover"/>
             <span className="player__icons-center">
               {isPlaying() ?
-                <PlayCircleFilledIcon onClick={playSong}/> :
-                <PauseCircleFilledIcon onClick={pauseSong}/>
+                <PlayCircleFilledIcon onClick={() => player?.resume()}/> :
+                <PauseCircleFilledIcon onClick={() => player?.pause()}/>
               }
             </span>
-            <SkipNextIcon onClick={() => skipSong(true)} className="player__icons-hover"/>
+            <SkipNextIcon onClick={() => player?.nextTrack()} className="player__icons-hover"/>
             {getRepeatMode()}
           </Grid>
-          <PlayerSlider position={0} duration={245230}/>
+          <PlayerSlider position={playbackState?.position} duration={playbackState?.duration}/>
         </Grid>
       </Grid>
 
