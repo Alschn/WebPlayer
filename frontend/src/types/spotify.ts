@@ -186,6 +186,8 @@ export interface SpotifyPlayerTrack {
   uri: string;
 }
 
+export type SpotifyRepeatType = 'track' | 'context' | 'off';
+
 export type WebPlaybackStatuses = 'ready' | 'not_ready';
 export type WebPlaybackStates = 'player_state_changed';
 export type WebPlaybackErrors =

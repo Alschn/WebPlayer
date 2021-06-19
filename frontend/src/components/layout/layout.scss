@@ -378,8 +378,35 @@ $gray-border: #262626;
       margin-top: 20px; // make it responsive later
 
       * { // make it responsive later
-        padding: 0 10px;
-        font-size: 24px;
+        padding: 0 5px;
+        font-size: 22px;
+      }
+
+      .player__icons-center {
+        color: white;
+
+        & > * {
+          transform: scale(2);
+
+          &:hover {
+            transform: scale(2.1);
+            transition: 0.5s;
+          }
+        }
+      }
+
+      .player__icons-hover:hover {
+        color: white;
+        transition: color 0.2s;
+      }
+
+      .player__icons-green {
+        color: #008000;
+
+        &:hover {
+          color: #00b000;
+          transition: color 0.25s;
+        }
       }
     }
 
