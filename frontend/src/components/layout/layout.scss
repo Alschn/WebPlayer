@@ -32,6 +32,55 @@ $gray-border: #262626;
   font-weight: bold;
   height: $header-height;
 
+  .header__location {
+    padding-left: 40px;
+    flex-grow: 1;
+  }
+
+  .header__search-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    .header__search {
+      display: flex;
+      align-items: center;
+      border-radius: 30px;
+      height: 80%;
+      width: 25%;
+
+      background-color: white;
+
+      .header_search-icon {
+        padding: 0 8px;
+        font-size: 30px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      input {
+        width: 80%;
+        height: 65%;
+        border: none;
+        font-size: 14px;
+        background: none;
+
+        &:focus {
+          outline-width: 0;
+        }
+      }
+    }
+  }
+
+
+  .header__tabs * {
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
   .header__left {
 
     .header__back, .header__forward {

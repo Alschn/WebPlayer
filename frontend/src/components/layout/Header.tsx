@@ -5,6 +5,10 @@ import {Grid} from "@material-ui/core";
 import {Avatar} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import UserContext from "../../context/userContext";
+import HeaderTabs from "./HeaderTabs";
+import {SearchBox} from "../main/Search";
+
+const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
 interface HeaderProps {
 
@@ -23,9 +27,13 @@ const Header: FC<HeaderProps> = () => {
   }
 
   const getLocationBasedPart = (): JSX.Element | null => {
-    switch (history.location.pathname) {
+    const loc = history.location.pathname;
+
+    if (libraryPaths.includes(loc)) return <HeaderTabs/>;
+
+    switch (loc) {
       case '/search':
-        return <p>Saved</p>
+        return <SearchBox/>;
       default:
         return null;
     }
@@ -33,12 +41,12 @@ const Header: FC<HeaderProps> = () => {
 
   return (
     <Grid container className="header">
-      <Grid item xs={2} className="header__left">
+      <Grid item className="header__left">
         <ChevronLeftIcon className="header__back" onClick={pageBack}/>
         <ChevronRightIcon className="header__forward" onClick={pageForward}/>
       </Grid>
 
-      <Grid item xs={8}>
+      <Grid item className="header__location">
         {getLocationBasedPart()}
       </Grid>
 
