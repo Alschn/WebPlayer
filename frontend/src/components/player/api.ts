@@ -1,5 +1,6 @@
 import axiosClient from "../../utils/axiosClient";
 import {SpotifyRepeatType} from "../../types/spotify";
+import AxiosClient from "../../utils/axiosClient";
 
 export const playSong = (): void => {
   axiosClient.put("http://localhost:8000/api/spotify/play", {}).then(() => {
@@ -43,4 +44,11 @@ export const playSongWithUri = (uri: string, context_uri: string | null | undefi
     uris: [uri],
     context_uri: context_uri,
   }).catch(err => console.log(err))
+};
+
+
+export const transferPlaybackToDevice = (device_id: string) => {
+  return AxiosClient.put('http://localhost:8000/api/spotify/devices', {
+    device_id: device_id,
+  });
 };

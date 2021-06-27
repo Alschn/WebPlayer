@@ -8,9 +8,11 @@ $sidebar-top-height: 245px;
 $sidebar-playlists-height: calc(#{$content-height} - #{$sidebar-top-height} - 15px);
 
 $spotify-gray: #191414;
+$spotify-green: #1DB954;
 $gray-font: #888;
 $lighter-gray-font: #bebebe;
 $gray-border: #262626;
+$menu-gray-bg: #292626;
 
 
 /*
@@ -101,18 +103,25 @@ $gray-border: #262626;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: nowrap;
 
-    // image
-    .MuiAvatar-root {
-      margin-right: 5px;
-      width: 30px;
-      height: 30px;
-    }
+    .header__right-user {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
 
-    // text
-    span {
+      background: #373737; // make it black later
+      border-radius: 25px;
 
+      .MuiAvatar-root {
+        margin-right: 5px;
+        width: 30px;
+        height: 30px;
+      }
+
+      .header__right-user-name {
+        font-weight: 500;
+      }
     }
   }
 }
@@ -384,6 +393,7 @@ $gray-border: #262626;
   }
 }
 
+
 // Playlists view table
 .MuiTableCell-root {
   border-bottom: none !important;
@@ -438,6 +448,10 @@ $gray-border: #262626;
         color: white;
         text-decoration: none;
 
+        .text {
+          -webkit-line-clamp: 1;
+        }
+
         &:hover {
           text-decoration: underline;
         }
@@ -445,6 +459,7 @@ $gray-border: #262626;
 
       .footer__left-artists {
         font-size: 14px;
+        -webkit-line-clamp: 1;
 
         a {
           text-decoration: none;
@@ -518,7 +533,35 @@ $gray-border: #262626;
     .volume-slider-icon {
       padding: 3px;
       margin-right: 4px;
+
+      &:hover {
+        color: white;
+        transition: 0.25s;
+      }
     }
+  }
+}
+
+.user-menu {
+  background: $menu-gray-bg;
+  color: $lighter-gray-font;
+  width: 180px;
+}
+
+.devices-menu {
+  background: $menu-gray-bg;
+  color: white;
+
+  .device-active {
+    color: $spotify-green;
+  }
+
+  .device-name {
+    font-weight: 500;
+  }
+
+  .device-label {
+    color: $lighter-gray-font;
   }
 }
 

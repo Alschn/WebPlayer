@@ -8,6 +8,7 @@ urlpatterns = [
     path('auth/spotify-token', GetSpotifyAccessToken.as_view()),
     path('auth/spotify-login', SpotifyLoginHandler.as_view()),
     path('auth/login', SpotifyLogin.as_view()),
+    path('auth/logout', Logout.as_view()),
     # Spotify token used to initialize SDK
     path('spotify/token', GetCurrentSpotifyToken.as_view()),
     # Spotify endpoints
@@ -33,8 +34,9 @@ urlpatterns = [
     path('spotify/volume', SetVolume.as_view()),
     path('spotify/shuffle', SetShuffle.as_view()),
     path('spotify/repeat', SetRepeatMode.as_view()),
+
     path('spotify/song', GetCurrentSong.as_view()),
 
     path('spotify/queue', AddToQueue.as_view()),
-    path('spotify/devices', GetAvailableDevices.as_view()),
+    path('spotify/devices', AvailableDevices.as_view()),
 ]

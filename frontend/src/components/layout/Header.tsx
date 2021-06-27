@@ -1,30 +1,29 @@
-import React, {FC, useContext} from "react";
+import React, {FC, MouseEvent, useContext, useState} from "react";
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import {Grid} from "@material-ui/core";
-import {Avatar} from "@material-ui/core";
+import {Avatar, Grid} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import UserContext from "../../context/userContext";
 import HeaderTabs from "./HeaderTabs";
 import {SearchBox} from "../main/Search";
+import UserMenu from "./UserMenu";
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
-interface HeaderProps {
-
-}
-
-const Header: FC<HeaderProps> = () => {
+const Header: FC = () => {
   let history = useHistory();
-  const {username, imageURL} = useContext(UserContext);
+  const {username, imageURL, id} = useContext(UserContext);
 
-  const pageBack = () => {
-    history.goBack();
-  }
+  // User Menu
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+  const handleOpenMenu = (event: MouseEvent<any>): void => setAnchorEl(event.currentTarget);
+  const handleCloseMenu = () => setAnchorEl(null);
 
-  const pageForward = () => {
-    history.goForward();
-  }
+  const pageBack = () => history.goBack();
+
+  const pageForward = () => history.goForward();
 
   const getLocationBasedPart = (): JSX.Element | null => {
     const loc = history.location.pathname;
@@ -51,8 +50,12 @@ const Header: FC<HeaderProps> = () => {
       </Grid>
 
       <Grid item xs={2} className="header__right">
-        {imageURL && <Avatar alt="avatar" src={imageURL}/>}
-        {username && <span>{username}</span>}
+        <div className="header__right-user" onClick={handleOpenMenu}>
+          {imageURL && <Avatar alt="avatar" src={imageURL}/>}
+          {username && <span className="header__right-user-name">{username}</span>}
+          {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+        </div>
+        <UserMenu profileID={id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
       </Grid>
     </Grid>
   );

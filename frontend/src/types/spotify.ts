@@ -16,13 +16,15 @@ export type SpotifyPlayerCallback = (token: string) => void;
  TrackRestriction, TuneableTrack
 */
 
+export type deviceType = 'computer' | 'smartphone' | 'speaker';
+
 export interface SpotifyDeviceObject {
   id: string;
   is_active: boolean;
   is_private_session: boolean;
   is_restricted: boolean;
   name: string;
-  type: string;
+  type: deviceType;
   volume_percent: number;
 }
 

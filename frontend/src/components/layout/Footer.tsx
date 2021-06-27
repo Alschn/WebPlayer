@@ -73,9 +73,11 @@ const Footer: FC = () => {
           <Grid item className="footer__left-desc" xs={10}>
             <Grid container>
               <Grid item xs={12} className="footer__left-title">
-                <Link to={`/tracks/${track_id}`}>{title}</Link>
+                <Link to={`/tracks/${track_id}`}>
+                  <span className="text">{title}</span>
+                </Link>
               </Grid>
-              <Grid item xs={12} className="footer__left-artists">
+              <Grid item xs={12} className="footer__left-artists text">
                 {artists}
               </Grid>
             </Grid>

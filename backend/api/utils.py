@@ -58,7 +58,7 @@ def refresh_spotify_token(user) -> None:
 
 
 def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
-    -> Union[Response, Dict[str, str]]:
+        -> Union[Response, Dict[str, str]]:
     spotify_token = get_user_token(user).token
     headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
 
@@ -119,6 +119,17 @@ def set_repeat_mode(user: User, mode: str) -> Union[Response, Dict[str, str]]:
 
 def seek_position(user: User, position_ms: int) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, f"player/seek?position_ms={position_ms}")
+
+
+def get_user_devices(user: User) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, "player/devices")
+
+
+def select_device(user, device_id) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, 'player', data=json.dumps({
+        'device_ids': [device_id],
+        'play': True,
+    }))
 
 
 def search_for_items(user: User, query: str, types: str, limit=20) -> Union[Response, Dict[str, str]]:

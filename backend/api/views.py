@@ -8,6 +8,7 @@ from django.utils import timezone
 from requests import Request, post
 from rest_auth.registration.serializers import SocialLoginSerializer
 from rest_auth.registration.views import SocialLoginView
+from rest_auth.views import LogoutView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -30,7 +31,7 @@ from .utils import (
     skip_song,
     pause_song,
     play_song,
-    seek_position,
+    seek_position, get_user_devices, select_device,
 )
 
 SCOPES = [
@@ -126,6 +127,10 @@ class SpotifyLogin(SocialLoginView):
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+
+class Logout(LogoutView):
+    permission_classes = [IsAuthenticated]
 
 
 class GetCurrentSpotifyToken(APIView):
@@ -238,8 +243,22 @@ class SeekPosition(APIView):
         return Response({'error': 'Position_ms not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetAvailableDevices(APIView):
-    pass
+class AvailableDevices(APIView):
+    """api/spotify/devices"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        devices = get_user_devices(user)
+        return Response(devices, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        device_id = request.data.get('device_id')
+        if device_id:
+            device = select_device(user, device_id)
+            return Response(device, status=status.HTTP_200_OK)
+        return Response({'error': 'Device_id not found in request body'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchForItems(APIView):
