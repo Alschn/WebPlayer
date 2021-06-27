@@ -12,14 +12,18 @@ import PlayerSlider from "./PlayerSlider";
 import {usePlaybackState, useSpotifyPlayer} from "react-spotify-web-playback-sdk";
 import {setRepeatMode, setShuffle} from "../player/api";
 import {getArtistsFromSDK, getTrackImage} from "../../utils/formatComponents";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
-
-interface FooterProps {
+enum RepeatMode {
+  NO_REPEAT,
+  LOOP,
+  REPEAT_ONCE
 }
 
-const Footer: FC<FooterProps> = () => {
-  const playbackState = usePlaybackState();
+const POLLING_INTERVAL_MS = 5_000;
+
+const Footer: FC = () => {
+  const playbackState = usePlaybackState(true, POLLING_INTERVAL_MS);
   const player = useSpotifyPlayer();
 
   const isPlaying = (): boolean | undefined => playbackState?.paused;
@@ -29,19 +33,19 @@ const Footer: FC<FooterProps> = () => {
   const getRepeatMode = (): JSX.Element | null => {
     const num = playbackState?.repeat_mode;
     switch (num) {
-      case 0: // no repeat, on click switch to loop
+      case RepeatMode.NO_REPEAT: // no repeat, on click switch to loop
         return <RepeatIcon
           className="player__icons-hover"
           onClick={() => setRepeatMode('context')}
         />;
-      case 1: // loop, on click switch to repeat once
+      case RepeatMode.LOOP: // loop, on click switch to repeat once
         return (
           <RepeatIcon
             className="player__icons-green"
             onClick={() => setRepeatMode('track')}
           />
         );
-      case 2: // repeat once, on click switch to no repeat
+      case RepeatMode.REPEAT_ONCE: // repeat once, on click switch to no repeat
         return (
           <RepeatOneIcon
             className="player__icons-green"

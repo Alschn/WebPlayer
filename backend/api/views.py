@@ -74,7 +74,7 @@ class GetSpotifyAccessToken(APIView):
     def post(self, request):
         """Sends authorization code to Spotify api endpoint.
         Responds with access_token, refresh_token, expires_in, token_type."""
-        code = request.data.get('code', None)
+        code = request.data.get('code')
 
         if code:
             response = post('https://accounts.spotify.com/api/token', data={
@@ -145,8 +145,8 @@ class PlaySong(APIView):
 
     def post(self, request, *args, **kwargs):
         sender = request.user
-        uris = request.data.get('uris', None)
-        context_uri = request.data.get('context_uri', None)
+        uris = request.data.get('uris')
+        context_uri = request.data.get('context_uri')
         if not uris:
             return Response({"error": 'Uri not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -192,7 +192,7 @@ class SetVolume(APIView):
 
     def put(self, request, *args, **kwargs):
         sender = request.user
-        volume = request.data.get('volume', None)
+        volume = request.data.get('volume')
         if isinstance(volume, int) and 0 <= volume <= 100:
             set_volume(sender, volume)
             return Response({"Message": f"Changed volume to {volume}"}, status=status.HTTP_204_NO_CONTENT)
@@ -205,7 +205,7 @@ class SetShuffle(APIView):
 
     def put(self, request, *args, **kwargs):
         sender = request.user
-        shuffle = request.data.get('shuffle', None)
+        shuffle = request.data.get('shuffle')
         if shuffle is not None:
             set_shuffle(sender, shuffle)
             return Response({'Message': 'Changed shuffle mode'}, status=status.HTTP_200_OK)
@@ -218,7 +218,7 @@ class SetRepeatMode(APIView):
 
     def put(self, request, *args, **kwargs):
         sender = request.user
-        mode = request.data.get('mode', None)
+        mode = request.data.get('mode')
         if mode and mode in ['off', 'track', 'context']:
             set_repeat_mode(sender, mode)
             return Response({'Message': 'Changed repeat mode!'}, status=status.HTTP_200_OK)
@@ -231,7 +231,7 @@ class SeekPosition(APIView):
 
     def put(self, request, *args, **kwargs):
         sender = request.user
-        position_ms = request.data.get('position_ms', None)
+        position_ms = request.data.get('position_ms')
         if isinstance(position_ms, int) and 0 <= position_ms:
             seek_position(sender, position_ms)
             return Response({'Message': f'Changed current position to {position_ms} [ms]!'}, status=status.HTTP_200_OK)
@@ -268,7 +268,7 @@ class GetPlaylist(APIView):
     def put(self, request, id):
         sender = request.user
         playlist_id = id
-        next_tracks = request.data.get('next', None)
+        next_tracks = request.data.get('next')
         if next_tracks and playlist_id:
             more_tracks = get_next_items(sender, next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)
@@ -289,7 +289,7 @@ class GetUserPlaylists(APIView):
 
     def put(self, request):
         sender = request.user
-        next_playlists = request.data.get('next', None)
+        next_playlists = request.data.get('next')
         if next_playlists:
             playlists = get_next_items(sender, href=next_playlists)
             return Response(playlists, status=status.HTTP_200_OK)
@@ -304,7 +304,7 @@ class GetSavedItems(APIView):
 
     def put(self, request):
         sender = request.user
-        next_tracks = request.data.get('next', None)
+        next_tracks = request.data.get('next')
         if next_tracks:
             tracks = get_next_items(sender, href=next_tracks)
             return Response(tracks, status=status.HTTP_200_OK)
@@ -327,9 +327,9 @@ class GetCurrentUser(APIView):
                 pass
             followers = user_data.get('followers').get('total')
             return Response({
-                'username': user_data.get('display_name', None),
+                'username': user_data.get('display_name'),
                 'imageURL': image,
-                'id': user_data.get('id', None),
+                'id': user_data.get('id'),
                 'followers': followers,
             }, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -362,7 +362,7 @@ class GetAlbum(APIView):
     def put(self, request, id):
         sender = request.user
         album_id = id
-        next_tracks = request.data.get('next', None)
+        next_tracks = request.data.get('next')
         if next_tracks and album_id:
             more_tracks = get_next_items(sender, href=next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)

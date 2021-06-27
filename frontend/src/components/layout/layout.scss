@@ -522,5 +522,91 @@ $gray-border: #262626;
   }
 }
 
+/*
+  Library - playlists, podcasts, artists, albums
+*/
+.library__playlists {
+  .library__playlists-saved {
+    border-radius: 6px;
+    padding: 20px 20px 10px 20px;
+
+    display: flex;
+    align-items: flex-end;
+
+    height: 310px;
+
+    background: rgb(8, 0, 252);
+    background: linear-gradient(
+        145deg,
+        rgba(8, 0, 252, 1) 0%,
+        rgba(75, 52, 246, 1) 24%,
+        rgba(111, 87, 255, 1) 71%,
+        rgba(134, 124, 236, 1) 84%,
+        rgba(143, 155, 235, 1) 99%
+    );
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .text {
+      -webkit-line-clamp: 3;
+
+      .library__playlists-saved-details {
+        span {
+          color: $lighter-gray-font;
+        }
+      }
+    }
+  }
+
+  .library__playlists-playlist {
+    width: 180px;
+    height: 300px;
+    border-radius: 6px;
+    background: rgba(124, 124, 124, 0.05);
+    padding: 10px 10px 0 10px;
+    margin-bottom: 20px;
+
+    &:hover {
+      background: rgba(124, 124, 124, 0.2);
+      transition: 0.5s;
+      cursor: pointer;
+    }
+
+    .library_playlists-playlist-image img {
+      height: 180px;
+      width: 180px;
+    }
+
+    .library_playlists-playlist-name .text {
+      -webkit-line-clamp: 1;
+    }
+
+    .library_playlists-playlist-desc .text {
+      color: $lighter-gray-font;
+      line-height: 1.25em;
+      -webkit-line-clamp: 2;
+    }
+  }
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
 
 
+.library__podcasts {
+
+}
+
+.library__artists {
+
+}
+
+.library__albums {
+
+}
