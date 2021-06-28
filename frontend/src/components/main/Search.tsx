@@ -1,6 +1,33 @@
-import React, {FC} from "react";
+import React, {FC, useState} from "react";
+import SearchIcon from '@material-ui/icons/Search';
 
-const Search:FC = () => {
+export const SearchBox = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const submitInput = () => {
+    // call to api
+  };
+
+  return (
+    <div className="header__search-wrapper">
+      <div className="header__search">
+        <SearchIcon color='primary' className="header_search-icon" onClick={submitInput}/>
+        <input
+          type="search"
+          placeholder="Artists, tracks or podcasts"
+          value={searchQuery}
+          onChange={handleInputChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+const Search: FC = () => {
   return (
     <div>
       <div className="search__recent">

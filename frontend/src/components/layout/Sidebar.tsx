@@ -52,7 +52,7 @@ const Sidebar: FC<SidebarProps> = () => {
         </Grid>
 
         <Grid container className="sidebar-navtab"
-              key="/library" onClick={() => handleGoToRoute("/library")}
+              key="/library" onClick={() => handleGoToRoute("/library/playlists")}
         >
           <Grid item xs={2}>
             <LibraryMusicOutlinedIcon/>

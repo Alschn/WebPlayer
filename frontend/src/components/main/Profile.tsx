@@ -1,113 +1,154 @@
 import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
 import React, {FC, useContext, useEffect, useState} from "react";
 import UserContext from "../../context/userContext";
-import {Link, useParams} from "react-router-dom";
+import {Link, useHistory, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
-import {SpotifyArtistObject} from "../../types/spotify";
+import {
+  SpotifyArtistObject,
+  SpotifyPlaylistObject,
+  SpotifyPublicUserObject,
+  SpotifyTrackObject
+} from "../../types/spotify";
+import AxiosClient from "../../utils/axiosClient";
 
 interface Parameters {
   id: string;
 }
 
-interface ProfileInfo {
-  username: string | undefined,
-  imageURL: string | undefined,
-  followers: number,
-
-}
-
-interface SpotifyTrack {
-  track: any, // to be replaced
-}
-
-interface SpotifyPlaylist {
-  //
-}
-
 const Profile: FC = () => {
-  // url parameter
+  // url parameter - user id
   let {id: url_id} = useParams<Parameters>();
 
-  const {username, imageURL: image_url, id, followers} = useContext(UserContext);
-  const [profileInfo, setProfileInfo] = useState<ProfileInfo>();
-  const [publicPlaylists, setPublicPlaylists] = useState<SpotifyPlaylist[]>();
+  let history = useHistory();
 
-  const [topTracks, setTopTracks] = useState<SpotifyTrack[]>();
-  const [topArtists, setTopArtists] = useState<SpotifyArtistObject[]>();
+  const {username, imageURL: image_url, id, followers} = useContext(UserContext);
+
+  const [profileInfo, setProfileInfo] = useState<SpotifyPublicUserObject | undefined>(undefined);
+
+  const [totalPlaylists, setTotalPlaylists] = useState<number | null>(null);
+  const [publicPlaylists, setPublicPlaylists] = useState<SpotifyPlaylistObject[]>([]);
+
+  const [topTracks, setTopTracks] = useState<SpotifyTrackObject[]>([]);
+  const [topArtists, setTopArtists] = useState<SpotifyArtistObject[]>([]);
 
   useEffect(() => {
-    // fetch profile info
+    // fetch profile info if visiting other user's profile
+    if (url_id !== id) {
+      AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}`)
+        .then(res => {
+          const {data} = res;
+          setProfileInfo(data)
+        }).catch(err => console.log(err))
+    }
+
     // fetch 6 public playlists
-  }, [])
+    AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}/playlists`)
+      .then(res => {
+        const {data: {items, total}} = res;
+        setTotalPlaylists(total);
+        setPublicPlaylists(items);
+      }).catch(err => console.log(err))
+
+    // clear public playlist when switching to different profile
+    return () => setPublicPlaylists([]);
+  }, []);
 
   useEffect(() => {
     if (url_id === id) {
       // fetch 6 top artists
+      AxiosClient.get('http://localhost:8000/api/spotify/top/artists?limit=6')
+        .then(res => {
+          const {data: {items}} = res;
+          setTopArtists([...items]);
+        }).catch(err => console.log(err))
+
       // fetch 4 top tracks
+      AxiosClient.get('http://localhost:8000/api/spotify/top/tracks?limit=4')
+        .then(res => {
+          const {data: {items}} = res;
+          setTopTracks([...items]);
+        }).catch(err => console.log(err))
+      console.log(topTracks)
     }
-  }, [id, url_id])
+  }, []);
 
   const getUsername = (): string | undefined => {
     if (url_id === id) return username
     else try {
-      return profileInfo?.username;
+      return profileInfo?.display_name;
     } catch {
       return undefined;
     }
-  }
+  };
 
   const getUserFollowers = (): number | undefined => {
     if (url_id === id) return followers
     else try {
-      return profileInfo?.followers;
+      return profileInfo?.followers?.total;
     } catch {
       return undefined;
     }
-  }
+  };
 
   const getUserImage = (): string | undefined => {
-    if (url_id === id) return image_url
+    if (url_id === id) return image_url;
     else try {
-      return profileInfo?.imageURL;
+      return profileInfo?.images[0].url;
     } catch {
       return undefined;
     }
-  }
+  };
+
+  const goToPlaylist = (playlist_id: string) => history.push(`/playlists/${playlist_id}`);
 
   const renderMostPopularArtists = () => (
     <Grid container className="profile__popular_artists">
+      <Grid item xs={12}>
+        <h2>The most popular artists this month</h2>
+        <p>Visible only for you</p>
+      </Grid>
       {topArtists && topArtists.map((artist) => (
-        <Grid item xs={2}>
+        <Grid item xs={2} container justify="center">
+          <div
+            className=""
+            onClick={() => {
+            }}
+          >
+            <Grid item xs={12} className="">
+              <img src={artist.images[0].url} alt="" height={200} width={200}/>
+            </Grid>
 
+            <Grid item xs={12} className="">
+              <p className="text">{artist.name}</p>
+            </Grid>
+
+            <Grid item xs={12} className="library_playlists-playlist-desc">
+              <p className="text">Artist</p>
+            </Grid>
+          </div>
         </Grid>
       ))}
     </Grid>
-  )
+  );
 
   const renderMostPopularTracks = () => (
     <Grid container className="profile__tracks">
+      <Grid item xs={12}>
+        <h2>The most popular tracks this month</h2>
+        <p>Visible only for you</p>
+      </Grid>
       <TableContainer>
         <Table aria-label="most-popular-tracks-table" size="small">
           <TableBody>
-            {topTracks && topTracks.map(
-              (
-                {
-                  track: {
-                    track_number, name, duration_ms, album: {
-                      name: album_name,
-                      id: album_id, images
-                    }, artists
-                  }
-                },
-                index
-              ) => (
+            {topTracks.length > 0 && topTracks.map(
+              ({artists, duration_ms, name, explicit, album}, index) => (
                 <TableRow key={`track-${index}`} className="playlist__track-row">
                   <TableCell component="th" scope="row">{index + 1}</TableCell>
                   <TableCell align="left">
                     <Grid container alignItems="center">
                       <Grid item className="playlist__track-image">
-                        <img src={getTrackImage(images)} width={40} height={40} alt=""/>
+                        <img src={getTrackImage(album.images)} width={40} height={40} alt=""/>
                       </Grid>
                       <Grid item>
                         <Grid item className="playlist__track-title">
@@ -119,7 +160,7 @@ const Profile: FC = () => {
                       </Grid>
                     </Grid>
                   </TableCell>
-                  <TableCell align="left"><Link to={`/albums/${album_id}`}>{album_name}</Link></TableCell>
+                  <TableCell align="left"><Link to={`/albums/`}>{album.name}</Link></TableCell>
                   <TableCell align="left">{getMsToTime(duration_ms, true)}</TableCell>
                 </TableRow>
               ))}
@@ -127,7 +168,7 @@ const Profile: FC = () => {
         </Table>
       </TableContainer>
     </Grid>
-  )
+  );
 
   return (
     <Grid container className="profile__root">
@@ -139,18 +180,35 @@ const Profile: FC = () => {
         <Grid item className="profile__info-right">
           <h4>PROFILE</h4>
           <h1>{getUsername()}</h1>
-          <p>X public playlists · {getUserFollowers()} followers</p>
+          <p>{totalPlaylists} public playlists · {getUserFollowers()} followers</p>
         </Grid>
       </Grid>
 
-      {/*{url_id === id && <>*/}
-      {/*  {renderMostPopularArtists()}*/}
-      {/*  {renderMostPopularTracks()}*/}
-      {/*</>*/}
-      {/*}*/}
+      {/* Render if user accesses their own profile */}
+      {url_id === id && (
+        <>
+          {renderMostPopularArtists()}
+          {renderMostPopularTracks()}
+        </>
+      )}
 
       <Grid container className="profile__public_playlists">
+        {publicPlaylists.length > 0 && publicPlaylists.map(({name, images, id: playlist_id}) => (
+          <Grid item xs={2} container justify="center">
+            <div
+              className="profile__public_playlists-playlist"
+              onClick={() => goToPlaylist(playlist_id)}
+            >
+              <Grid item xs={12} className="profile__public_playlists-playlist-image">
+                <img src={images[0].url} alt="" height={200} width={200}/>
+              </Grid>
 
+              <Grid item xs={12} className="profile__public_playlists-playlist-title">
+                <p className="text">{name}</p>
+              </Grid>
+            </div>
+          </Grid>
+        ))}
       </Grid>
     </Grid>
   )

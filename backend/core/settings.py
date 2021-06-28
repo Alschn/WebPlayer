@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     # rest_framework
     'rest_framework',
     'rest_framework.authtoken',
+    # django utils
+    'django_filters',
     # cors headers
     'corsheaders',
     # rest_auth
@@ -50,6 +52,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.spotify',
+    # openapi documentation
+    'drf_yasg',
     # apps
     'api',
 ]
@@ -150,11 +154,11 @@ AUTHENTICATION_BACKENDS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        ('rest_framework.permissions.AllowAny', )
+        ('rest_framework.permissions.AllowAny',)
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        ('rest_framework.authentication.TokenAuthentication', )
+        ('rest_framework.authentication.TokenAuthentication',)
     ),
 }
 

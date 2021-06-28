@@ -1,11 +1,12 @@
 <div align="center">
     <h1>Web Player</h1>
+    <p>Spotify Clone with Django as a backend and React as a frontend.</p>
     <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/>
     <img alt="Django" src="https://img.shields.io/badge/django%20-%23092E20.svg?&style=for-the-badge&logo=django&logoColor=white"/>
     <img alt="Typescript" src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>&nbsp;
     <img alt="React" src="https://img.shields.io/badge/react%20-%2320232a.svg?&style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
+    <img alt="SCSS" src="https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white"/>
     <img alt="Spotify" src="https://img.shields.io/badge/Spotify-1ED760?style=for-the-badge&logo=spotify&logoColor=white" />
-    <p>Spotify Clone with Django as a backend and React as a frontend.</p>
 </div>
 
 ## Used frameworks, libraries and tools:
@@ -19,8 +20,9 @@
 - React-router-dom
 - Typescript
 - Sass
+- Material UI
 - Axios
-- UI library to be selected (probably Material UI)
+- react-spotify-web-playback-sdk
 
 #### External APIs:
 - Spotify Web API

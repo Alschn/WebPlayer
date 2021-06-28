@@ -103,7 +103,11 @@ const Playlist: FC = () => {
           <h1>{playlistInfo.name}</h1>
           <p className="playlist__info-right__description">{playlistInfo.description}</p>
           <p className="playlist__info-right__stats">
-            <Link to="/">{playlistInfo.owner.display_name}</Link> · {playlistInfo.followers.total} likes
+            <Link
+              to={`/profiles/${playlistInfo.owner.id}`}
+            >{playlistInfo.owner.display_name}
+            </Link>
+            · {playlistInfo.followers.total} likes
             · {totalCount} tracks, {getPlaylistLength()}
           </p>
         </Grid>

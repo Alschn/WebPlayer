@@ -8,14 +8,14 @@ from django.utils import timezone
 from requests import Request, post
 from rest_auth.registration.serializers import SocialLoginSerializer
 from rest_auth.registration.views import SocialLoginView
+from rest_auth.views import LogoutView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import HasSpotifyToken
-from .utils import get_user_playlists, get_next_items, get_playlist, get_user_by_id, get_saved_items, get_album, \
-    get_user_token
+from .utils import *
 
 SCOPES = [
     # listening history
@@ -58,7 +58,7 @@ class GetSpotifyAccessToken(APIView):
     def post(self, request):
         """Sends authorization code to Spotify api endpoint.
         Responds with access_token, refresh_token, expires_in, token_type."""
-        code = request.data.get('code', None)
+        code = request.data.get('code')
 
         if code:
             response = post('https://accounts.spotify.com/api/token', data={
@@ -69,8 +69,7 @@ class GetSpotifyAccessToken(APIView):
                 'client_secret': CLIENT_SECRET
             }).json()
             return Response(response, status=status.HTTP_200_OK)
-        else:
-            return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SpotifyLoginHandler(APIView):
@@ -113,7 +112,12 @@ class SpotifyLogin(SocialLoginView):
         return serializer_class(*args, **kwargs)
 
 
+class Logout(LogoutView):
+    permission_classes = [IsAuthenticated]
+
+
 class GetCurrentSpotifyToken(APIView):
+    """api/spotify/token"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, *args, **kwargs):
@@ -124,31 +128,120 @@ class GetCurrentSpotifyToken(APIView):
 
 
 class PlaySong(APIView):
-    pass
+    """api/spotify/play"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def post(self, request, *args, **kwargs):
+        sender = request.user
+        uris = request.data.get('uris')
+        context_uri = request.data.get('context_uri')
+        if not uris:
+            return Response({"error": 'Uri not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if context_uri:
+            play_song_with_uri(sender, uris)
+        else:
+            play_song_with_uri(sender, uris, context_uri)
+        return Response({'Success': f'Playing with uris: {str(uris)}'}, status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        play_song(sender)
+        return Response({'Success': 'Playing song'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class PauseSong(APIView):
-    pass
+    """api/spotify/pause"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        pause_song(sender)
+        return Response({'Success': 'Paused song'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class SkipSong(APIView):
-    pass
+    """api/spotify/skip"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def post(self, request, *args, **kwargs):
+        sender = request.user
+        if request.data['forward'] is False:
+            prev_song(sender)
+            return Response({'Message': 'Skipped song'}, status.HTTP_204_NO_CONTENT)
+
+        skip_song(sender)
+        return Response({'Message': 'Skipped song'}, status.HTTP_204_NO_CONTENT)
 
 
 class SetVolume(APIView):
-    pass
+    """api/spotify/volume"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        volume = request.data.get('volume')
+        if isinstance(volume, int) and 0 <= volume <= 100:
+            set_volume(sender, volume)
+            return Response({"Message": f"Changed volume to {volume}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": 'Invalid volume parameter'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SetPlaybackMode(APIView):
-    pass
+class SetShuffle(APIView):
+    """api/spotify/shuffle"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        shuffle = request.data.get('shuffle')
+        if shuffle is not None:
+            set_shuffle(sender, shuffle)
+            return Response({'Message': 'Changed shuffle mode'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Shuffle not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetRepeatMode(APIView):
-    pass
+    """api/spotify/repeat"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        mode = request.data.get('mode')
+        if mode and mode in ['off', 'track', 'context']:
+            set_repeat_mode(sender, mode)
+            return Response({'Message': 'Changed repeat mode!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Mode not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetAvailableDevices(APIView):
-    pass
+class SeekPosition(APIView):
+    """api/spotify/seek"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def put(self, request, *args, **kwargs):
+        sender = request.user
+        position_ms = request.data.get('position_ms')
+        if isinstance(position_ms, int) and 0 <= position_ms:
+            seek_position(sender, position_ms)
+            return Response({'Message': f'Changed current position to {position_ms} [ms]!'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Position_ms not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AvailableDevices(APIView):
+    """api/spotify/devices"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        devices = get_user_devices(user)
+        return Response(devices, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        device_id = request.data.get('device_id')
+        if device_id:
+            device = select_device(user, device_id)
+            return Response(device, status=status.HTTP_200_OK)
+        return Response({'error': 'Device_id not found in request body'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchForItems(APIView):
@@ -177,7 +270,7 @@ class GetPlaylist(APIView):
     def put(self, request, id):
         sender = request.user
         playlist_id = id
-        next_tracks = request.data.get('next', None)
+        next_tracks = request.data.get('next')
         if next_tracks and playlist_id:
             more_tracks = get_next_items(sender, next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)
@@ -198,7 +291,7 @@ class GetUserPlaylists(APIView):
 
     def put(self, request):
         sender = request.user
-        next_playlists = request.data.get('next', None)
+        next_playlists = request.data.get('next')
         if next_playlists:
             playlists = get_next_items(sender, href=next_playlists)
             return Response(playlists, status=status.HTTP_200_OK)
@@ -213,7 +306,7 @@ class GetSavedItems(APIView):
 
     def put(self, request):
         sender = request.user
-        next_tracks = request.data.get('next', None)
+        next_tracks = request.data.get('next')
         if next_tracks:
             tracks = get_next_items(sender, href=next_tracks)
             return Response(tracks, status=status.HTTP_200_OK)
@@ -236,9 +329,9 @@ class GetCurrentUser(APIView):
                 pass
             followers = user_data.get('followers').get('total')
             return Response({
-                'username': user_data.get('display_name', None),
+                'username': user_data.get('display_name'),
                 'imageURL': image,
-                'id': user_data.get('id', None),
+                'id': user_data.get('id'),
                 'followers': followers,
             }, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -256,6 +349,16 @@ class GetUser(APIView):
         return Response({'error': 'User id not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class GetUsersPlaylists(APIView):
+    """api/spotify/users/{user_id}/playlists"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, id):
+        sender = request.user
+        playlists = get_users_playlists(sender, id)
+        return Response(playlists, status=status.HTTP_200_OK)
+
+
 class GetArtist(APIView):
     pass
 
@@ -268,10 +371,39 @@ class GetAlbum(APIView):
         saved_tracks = get_album(sender, id)
         return Response(saved_tracks, status=status.HTTP_200_OK)
 
+    def put(self, request, id):
+        sender = request.user
+        album_id = id
+        next_tracks = request.data.get('next')
+        if next_tracks and album_id:
+            more_tracks = get_next_items(sender, href=next_tracks)
+            return Response(more_tracks, status=status.HTTP_200_OK)
+        return Response({'error': 'Album id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GetTopTracks(APIView):
-    pass
+    """api/spotify/top/tracks"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        limit = request.query_params.get('limit')
+        sender = request.user
+        tracks = get_users_top_tracks(sender, limit=limit) if limit else get_users_top_tracks(sender)
+        return Response(tracks, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        return Response({}, status=status.HTTP_200_OK)
 
 
 class GetTopArtists(APIView):
-    pass
+    """api/spotify/top/artists"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        limit = request.query_params.get('limit')
+        sender = request.user
+        artists = get_users_top_artists(sender, limit=limit) if limit else get_users_top_artists(sender)
+        return Response(artists, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        return Response({}, status=status.HTTP_200_OK)
