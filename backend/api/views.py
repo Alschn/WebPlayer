@@ -15,24 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import HasSpotifyToken
-from .utils import (
-    get_user_playlists,
-    get_next_items,
-    get_playlist,
-    get_user_by_id,
-    get_saved_items,
-    get_album,
-    get_user_token,
-    set_repeat_mode,
-    set_shuffle,
-    set_volume,
-    play_song_with_uri,
-    prev_song,
-    skip_song,
-    pause_song,
-    play_song,
-    seek_position, get_user_devices, select_device,
-)
+from .utils import *
 
 SCOPES = [
     # listening history
@@ -366,6 +349,16 @@ class GetUser(APIView):
         return Response({'error': 'User id not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class GetUsersPlaylists(APIView):
+    """api/spotify/users/{user_id}/playlists"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, id):
+        sender = request.user
+        playlists = get_users_playlists(sender, id)
+        return Response(playlists, status=status.HTTP_200_OK)
+
+
 class GetArtist(APIView):
     pass
 
@@ -389,8 +382,28 @@ class GetAlbum(APIView):
 
 
 class GetTopTracks(APIView):
-    pass
+    """api/spotify/top/tracks"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        limit = request.query_params.get('limit')
+        sender = request.user
+        tracks = get_users_top_tracks(sender, limit=limit) if limit else get_users_top_tracks(sender)
+        return Response(tracks, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        return Response({}, status=status.HTTP_200_OK)
 
 
 class GetTopArtists(APIView):
-    pass
+    """api/spotify/top/artists"""
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, *args, **kwargs):
+        limit = request.query_params.get('limit')
+        sender = request.user
+        artists = get_users_top_artists(sender, limit=limit) if limit else get_users_top_artists(sender)
+        return Response(artists, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        return Response({}, status=status.HTTP_200_OK)

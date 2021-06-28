@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     # rest_framework
     'rest_framework',
     'rest_framework.authtoken',
+    # django utils
+    'django_filters',
     # cors headers
     'corsheaders',
     # rest_auth

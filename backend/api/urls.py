@@ -16,11 +16,12 @@ urlpatterns = [
     path('spotify/playlists/<str:id>', GetPlaylist.as_view()),
     path('spotify/users', GetCurrentUser.as_view()),
     path('spotify/users/<str:id>', GetUser.as_view()),
+    path('spotify/users/<str:id>/playlists', GetUsersPlaylists.as_view()),
     path('spotify/artists/<str:id>', GetArtist.as_view()),
     path('spotify/albums/<str:id>', GetAlbum.as_view()),
 
     path('spotify/top/artists', GetTopArtists.as_view()),
-    path('spotify/top/tracks', GetTopArtists.as_view()),
+    path('spotify/top/tracks', GetTopTracks.as_view()),
 
     path('spotify/saved', GetSavedItems.as_view()),
     path('spotify/recommendations', GetRecommendations.as_view()),

@@ -14,7 +14,6 @@ BASE_URL_ME = "https://api.spotify.com/v1/me/"
 
 
 def get_user_token(user) -> Optional[SocialToken]:
-    """:returns SocialToken object || None"""
     user_tokens = SocialToken.objects.filter(account__user=user)
     if user_tokens.exists():
         return user_tokens.first()
@@ -58,7 +57,7 @@ def refresh_spotify_token(user) -> None:
 
 
 def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
-        -> Union[Response, Dict[str, str]]:
+    -> Union[Response, Dict[str, str]]:
     spotify_token = get_user_token(user).token
     headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
 
@@ -174,3 +173,17 @@ def get_saved_items(user: User) -> Union[Response, Dict[str, str]]:
 
 def get_album(user: User, album_id: str) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(user, endpoint=f"albums/{album_id}", other_base_url=BASE_URL)
+
+
+def get_users_top_tracks(user: User, time_range='short_term', limit=4) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, endpoint=f'top/tracks?time_range={time_range}&limit={limit}')
+
+
+def get_users_top_artists(user: User, time_range='short_term', limit=6) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(user, endpoint=f'top/artists?time_range={time_range}&limit={limit}')
+
+
+def get_users_playlists(user: User, user_id: str, limit=6) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user, endpoint=f'users/{user_id}/playlists?limit={limit}', other_base_url=BASE_URL
+    )

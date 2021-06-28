@@ -1,19 +1,14 @@
-type SpotifyPlayerMethod<T = void> = () => Promise<T>;
-
-export type SpotifyPlayerCallback = (token: string) => void;
-
 /* Object types to cover:
- Album, AlbumRestriction, Artist, AudioFeatures, Category, Context,
- Copyright, CurrentlyPlayingContext, CurrentlyPlaying, CursorObject
+ AudioFeatures, Category, Context,
+ CurrentlyPlayingContext, CurrentlyPlaying, CursorObject
  CursorPaging, DeviceObject, Devices, Disallows, Episode
- EpisodeRestriction, Error, ExplicitContentSettings, ExternalId
- ExternalUrl, Followers, Image, LinkedTrack, Paging,
+ Error, ExplicitContentSettings, Paging,
  PlayHistory, PlayerError, Playlist, PlaylistTrack, PlaylistTracksRef,
  PrivateUser, PublicUser, RecommendationSeed, Recommendations,
  ResumePoint, SavedAlbum, SavedEpisode, SavedShow, SavedTrack,
- Show, SimplifiedAlbum, SimplifiedArtist, SimplifiedEpisode,
+ Show, SimplifiedArtist, SimplifiedEpisode,
  SimplifiedPlaylist, SimplifiedShow, SimplifiedTrack, Track,
- TrackRestriction, TuneableTrack
+ TuneableTrack
 */
 
 export type deviceType = 'computer' | 'smartphone' | 'speaker';
@@ -28,8 +23,12 @@ export interface SpotifyDeviceObject {
   volume_percent: number;
 }
 
+export interface SpotifyTrackObject extends SpotifySimplifiedTrackObject {
+  album: SpotifySimplifiedAlbumObject,
+}
+
 export interface SpotifySimplifiedTrackObject {
-  artists: any,
+  artists: SpotifyArtistObject[],
   available_markets: string[],
   disc_number: number,
   duration_ms: number,
@@ -39,7 +38,7 @@ export interface SpotifySimplifiedTrackObject {
   id: string,
   is_local: boolean,
   is_playable: boolean,
-  linked_from: any, //
+  linked_from: SpotifyLinkedTrackObject,
   name: string,
   preview_url: string,
   restrictions: any,
@@ -48,27 +47,48 @@ export interface SpotifySimplifiedTrackObject {
   uri: string
 }
 
-export interface SpotifyAlbumObject {
+export interface SpotifySimplifiedAlbumObject {
+  album_group: string,
   album_type: string;
   artists: SpotifyArtistObject[],
   available_markets: string[],
-  copyrights: any,  //
-  external_ids: any,  //
   external_urls: SpotifyExternalUrlObject,
-  genres: string[],
   href: string,
   id: string,
   images: string,
-  label: string,
   name: string,
-  popularity: number,
   release_date: string,
   release_date_precision: string,
-  restrictions: any;  //
   total_tracks: number,
-  tracks: SpotifySimplifiedTrackObject[],
   type: string,
   uri: string,
+}
+
+export interface SpotifyAlbumObject extends SpotifySimplifiedAlbumObject {
+  copyrights: SpotifyCopyrightObject[],
+  external_ids: SpotifyExternalIdObject,
+  genres: string[],
+  label: string,
+  popularity: number,
+  restrictions: SpotifyRestrictionObject;
+  tracks: SpotifySimplifiedTrackObject[],
+}
+
+export interface SpotifyCopyrightObject {
+  text: string,
+  type: string,
+}
+
+export interface SpotifyExternalIdObject {
+  ean: string,
+  isrc: string,
+  upc: string,
+}
+
+type reasonType = 'market' | 'product' | 'explicit';
+
+export interface SpotifyRestrictionObject {
+  reason: reasonType,
 }
 
 export interface SpotifyFollowersObject {
@@ -81,23 +101,46 @@ export interface SpotifyExternalUrlObject {
 }
 
 export interface SpotifyArtistObject {
-  external_urls: {
-    spotify: string;
-  };
+  external_urls: SpotifyExternalUrlObject;
+  followers: SpotifyFollowersObject;
+  genres: string[],
   href: string;
   id: string;
+  images: SpotifyImageObject[];
   name: string;
+  popularity: number;
   type: string;
   uri: string;
+}
+
+export interface SpotifySimplifiedPlaylistObject {
+  collaborative: boolean,
+  description: string,
+  external_urls: SpotifyExternalUrlObject,
+  href: string,
+  id: string,
+  images: SpotifyImageObject[],
+  name: string,
+  owner: SpotifyPublicUserObject;
+  public: boolean,
+  snapshot_id: string,
+  tracks: any, //
+  type: string,
+  uri: string,
+}
+
+export interface SpotifyPlaylistObject extends SpotifySimplifiedPlaylistObject {
+  followers: SpotifyFollowersObject,
+  tracks: any[],
 }
 
 export interface SpotifyPublicUserObject {
   display_name: string;
   external_urls: SpotifyExternalUrlObject;
-  followers?: SpotifyFollowersObject;
+  followers: SpotifyFollowersObject;
   href: string;
   id: string;
-  images?: SpotifyImageObject[];
+  images: SpotifyImageObject[];
   type: string;
   uri: string;
 }
@@ -107,6 +150,16 @@ export interface SpotifyImageObject {
   url: string;
   width: number;
 }
+
+export interface SpotifyLinkedTrackObject {
+  external_urls: SpotifyExternalUrlObject,
+  href: string,
+  id: string,
+  type: string,
+  uri: string,
+}
+
+///////////////////////////////////////
 
 export interface SpotifyPlayOptions {
   context_uri?: string;
@@ -200,36 +253,6 @@ export type WebPlaybackErrors =
 
 export interface WebPlaybackError {
   message: WebPlaybackErrors;
-}
-
-export interface WebPlaybackPlayer {
-  _options: {
-    getOAuthToken: SpotifyPlayerCallback;
-    name: string;
-    id: string;
-    volume: number;
-  };
-  addListener: {
-    (event: WebPlaybackErrors, callback: (d: WebPlaybackError) => void): boolean;
-    (event: WebPlaybackStates, callback: (d: WebPlaybackState | null) => void): boolean;
-    (event: WebPlaybackStatuses, callback: (d: WebPlaybackReady) => void): boolean;
-  };
-  connect: SpotifyPlayerMethod;
-  disconnect: () => void;
-  getCurrentState: () => Promise<WebPlaybackState | null>;
-  getVolume: SpotifyPlayerMethod<number>;
-  nextTrack: SpotifyPlayerMethod;
-  pause: SpotifyPlayerMethod;
-  previousTrack: SpotifyPlayerMethod;
-  removeListener: (
-    event: WebPlaybackErrors | WebPlaybackStates | WebPlaybackStatuses,
-    callback?: () => void,
-  ) => boolean;
-  resume: SpotifyPlayerMethod;
-  seek: (positionMS: number) => Promise<void>;
-  setName: (n: string) => Promise<void>;
-  setVolume: (n: number) => Promise<void>;
-  togglePlay: SpotifyPlayerMethod;
 }
 
 export interface WebPlaybackReady {
