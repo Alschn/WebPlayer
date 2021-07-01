@@ -24,7 +24,7 @@ const SpotifyCallback: FC = () => {
         code: code,
       })
 
-      const auth_response = await axios.post('http://localhost:8000/api/auth/spotify-login', {
+      const auth_response = await axios.post('http://localhost:8000/api/auth/login', {
         access_token: token_response.data.access_token,
         refresh_token: token_response.data.refresh_token,
         expires_in: token_response.data.expires_in,

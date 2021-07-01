@@ -9,7 +9,7 @@ const Welcome: FC = () => {
 
   let location = useLocation();
   // @ts-ignore
-  const redirectedWithAuth = location.state !== undefined && location.state.authenticated
+  const redirectedWithAuth: boolean = location.state !== undefined && location.state.authenticated
 
   if (isAuthenticated || redirectedWithAuth) return <Redirect to="/home"/>;
 

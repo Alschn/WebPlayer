@@ -1,4 +1,4 @@
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch, useLocation} from "react-router-dom";
 import SpotifyCallback from "./components/SpotifyCallback";
 import React, {ComponentType, FC} from "react";
 import Welcome from "./components/Welcome";

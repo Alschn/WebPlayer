@@ -94,38 +94,25 @@ class GetSpotifyAccessToken(APIView):
         return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SpotifyLoginHandler(APIView):
-    """api/auth/spotify-login.
-    SpotifyLogin wrapper"""
-
-    def post(self, request):
-        access_token = request.data.get("access_token")
-        refresh_token = request.data.get("refresh_token")
-        expires_in = request.data.get("expires_in")
-
-        auth_response = post(f'{DOMAIN_URL}/api/auth/login', data={
-            'access_token': access_token,
-            'refresh_token': refresh_token,
-            'expires_in': expires_in,
-        })
-
-        if not auth_response.ok:
-            return Response(auth_response, status=status.HTTP_400_BAD_REQUEST)
-
-        response = auth_response.json()
-        if 'key' in response:
-            token = SocialToken.objects.get(token=access_token)
-            token.token_secret = refresh_token
-            token.expires_at = timezone.now() + timedelta(seconds=expires_in)
-            token.save()
-            return Response(response, status=status.HTTP_201_CREATED)
-        return Response({'Error': "Key was not returned in response"}, status=auth_response.status_code)
-
-
 class SpotifyLogin(SocialLoginView):
     """api/auth/login"""
     adapter_class = SpotifyOAuth2Adapter
     serializer_class = SocialLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        login_response = super(SpotifyLogin, self).post(request, *args, **kwargs)
+        access_token = request.data.get("access_token")
+        refresh_token = request.data.get("refresh_token")
+        expires_in = request.data.get("expires_in")
+
+        if not login_response.data.get('key'):
+            return Response({'Error': "Key was not returned in response"}, status=status.HTTP_404_NOT_FOUND)
+
+        token = SocialToken.objects.get(token=access_token)
+        token.token_secret = refresh_token
+        token.expires_at = timezone.now() + timedelta(seconds=expires_in)
+        token.save(update_fields=['token_secret', 'expires_at'])
+        return Response(login_response.data, status=status.HTTP_201_CREATED)
 
     # This fixes issue with login view in the latest version of drf
     def get_serializer(self, *args, **kwargs):
