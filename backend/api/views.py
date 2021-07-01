@@ -38,7 +38,9 @@ from .utils import (
     play_song,
     seek_position,
     select_device,
-    create_playlist, update_playlist,
+    create_playlist,
+    update_playlist,
+    get_artist,
 )
 
 SCOPES = [
@@ -406,7 +408,35 @@ class UsersPlaylists(APIView):
 
 
 class GetArtist(APIView):
-    pass
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, artist_id, *args, **kwargs):
+        artist = get_artist(request.user, artist_id)
+        return Response(artist, status=status.HTTP_200_OK)
+
+
+class GetArtistsTopTracks(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, artist_id, *args, **kwargs):
+        artist_top = get_artist(request.user, artist_id, endpoint_type='/top-tracks')
+        return Response(artist_top, status=status.HTTP_200_OK)
+
+
+class GetArtistsAlbums(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, artist_id, *args, **kwargs):
+        artist_albums = get_artist(request.user, artist_id, endpoint_type='/albums')
+        return Response(artist_albums, status=status.HTTP_200_OK)
+
+
+class GetRelatedArtists(APIView):
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
+
+    def get(self, request, artist_id, *args, **kwargs):
+        related_artists = get_artist(request.user, artist_id, endpoint_type='/related-artists')
+        return Response(related_artists, status=status.HTTP_200_OK)
 
 
 class GetAlbum(APIView):

@@ -447,6 +447,10 @@ $gray-card-hover: rgba(124, 124, 124, 0.2);
   }
 }
 
+.playlist-owner-hover:hover {
+  cursor: pointer;
+}
+
 
 // Playlists view table
 .MuiTableCell-root {

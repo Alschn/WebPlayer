@@ -1,6 +1,6 @@
 import json
 from datetime import timedelta
-from typing import Optional, Dict, Union, List
+from typing import Optional, Dict, Union, List, Literal
 
 from allauth.socialaccount.models import SocialToken
 # noinspection PyUnresolvedReferences
@@ -8,6 +8,9 @@ from config import CLIENT_ID, CLIENT_SECRET
 from django.contrib.auth.models import User
 from django.utils import timezone
 from requests import post, put, get, Response
+
+# custom types
+ArtistEndpointType = Literal['', '/top-tracks', '/albums', '/related-artists']
 
 BASE_URL = "https://api.spotify.com/v1/"
 BASE_URL_ME = "https://api.spotify.com/v1/me/"
@@ -59,7 +62,11 @@ def refresh_spotify_token(user) -> None:
 def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
     -> Union[Response, Dict[str, str]]:
     spotify_token = get_user_token(user).token
-    headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + spotify_token
+    }
 
     url = BASE_URL_ME if not other_base_url else other_base_url
 
@@ -200,10 +207,18 @@ def create_playlist(user: User, user_id: str, playlist_name: str) -> Union[Respo
     )
 
 
-def update_playlist(user: User, playlist_id: str, payload: Dict[str, str]):
+def update_playlist(user: User, playlist_id: str, payload: Dict[str, str]) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(
         user, endpoint=f'playlists/{playlist_id}',
         put_=True,
         data=json.dumps(payload),
+        other_base_url=BASE_URL
+    )
+
+
+def get_artist(user: User, artist_id: str, endpoint_type: ArtistEndpointType = "") -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user,
+        endpoint=f"artists/{artist_id}{endpoint_type}",
         other_base_url=BASE_URL
     )
