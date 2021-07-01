@@ -14,6 +14,9 @@ $lighter-gray-font: #bebebe;
 $gray-border: #262626;
 $menu-gray-bg: #292626;
 
+$gray-card-bg: rgba(124, 124, 124, 0.05);
+$gray-card-hover: rgba(124, 124, 124, 0.2);
+
 
 /*
   Main section - Sidebar, Header + Content
@@ -151,6 +154,13 @@ $menu-gray-bg: #292626;
 
     .sidebar__top {
       height: $sidebar-top-height;
+
+      .sidebar-settings {
+        &:hover {
+          color: white;
+          transition: color 0.5s;
+        }
+      }
     }
   }
 
@@ -366,7 +376,7 @@ $menu-gray-bg: #292626;
     }
   }
 
-  .profile__root {
+  .profile {
     padding: 30px 0 20px 0;
 
     .profile__info-left {
@@ -390,6 +400,50 @@ $menu-gray-bg: #292626;
         font-weight: bold;
       }
     }
+
+    .profile__tracks {
+
+    }
+
+    .profile__popular_artists {
+
+      .profile__popular_artists-artist {
+        width: 200px;
+        height: 300px;
+        border-radius: 6px;
+        background: $gray-card-bg;
+
+        &:hover {
+          background: $gray-card-hover;
+          transition: 0.5s;
+          cursor: pointer;
+        }
+
+        .profile__popular_artists-artist-name {
+          font-weight: 700;
+        }
+
+        .profile__popular_artists-artist-desc {
+          color: $lighter-gray-font;
+        }
+
+        .profile__popular_artists-artist-image img {
+          border-radius: 50%;
+          width: 180px;
+          height: 180px;
+        }
+      }
+    }
+
+    //.profile__public-playlists {
+    //  .profile__public_playlists-playlist {
+    //
+    //    .profile__public_playlists-playlist-image img {
+    //      height: 180px;
+    //      width: 180px;
+    //    }
+    //  }
+    //}
   }
 }
 

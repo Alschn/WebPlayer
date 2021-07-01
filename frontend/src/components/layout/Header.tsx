@@ -50,11 +50,13 @@ const Header: FC = () => {
       </Grid>
 
       <Grid item xs={2} className="header__right">
-        <div className="header__right-user" onClick={handleOpenMenu}>
-          {imageURL && <Avatar alt="avatar" src={imageURL}/>}
-          {username && <span className="header__right-user-name">{username}</span>}
-          {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
-        </div>
+        {username && (
+          <div className="header__right-user" onClick={handleOpenMenu}>
+            {imageURL && <Avatar alt="avatar" src={imageURL}/>}
+            {username && <span className="header__right-user-name">{username}</span>}
+            {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+          </div>
+        )}
         <UserMenu profileID={id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
       </Grid>
     </Grid>

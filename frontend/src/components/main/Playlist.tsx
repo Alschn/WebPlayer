@@ -10,6 +10,7 @@ import {
   SpotifyPublicUserObject
 } from "../../types/spotify";
 import SpotifyTable from "../layout/SpotifyTable";
+import {loadMoreItems} from "../../utils/api";
 
 
 interface Parameters {
@@ -68,17 +69,11 @@ const Playlist: FC = () => {
 
   const loadMoreTracks = (): void => {
     if (next) {
-      AxiosClient.put(`http://localhost:8000/api/spotify/playlists/${id}`, {
-        next: next,
-      }).then(res => {
-        // console.log(res.data)
+      loadMoreItems(`http://localhost:8000/api/spotify/playlists/${id}`, next).then(res => {
         const {items, next} = res.data;
-        console.log(items)
         setTracks(prevState => [...prevState, ...items]);
         setNext(next);
-      }).catch(
-        err => console.log(err)
-      )
+      }).catch(err => console.log(err))
     }
   };
 
@@ -91,11 +86,18 @@ const Playlist: FC = () => {
     return '';
   }
 
+  const getPlaylistImage = (): string | undefined => {
+    if (playlistInfo && playlistInfo.images.length > 0) {
+      return playlistInfo.images[0].url
+    }
+    return undefined;
+  }
+
   return (
     <div className="playlist__root">
       {playlistInfo && <Grid container alignItems="flex-end">
         <Grid item className="playlist__info-left">
-          <img src={playlistInfo.images[0].url} alt="playlist-img" width={300} height={300}/>
+          <img src={getPlaylistImage()} alt="" width={300} height={300}/>
         </Grid>
 
         <Grid item className="playlist__info-right">

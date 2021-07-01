@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Optional
 
 from allauth.socialaccount.models import SocialToken, SocialAccount
 from allauth.socialaccount.providers.spotify.views import SpotifyOAuth2Adapter
@@ -37,6 +38,7 @@ from .utils import (
     play_song,
     seek_position,
     select_device,
+    create_playlist, update_playlist,
 )
 
 SCOPES = [
@@ -269,6 +271,7 @@ class GetPlaylist(APIView):
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, id):
+        """Get a Playlist"""
         sender = request.user
         playlist_id = id
         if playlist_id:
@@ -276,11 +279,37 @@ class GetPlaylist(APIView):
             return Response(playlist, status=status.HTTP_200_OK)
         return Response({'error': 'Playlist id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request, id, *args, **kwargs):
+        """Add Items to a playlist"""
+        return Response({}, status=status.HTTP_201_CREATED)
+
+    def patch(self, request, id, *args, **kwargs):
+        """Change a Playlist's Details"""
+        sender = request.user
+        req_data = request.data
+        name: Optional[str] = req_data.get('name')
+        public: Optional[bool] = req_data.get('public')
+        collaborative: Optional[bool] = req_data.get('collaborative')
+        description: Optional[str] = req_data.get('description')
+
+        payload = {}
+
+        if name and isinstance(name, str):
+            payload['name'] = name
+        if public is not None and isinstance(public, bool):
+            payload['public'] = public
+        if collaborative is not None and isinstance(public, bool):
+            payload['collaborative'] = public
+        if description and isinstance(description, str):
+            payload['description'] = description
+
+        update = update_playlist(sender, playlist_id=id, payload=payload)
+        return Response(update, status=status.HTTP_200_OK)
+
     def put(self, request, id):
         sender = request.user
-        playlist_id = id
         next_tracks = request.data.get('next')
-        if next_tracks and playlist_id:
+        if next_tracks:
             more_tracks = get_next_items(sender, next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)
         return Response({'error': 'Playlist id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
@@ -358,14 +387,22 @@ class GetUser(APIView):
         return Response({'error': 'User id not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetUsersPlaylists(APIView):
+class UsersPlaylists(APIView):
     """api/spotify/users/{user_id}/playlists"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def get(self, request, id):
+    def get(self, request, id, *args, **kwargs):
         sender = request.user
         playlists = get_users_playlists(sender, id)
         return Response(playlists, status=status.HTTP_200_OK)
+
+    def post(self, request, id, *args, **kwargs):
+        sender = request.user
+        playlist_name = request.data.get('name')
+        if not playlist_name:
+            return Response({'error': 'Playlist name not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
+        new_playlist = create_playlist(sender, id, playlist_name)
+        return Response(new_playlist, status=status.HTTP_201_CREATED)
 
 
 class GetArtist(APIView):

@@ -187,3 +187,23 @@ def get_users_playlists(user: User, user_id: str, limit=6) -> Union[Response, Di
     return execute_spotify_api_call(
         user, endpoint=f'users/{user_id}/playlists?limit={limit}', other_base_url=BASE_URL
     )
+
+
+def create_playlist(user: User, user_id: str, playlist_name: str) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user, endpoint=f'users/{user_id}/playlists',
+        post_=True,
+        data=json.dumps({
+            'name': playlist_name,
+        }),
+        other_base_url=BASE_URL
+    )
+
+
+def update_playlist(user: User, playlist_id: str, payload: Dict[str, str]):
+    return execute_spotify_api_call(
+        user, endpoint=f'playlists/{playlist_id}',
+        put_=True,
+        data=json.dumps(payload),
+        other_base_url=BASE_URL
+    )
