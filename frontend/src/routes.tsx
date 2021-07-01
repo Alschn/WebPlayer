@@ -1,7 +1,6 @@
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import SpotifyCallback from "./components/SpotifyCallback";
-import React, {ComponentType, FC, useContext} from "react";
-import AuthContext from "./context/authContext";
+import React, {ComponentType, FC} from "react";
 import Welcome from "./components/Welcome";
 import Home from "./components/main/Home";
 import Profile from "./components/main/Profile";
@@ -14,6 +13,7 @@ import Search from "./components/main/Search";
 import SavedTracks from "./components/main/Saved";
 import Library from "./components/main/Library";
 import Queue from "./components/main/Queue";
+import useAuth from "./hooks/useAuth";
 
 interface PrivateRouteProps {
   component: ComponentType,
@@ -22,7 +22,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute = ({component: Component, path}: PrivateRouteProps) => {
-  const {isAuthenticated} = useContext(AuthContext);
+  const {isAuthenticated} = useAuth();
 
   return isAuthenticated ? (
     <Route path={path} exact>
@@ -39,8 +39,6 @@ const PrivateRoute = ({component: Component, path}: PrivateRouteProps) => {
 
 
 const Router: FC = () => {
-  const {isAuthenticated} = useContext(AuthContext);
-
   return (
     <BrowserRouter>
       <Switch>
@@ -56,9 +54,7 @@ const Router: FC = () => {
         <PrivateRoute path="/library/:subpage" component={Library}/>
         <PrivateRoute path="/queue" component={Queue}/>
 
-        <Route exact path="/" render={
-          () => (isAuthenticated ? <Redirect to="/home"/> : <Welcome/>)
-        }/>
+        <Route exact path="/" component={Welcome}/>
 
         <Route path="*" component={PageNotFound}/>
       </Switch>

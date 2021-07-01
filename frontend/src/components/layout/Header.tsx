@@ -1,20 +1,20 @@
-import React, {FC, MouseEvent, useContext, useState} from "react";
+import React, {FC, MouseEvent, useState} from "react";
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import {Avatar, Grid} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
-import UserContext from "../../context/userContext";
 import HeaderTabs from "./HeaderTabs";
 import {SearchBox} from "../main/Search";
 import UserMenu from "./UserMenu";
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import useUserData from "../../hooks/useUserData";
 
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
 const Header: FC = () => {
   let history = useHistory();
-  const {username, imageURL, id} = useContext(UserContext);
+  const {username, imageURL, id} = useUserData();
 
   // User Menu
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
