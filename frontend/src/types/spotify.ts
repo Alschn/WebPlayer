@@ -55,7 +55,7 @@ export interface SpotifySimplifiedAlbumObject {
   external_urls: SpotifyExternalUrlObject,
   href: string,
   id: string,
-  images: string,
+  images: SpotifyImageObject[],
   name: string,
   release_date: string,
   release_date_precision: string,
