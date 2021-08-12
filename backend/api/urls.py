@@ -8,21 +8,26 @@ urlpatterns = [
     path('auth/spotify-token', GetSpotifyAccessToken.as_view()),
     path('auth/login', SpotifyLogin.as_view()),
     path('auth/logout', Logout.as_view()),
+
     # Spotify token used to initialize SDK
     path('spotify/token', GetCurrentSpotifyToken.as_view()),
+
     # Spotify endpoints
     path('spotify/playlists', GetUserPlaylists.as_view()),
-    path('spotify/playlists/<str:id>', GetPlaylist.as_view()),
+    path('spotify/playlists/<str:playlist_id>', GetPlaylist.as_view()),
+
     path('spotify/users', GetCurrentUser.as_view()),
-    path('spotify/users/<str:id>', GetUser.as_view()),
-    path('spotify/users/<str:id>/playlists', UsersPlaylists.as_view()),
+    path('spotify/users/<str:user_id>', GetUser.as_view()),
+    path('spotify/users/<str:user_id>/playlists', UsersPlaylists.as_view()),
+
+    path('spotify/follow/<str:ids>', FollowOthers.as_view()),
 
     path('spotify/artists/<str:artist_id>', GetArtist.as_view()),
     path('spotify/artists/<str:artist_id>/tracks', GetArtistsTopTracks.as_view()),
     path('spotify/artists/<str:artist_id>/albums', GetArtistsAlbums.as_view()),
     path('spotify/artists/<str:artist_id>/related-artists', GetRelatedArtists.as_view()),
 
-    path('spotify/albums/<str:id>', GetAlbum.as_view()),
+    path('spotify/albums/<str:album_id>', GetAlbum.as_view()),
 
     path('spotify/top/artists', GetTopArtists.as_view()),
     path('spotify/top/tracks', GetTopTracks.as_view()),

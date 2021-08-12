@@ -126,6 +126,7 @@ class SpotifyLogin(SocialLoginView):
 
 
 class Logout(LogoutView):
+    """api/auth/logout"""
     permission_classes = [IsAuthenticated]
 
 
@@ -270,22 +271,22 @@ class GetCurrentSong(APIView):
 
 
 class GetPlaylist(APIView):
+    """api/spotify/playlists/{playlist_id}"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def get(self, request, id):
+    def get(self, request, playlist_id):
         """Get a Playlist"""
         sender = request.user
-        playlist_id = id
         if playlist_id:
             playlist = get_playlist(sender, playlist_id)
             return Response(playlist, status=status.HTTP_200_OK)
-        return Response({'error': 'Playlist id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Playlist id not found in query parameters!'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, playlist_id, *args, **kwargs):
         """Add Items to a playlist"""
         return Response({}, status=status.HTTP_201_CREATED)
 
-    def patch(self, request, id, *args, **kwargs):
+    def patch(self, request, playlist_id, *args, **kwargs):
         """Change a Playlist's Details"""
         sender = request.user
         req_data = request.data
@@ -305,16 +306,16 @@ class GetPlaylist(APIView):
         if description and isinstance(description, str):
             payload['description'] = description
 
-        update = update_playlist(sender, playlist_id=id, payload=payload)
+        update = update_playlist(sender, playlist_id, payload=payload)
         return Response(update, status=status.HTTP_200_OK)
 
-    def put(self, request, id):
+    def put(self, request, playlist_id):
         sender = request.user
         next_tracks = request.data.get('next')
         if next_tracks:
             more_tracks = get_next_items(sender, next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)
-        return Response({'error': 'Playlist id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Next parameter not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetRecommendations(APIView):
@@ -322,6 +323,7 @@ class GetRecommendations(APIView):
 
 
 class GetUserPlaylists(APIView):
+    """api/spotify/playlists"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request):
@@ -339,6 +341,7 @@ class GetUserPlaylists(APIView):
 
 
 class GetSavedItems(APIView):
+    """api/spotify/saved"""
     def get(self, request):
         sender = request.user
         saved_tracks = get_saved_items(sender)
@@ -354,6 +357,7 @@ class GetSavedItems(APIView):
 
 
 class GetCurrentUser(APIView):
+    """api/spotify/users"""
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -378,36 +382,54 @@ class GetCurrentUser(APIView):
 
 
 class GetUser(APIView):
+    """api/spotify/users/{user_id}"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def get(self, request, id):
+    def get(self, request, user_id):
         sender = request.user
-        user_id = id
         if user_id:
             user = get_user_by_id(sender, user_id)
             return Response(user, status=status.HTTP_200_OK)
-        return Response({'error': 'User id not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'User id not found in query parameters!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsersPlaylists(APIView):
     """api/spotify/users/{user_id}/playlists"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def get(self, request, id, *args, **kwargs):
+    def get(self, request, user_id, *args, **kwargs):
         sender = request.user
-        playlists = get_users_playlists(sender, id)
+        playlists = get_users_playlists(sender, user_id)
         return Response(playlists, status=status.HTTP_200_OK)
 
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, user_id, *args, **kwargs):
         sender = request.user
         playlist_name = request.data.get('name')
         if not playlist_name:
             return Response({'error': 'Playlist name not found in request!'}, status=status.HTTP_400_BAD_REQUEST)
-        new_playlist = create_playlist(sender, id, playlist_name)
+        new_playlist = create_playlist(sender, user_id, playlist_name)
         return Response(new_playlist, status=status.HTTP_201_CREATED)
 
 
+class FollowOthers(APIView):
+    """api/spotify/follow/{ids}"""
+    # to do
+
+    def get(self):
+        # Checks if given artists/users are followed
+        return Response({}, status.HTTP_200_OK)
+
+    def put(self):
+        # Follow given artists/users
+        return Response({}, status.HTTP_200_OK)
+
+    def delete(self):
+        # Unfollow given artists/users
+        return Response({}, status.HTTP_204_NO_CONTENT)
+
+
 class GetArtist(APIView):
+    """api/spotify/artists/{artist_id}"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, artist_id, *args, **kwargs):
@@ -416,6 +438,7 @@ class GetArtist(APIView):
 
 
 class GetArtistsTopTracks(APIView):
+    """api/spotify/artists/{artist_id}/tracks"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, artist_id, *args, **kwargs):
@@ -424,14 +447,21 @@ class GetArtistsTopTracks(APIView):
 
 
 class GetArtistsAlbums(APIView):
+    """api/spotify/artists/{artist_id}/albums"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, artist_id, *args, **kwargs):
-        artist_albums = get_artist(request.user, artist_id, endpoint_type='/albums')
+        include_groups = request.query_params.get('include_groups')
+
+        artist_albums = get_artist(
+            request.user, artist_id, endpoint_type='/albums',
+            include_groups=include_groups
+        )
         return Response(artist_albums, status=status.HTTP_200_OK)
 
 
 class GetRelatedArtists(APIView):
+    """api/spotify/artists/{artist_id}/related-artists"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request, artist_id, *args, **kwargs):
@@ -440,21 +470,21 @@ class GetRelatedArtists(APIView):
 
 
 class GetAlbum(APIView):
+    """api/spotify/albums/{album_id}"""
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def get(self, request, id):
+    def get(self, request, album_id):
         sender = request.user
-        saved_tracks = get_album(sender, id)
+        saved_tracks = get_album(sender, album_id)
         return Response(saved_tracks, status=status.HTTP_200_OK)
 
-    def put(self, request, id):
+    def put(self, request, album_id):
         sender = request.user
-        album_id = id
         next_tracks = request.data.get('next')
         if next_tracks and album_id:
             more_tracks = get_next_items(sender, href=next_tracks)
             return Response(more_tracks, status=status.HTTP_200_OK)
-        return Response({'error': 'Album id not found in request body!'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Album id not found in query parameters!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetTopTracks(APIView):
