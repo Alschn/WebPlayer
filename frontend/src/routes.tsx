@@ -1,4 +1,4 @@
-import {BrowserRouter, Redirect, Route, Switch, useLocation} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import SpotifyCallback from "./components/SpotifyCallback";
 import React, {ComponentType, FC} from "react";
 import Welcome from "./components/Welcome";
@@ -14,6 +14,7 @@ import SavedTracks from "./components/main/Saved";
 import Library from "./components/main/Library";
 import Queue from "./components/main/Queue";
 import useAuth from "./hooks/useAuth";
+import ArtistSubPage from "./components/main/artist/ArtistRedirect";
 
 interface PrivateRouteProps {
   component: ComponentType,
@@ -21,11 +22,11 @@ interface PrivateRouteProps {
   exact?: boolean,
 }
 
-const PrivateRoute = ({component: Component, path}: PrivateRouteProps) => {
+const PrivateRoute = ({component: Component, path, exact=true}: PrivateRouteProps) => {
   const {isAuthenticated} = useAuth();
 
   return isAuthenticated ? (
-    <Route path={path} exact>
+    <Route path={path} exact={exact}>
       <SpotifyLayout>
         <Component/>
       </SpotifyLayout>
@@ -47,6 +48,7 @@ const Router: FC = () => {
         <PrivateRoute path="/home" component={Home}/>
         <PrivateRoute path="/profiles/:id" component={Profile}/>
         <PrivateRoute path="/playlists/:id" component={Playlist}/>
+        <PrivateRoute path="/artists/:id/:page" component={ArtistSubPage}/>
         <PrivateRoute path="/artists/:id" component={Artist}/>
         <PrivateRoute path="/albums/:id" component={Album}/>
         <PrivateRoute path="/search" component={Search}/>
