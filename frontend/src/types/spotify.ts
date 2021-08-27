@@ -55,7 +55,7 @@ export interface SpotifySimplifiedAlbumObject {
   external_urls: SpotifyExternalUrlObject,
   href: string,
   id: string,
-  images: string,
+  images: SpotifyImageObject[],
   name: string,
   release_date: string,
   release_date_precision: string,
@@ -124,14 +124,26 @@ export interface SpotifySimplifiedPlaylistObject {
   owner: SpotifyPublicUserObject;
   public: boolean,
   snapshot_id: string,
-  tracks: any, //
+  tracks: SpotifyPlaylistTracksRefObject[] | SpotifyPlaylistTrackObject[],
   type: string,
   uri: string,
 }
 
 export interface SpotifyPlaylistObject extends SpotifySimplifiedPlaylistObject {
   followers: SpotifyFollowersObject,
-  tracks: any[],
+  tracks: SpotifyPlaylistTrackObject[],
+}
+
+export interface SpotifyPlaylistTrackObject {
+  added_at: string,
+  added_by: SpotifyPublicUserObject,
+  is_local: boolean,
+  track: SpotifyTrackObject
+}
+
+export interface SpotifyPlaylistTracksRefObject {
+  href: string,
+  total: number
 }
 
 export interface SpotifyPublicUserObject {

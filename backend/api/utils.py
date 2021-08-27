@@ -1,6 +1,6 @@
 import json
 from datetime import timedelta
-from typing import Optional, Dict, Union, List
+from typing import Optional, Dict, Union, List, Literal
 
 from allauth.socialaccount.models import SocialToken
 # noinspection PyUnresolvedReferences
@@ -9,18 +9,21 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from requests import post, put, get, Response
 
+# custom types
+ArtistEndpointType = Literal['', '/top-tracks', '/albums', '/related-artists']
+
 BASE_URL = "https://api.spotify.com/v1/"
 BASE_URL_ME = "https://api.spotify.com/v1/me/"
 
 
-def get_user_token(user) -> Optional[SocialToken]:
+def get_user_token(user: User) -> Optional[SocialToken]:
     user_tokens = SocialToken.objects.filter(account__user=user)
     if user_tokens.exists():
         return user_tokens.first()
     return None
 
 
-def is_spotify_authenticated(user) -> bool:
+def is_spotify_authenticated(user: User) -> bool:
     token = get_user_token(user)
     if token:
         expiry = token.expires_at
@@ -30,7 +33,7 @@ def is_spotify_authenticated(user) -> bool:
     return False
 
 
-def update_user_token(user, access_token, expires_in, refresh_token) -> None:
+def update_user_token(user: User, access_token: str, expires_in: int, refresh_token: str) -> None:
     tokens = get_user_token(user)
     if not tokens:
         return
@@ -40,8 +43,12 @@ def update_user_token(user, access_token, expires_in, refresh_token) -> None:
     tokens.save(update_fields=['token', 'token_secret', 'expires_at'])
 
 
-def refresh_spotify_token(user) -> None:
-    refresh_token = get_user_token(user).token_secret
+def refresh_spotify_token(user: User) -> None:
+    token = get_user_token(user)
+    if not token:
+        return
+
+    refresh_token = token.token_secret
 
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'refresh_token',
@@ -50,16 +57,21 @@ def refresh_spotify_token(user) -> None:
         'client_secret': CLIENT_SECRET
     }).json()
 
-    access_token = response.get('access_token')
-    expires_in = response.get('expires_in')
+    access_token: str = response.get('access_token')
+    expires_in: int = response.get('expires_in')
 
     update_user_token(user, access_token, expires_in, refresh_token)
 
 
 def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
     -> Union[Response, Dict[str, str]]:
-    spotify_token = get_user_token(user).token
-    headers = {'Content-Type': 'application/json', 'Authorization': "Bearer " + spotify_token}
+    token = get_user_token(user)
+    spotify_token = token.token
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + spotify_token
+    }
 
     url = BASE_URL_ME if not other_base_url else other_base_url
 
@@ -186,4 +198,44 @@ def get_users_top_artists(user: User, time_range='short_term', limit=6) -> Union
 def get_users_playlists(user: User, user_id: str, limit=6) -> Union[Response, Dict[str, str]]:
     return execute_spotify_api_call(
         user, endpoint=f'users/{user_id}/playlists?limit={limit}', other_base_url=BASE_URL
+    )
+
+
+def create_playlist(user: User, user_id: str, playlist_name: str) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user, endpoint=f'users/{user_id}/playlists',
+        post_=True,
+        data=json.dumps({
+            'name': playlist_name,
+        }),
+        other_base_url=BASE_URL
+    )
+
+
+def update_playlist(user: User, playlist_id: str, payload: Dict[str, str]) -> Union[Response, Dict[str, str]]:
+    return execute_spotify_api_call(
+        user, endpoint=f'playlists/{playlist_id}',
+        put_=True,
+        data=json.dumps(payload),
+        other_base_url=BASE_URL
+    )
+
+
+def get_artist(user: User, artist_id: str, endpoint_type: ArtistEndpointType = "", **kwargs) -> Union[Response, Dict[str, str]]:
+    endpoint = f"artists/{artist_id}{endpoint_type}"
+
+    if endpoint_type == '/albums':
+        include = kwargs.get('include_groups')
+        if include:
+            endpoint += f'?include_groups={include}&limit=50'
+        else:
+            endpoint += '?limit=40'
+
+    if endpoint_type == '/top-tracks':
+        endpoint += '?market=from_token'
+
+    return execute_spotify_api_call(
+        user,
+        endpoint=endpoint,
+        other_base_url=BASE_URL
     )

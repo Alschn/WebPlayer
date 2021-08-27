@@ -1,7 +1,7 @@
-import React, {FC, Fragment, ReactNode, useCallback, useContext} from "react";
-import authContext from "../../context/authContext";
+import React, {FC, Fragment, ReactNode, useCallback} from "react";
 import {WebPlaybackSDK} from "react-spotify-web-playback-sdk";
 import axiosClient from "../../utils/axiosClient";
+import useAuth from "../../hooks/useAuth";
 
 
 interface WebPlaybackProps {
@@ -9,7 +9,7 @@ interface WebPlaybackProps {
 }
 
 const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
-  const {isAuthenticated} = useContext(authContext);
+  const {isAuthenticated} = useAuth();
 
   const fetchSpotifyToken = () => {
     return axiosClient.get(`http://localhost:8000/api/spotify/token`)

@@ -6,26 +6,20 @@ import {getMsToTime} from "../../utils/dataFormat";
 import {
   SpotifyExternalUrlObject,
   SpotifyFollowersObject,
-  SpotifyImageObject,
+  SpotifyImageObject, SpotifyPlaylistTrackObject,
   SpotifyPublicUserObject
 } from "../../types/spotify";
 import SpotifyTable from "../layout/SpotifyTable";
+import {loadMoreItems} from "../../utils/api";
+import EditPlaylistDialog from "./playlist/EditPlaylistDialog";
+import useUserData from "../../hooks/useUserData";
 
 
 interface Parameters {
   id: string,
 }
 
-interface SpotifyPlaylistTrack {
-  added_at: string,
-  added_by: any, // to be replaced - object
-  is_local: boolean,
-  primary_color?: string | null,
-  track: any, // to be replaced with SpotifyTrack
-  video_thumbnail?: any,
-}
-
-interface SpotifyPlaylistInfo {
+export interface SpotifyPlaylistInfo {
   collaborative: boolean,
   description: string,
   external_urls: SpotifyExternalUrlObject,
@@ -46,17 +40,30 @@ const Playlist: FC = () => {
   // url parameter
   let {id} = useParams<Parameters>();
 
+  const {id: user_id} = useUserData();
+
   // playlist info
   const [playlistInfo, setPlaylistInfo] = useState<SpotifyPlaylistInfo | null>(null);
 
   // playlists's tracks
-  const [tracks, setTracks] = useState<SpotifyPlaylistTrack[]>([]);
+  const [tracks, setTracks] = useState<SpotifyPlaylistTrackObject[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [next, setNext] = useState<string | null>(null);
+
+  // edit playlist dialog
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // force state update from dialog
+  const [shouldUpdate, setShouldUpdate] = useState<number>(0);
+
 
   useEffect(() => {
     AxiosClient.get(`http://localhost:8000/api/spotify/playlists/${id}`).then(res => {
       const {tracks: {items, next, total}, ...rest} = res.data;
+      if (shouldUpdate > 0) {
+        // no need to fetch tracks again, they stay the same
+        setPlaylistInfo(rest);
+        return;
+      }
       setTracks(items);
       setNext(next);
       setTotalCount(total);
@@ -64,21 +71,15 @@ const Playlist: FC = () => {
     }).catch(
       err => console.log(err)
     )
-  }, [id]);
+  }, [id, shouldUpdate]);
 
   const loadMoreTracks = (): void => {
     if (next) {
-      AxiosClient.put(`http://localhost:8000/api/spotify/playlists/${id}`, {
-        next: next,
-      }).then(res => {
-        // console.log(res.data)
+      loadMoreItems(`http://localhost:8000/api/spotify/playlists/${id}`, next).then(res => {
         const {items, next} = res.data;
-        console.log(items)
         setTracks(prevState => [...prevState, ...items]);
         setNext(next);
-      }).catch(
-        err => console.log(err)
-      )
+      }).catch(err => console.log(err))
     }
   };
 
@@ -89,19 +90,53 @@ const Playlist: FC = () => {
       return getMsToTime(length);
     }
     return '';
+  };
+
+  const getPlaylistImage = (): string | undefined => {
+    if (playlistInfo && playlistInfo.images.length > 0) {
+      return playlistInfo.images[0].url
+    }
+    return undefined;
+  };
+
+  const handleOpen = () => {
+    if (isOwner) setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    if (isOwner) setIsOpen(false);
   }
+
+  const isOwner = playlistInfo && playlistInfo.owner.id === user_id;
 
   return (
     <div className="playlist__root">
       {playlistInfo && <Grid container alignItems="flex-end">
+        <EditPlaylistDialog
+          open={isOpen}
+          handleClose={handleClose}
+          playlistInfo={playlistInfo}
+          forceUpdate={() => setShouldUpdate(prevState => prevState + 1)}
+        />
+
         <Grid item className="playlist__info-left">
-          <img src={playlistInfo.images[0].url} alt="playlist-img" width={300} height={300}/>
+          <img src={getPlaylistImage()} alt="" width={300} height={300}/>
         </Grid>
 
         <Grid item className="playlist__info-right">
           <h4>PLAYLIST</h4>
-          <h1>{playlistInfo.name}</h1>
-          <p className="playlist__info-right__description">{playlistInfo.description}</p>
+          <h1 onClick={handleOpen} className={isOwner ? "playlist-owner-hover" : ""}>
+            {playlistInfo.name}
+          </h1>
+          <p className={
+            isOwner ?
+              "playlist__info-right__description playlist-owner-hover" :
+              "playlist__info-right__description"
+          }
+             onClick={handleOpen}
+          >
+            {playlistInfo.description}
+          </p>
           <p className="playlist__info-right__stats">
             <Link
               to={`/profiles/${playlistInfo.owner.id}`}

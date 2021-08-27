@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import React, {FC, useState} from "react";
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import LibraryMusicOutlinedIcon from '@material-ui/icons/LibraryMusicOutlined';
@@ -8,25 +8,40 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import {Grid} from "@material-ui/core";
 import {useHistory} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
+import useUserData from "../../hooks/useUserData";
+import {createNewPlaylist} from "../../utils/api";
+import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
 
-interface SidebarProps {
 
-}
-
-const Sidebar: FC<SidebarProps> = () => {
+const Sidebar: FC = () => {
   let history = useHistory();
+  const {id: user_id} = useUserData();
+
+  const [newPlaylist, setNewPlaylist] = useState<SpotifySimplifiedPlaylistObject | null>(null);
 
   const handleSettingsOnClick = (): void => {
   };
 
-  const handleGoToRoute = (route: string): void => {
-    history.push(route);
-  }
+  const handleGoToRoute = (route: string): void => history.push(route);
+
+  const handleCreatePlaylist = (): void => {
+    if (user_id) {
+      createNewPlaylist(user_id).then(
+        ({data}) => {
+          setNewPlaylist(data);
+          const {id} = data;
+          history.push(`/playlists/${id}`);
+        }
+      ).catch(err => console.log(err))
+    }
+  };
 
   return (
     <div className="sidebar__inner">
       <div className="sidebar__top">
-        <p><MoreHorizIcon onClick={handleSettingsOnClick}/></p>
+        <p className="sidebar-settings">
+          <MoreHorizIcon onClick={handleSettingsOnClick}/>
+        </p>
         <Grid container className="sidebar-navtab"
               key="/home" onClick={() => handleGoToRoute("/home")}
         >
@@ -66,7 +81,7 @@ const Sidebar: FC<SidebarProps> = () => {
         <div style={{marginTop: '20px'}}/>
 
         <Grid container className="sidebar-tab"
-              key="/new-playlist" onClick={() => handleGoToRoute("/new-playlist")}
+              key="/new-playlist" onClick={() => handleCreatePlaylist()}
         >
           <Grid item xs={2} className="icon-add-bg">
             <AddIcon className="icon-add"/>
@@ -93,7 +108,7 @@ const Sidebar: FC<SidebarProps> = () => {
         <hr/>
       </div>
 
-      <SidebarPlaylists/>
+      <SidebarPlaylists newPlaylist={newPlaylist}/>
     </div>
   );
 };

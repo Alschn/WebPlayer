@@ -1,23 +1,22 @@
 import React, {FC, useEffect, useState} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import {Redirect, useHistory} from "react-router-dom";
 import axios from "axios";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useQuery from "../hooks/useQuery";
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
+type redirectType = 'CB_SUCCESS' | 'CB_FAILURE' | null;
+
+const setToken = (tokenValue: string): void => localStorage.setItem('token', tokenValue);
 
 const SpotifyCallback: FC = () => {
   let query = useQuery();
   let history = useHistory();
 
-  const [token, setToken] = useLocalStorage('token');
-
   const [code] = useState<string | null>(query.get("code"));
   const [error] = useState<string | null>(query.get("error"));
 
-  const [receivedSpotifyToken, setReceivedSpotifyToken] = useState<boolean>(false);
-  const [receivedAuthToken, setReceivedAuthToken] = useState<boolean>(false);
+  const [redirectState, setRedirectState] = useState<redirectType>(null);
+
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (code && !token) (async () => {
@@ -25,23 +24,32 @@ const SpotifyCallback: FC = () => {
         code: code,
       })
 
-      await setReceivedSpotifyToken(true);
-
-      const auth_response = await axios.post('http://localhost:8000/api/auth/spotify-login', {
+      const auth_response = await axios.post('http://localhost:8000/api/auth/login', {
         access_token: token_response.data.access_token,
         refresh_token: token_response.data.refresh_token,
         expires_in: token_response.data.expires_in,
       })
 
-      await setReceivedAuthToken(true);
-
       setToken(auth_response.data.key);
-      history.push("/home");
+      setRedirectState('CB_SUCCESS');
     })()
     else {
-      history.push("/");
+      setRedirectState('CB_FAILURE');
     }
-  }, [token, setToken, code, error, history])
+    return () => setRedirectState(null);
+  }, [token, code, error, history])
+
+  if (redirectState === 'CB_SUCCESS') {
+    return (<Redirect to={{
+      pathname: "/",
+      state: {authenticated: true}
+    }}/>);
+  } else if (redirectState === 'CB_FAILURE') {
+    return (<Redirect to={{
+      pathname: "/",
+      state: {authenticated: false}
+    }}/>)
+  }
 
   return (
     <div>

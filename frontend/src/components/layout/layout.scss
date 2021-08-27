@@ -14,6 +14,9 @@ $lighter-gray-font: #bebebe;
 $gray-border: #262626;
 $menu-gray-bg: #292626;
 
+$gray-card-bg: rgba(124, 124, 124, 0.05);
+$gray-card-hover: rgba(124, 124, 124, 0.2);
+
 
 /*
   Main section - Sidebar, Header + Content
@@ -151,6 +154,13 @@ $menu-gray-bg: #292626;
 
     .sidebar__top {
       height: $sidebar-top-height;
+
+      .sidebar-settings {
+        &:hover {
+          color: white;
+          transition: color 0.5s;
+        }
+      }
     }
   }
 
@@ -366,7 +376,7 @@ $menu-gray-bg: #292626;
     }
   }
 
-  .profile__root {
+  .profile {
     padding: 30px 0 20px 0;
 
     .profile__info-left {
@@ -389,6 +399,179 @@ $menu-gray-bg: #292626;
         font-size: 4.5em;
         font-weight: bold;
       }
+    }
+
+    .profile__tracks {
+
+    }
+
+    .profile__popular_artists {
+
+      .profile__popular_artists-artist {
+        width: 200px;
+        height: 300px;
+        border-radius: 6px;
+        background: $gray-card-bg;
+
+        &:hover {
+          background: $gray-card-hover;
+          transition: 0.5s;
+          cursor: pointer;
+        }
+
+        .profile__popular_artists-artist-name {
+          font-weight: 700;
+        }
+
+        .profile__popular_artists-artist-desc {
+          color: $lighter-gray-font;
+        }
+
+        .profile__popular_artists-artist-image img {
+          border-radius: 50%;
+          width: 180px;
+          height: 180px;
+        }
+      }
+    }
+
+    //.profile__public-playlists {
+    //  .profile__public_playlists-playlist {
+    //
+    //    .profile__public_playlists-playlist-image img {
+    //      height: 180px;
+    //      width: 180px;
+    //    }
+    //  }
+    //}
+  }
+
+  .artist {
+    padding: 30px 0 20px 0;
+
+    .artist__header {
+      .artist__header-left {
+        padding: 0 20px 20px 0;
+
+        img {
+          border-radius: 50%;
+          width: 250px;
+          height: 250px;
+          -webkit-box-shadow: 0 0 10px 0 rgba(30, 30, 30, 0.9);
+          -moz-box-shadow: 0 0 10px 0 rgba(30, 30, 30, 0.9);
+          box-shadow: 0 0 10px 0 rgba(30, 30, 30, 0.9);
+        }
+      }
+
+      .artist__header-right {
+        padding-bottom: 20px;
+
+        h1.artist__header-name {
+          margin: 0;
+          padding-left: 5px;
+          font-size: 4.5em;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .artist__buttons {
+      display: flex;
+      align-items: center;
+
+      .button-big-play {
+        color: $spotify-green !important;
+        margin-right: 20px;
+
+        & .big-play-icon {
+          transform: scale(2.5);
+        }
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      .button-follow {
+        color: white;
+        font-weight: 600;
+        border: 1px $gray-font solid;
+        height: 80%;
+        margin-right: 10px;
+
+        &:hover {
+          border: 1px white solid;
+        }
+      }
+
+      .button-more_horiz {
+        color: $gray-font !important;
+
+        &:hover {
+          color: white !important;
+        }
+      }
+    }
+
+    .artist__popular {
+      padding-bottom: 10px;
+
+      .toggle-show {
+        color: $gray-font;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &:hover {
+          color: white;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .artist__popular_releases {
+
+    }
+
+    .artists__albums {
+
+    }
+
+    .artists__singles {
+
+    }
+
+    .artists__included {
+
+    }
+
+    .artists__related {
+
+    }
+
+    .artists__appears_on {
+
+    }
+  }
+}
+
+.playlist-owner-hover:hover {
+  cursor: pointer;
+}
+
+.show-all {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 15px;
+
+  a {
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 600;
+    color: $gray-font;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 }

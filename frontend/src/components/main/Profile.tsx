@@ -1,6 +1,5 @@
 import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
-import React, {FC, useContext, useEffect, useState} from "react";
-import UserContext from "../../context/userContext";
+import React, {FC, useEffect, useState} from "react";
 import {Link, useHistory, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
@@ -11,6 +10,7 @@ import {
   SpotifyTrackObject
 } from "../../types/spotify";
 import AxiosClient from "../../utils/axiosClient";
+import useUserData from "../../hooks/useUserData";
 
 interface Parameters {
   id: string;
@@ -22,7 +22,7 @@ const Profile: FC = () => {
 
   let history = useHistory();
 
-  const {username, imageURL: image_url, id, followers} = useContext(UserContext);
+  const {username, imageURL: image_url, id, followers} = useUserData();
 
   const [profileInfo, setProfileInfo] = useState<SpotifyPublicUserObject | undefined>(undefined);
 
@@ -102,28 +102,37 @@ const Profile: FC = () => {
 
   const goToPlaylist = (playlist_id: string) => history.push(`/playlists/${playlist_id}`);
 
+  const goToArtist = (artist_id: string) => history.push(`/artists/${artist_id}`);
+
+  const getImageOrUndefined = (images: any[]) => {
+    try {
+      return images[0].url
+    } catch {
+      return undefined
+    }
+  }
+
   const renderMostPopularArtists = () => (
     <Grid container className="profile__popular_artists">
       <Grid item xs={12}>
         <h2>The most popular artists this month</h2>
         <p>Visible only for you</p>
       </Grid>
-      {topArtists && topArtists.map((artist) => (
-        <Grid item xs={2} container justify="center">
+      {topArtists && topArtists.map(({id: artist_id, name, images}) => (
+        <Grid item xs={2} container>
           <div
-            className=""
-            onClick={() => {
-            }}
+            className="profile__popular_artists-artist"
+            onClick={() => goToArtist(artist_id)}
           >
-            <Grid item xs={12} className="">
-              <img src={artist.images[0].url} alt="" height={200} width={200}/>
+            <Grid item xs={12} className="profile__popular_artists-artist-image">
+              <img src={getImageOrUndefined(images)} alt=""/>
             </Grid>
 
-            <Grid item xs={12} className="">
-              <p className="text">{artist.name}</p>
+            <Grid item xs={12} className="profile__popular_artists-artist-name">
+              <p className="text">{name}</p>
             </Grid>
 
-            <Grid item xs={12} className="library_playlists-playlist-desc">
+            <Grid item xs={12} className="profile__popular_artists-artist-desc">
               <p className="text">Artist</p>
             </Grid>
           </div>
@@ -171,7 +180,7 @@ const Profile: FC = () => {
   );
 
   return (
-    <Grid container className="profile__root">
+    <Grid container className="profile">
       <Grid container className="profile__header" alignItems="flex-end">
         <Grid item className="profile__info-left">
           <img src={getUserImage()} alt="profile-img" width={250} height={250}/>
@@ -194,13 +203,13 @@ const Profile: FC = () => {
 
       <Grid container className="profile__public_playlists">
         {publicPlaylists.length > 0 && publicPlaylists.map(({name, images, id: playlist_id}) => (
-          <Grid item xs={2} container justify="center">
+          <Grid item xs={2} container>
             <div
               className="profile__public_playlists-playlist"
               onClick={() => goToPlaylist(playlist_id)}
             >
               <Grid item xs={12} className="profile__public_playlists-playlist-image">
-                <img src={images[0].url} alt="" height={200} width={200}/>
+                <img src={getImageOrUndefined(images)} alt="" height={200} width={200}/>
               </Grid>
 
               <Grid item xs={12} className="profile__public_playlists-playlist-title">

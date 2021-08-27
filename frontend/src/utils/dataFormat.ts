@@ -47,3 +47,5 @@ export const getTimePassedSinceAdded = (added_at: string): string => {
   const diff: number = new Date().getTime() - new Date(added_at).getTime();
   return timeAgo.format(Date.now() - diff)
 };
+
+export const getYearFromDate = (date: string) => new Date(date).getFullYear();
