@@ -17,7 +17,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
 
   useEffect(() => {
     AxiosClient.get(
-      `http://localhost:8000/api/spotify/playlists`
+      `/spotify/playlists`
     ).then(res => {
       const {items, next} = res.data;
       setNext(next);
@@ -34,7 +34,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
 
   const loadMorePlaylists = (): void => {
     if (next) {
-      loadMoreItems('http://localhost:8000/api/spotify/playlists', next)
+      loadMoreItems('/spotify/playlists', next)
         .then(res => {
           const {items, next} = res.data;
           setNext(next);

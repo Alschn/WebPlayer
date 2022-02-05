@@ -30,7 +30,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({children}) =>
 
   useEffect(() => {
     if (!userData && token) {
-      axiosClient.get(`http://localhost:8000/api/spotify/users`)
+      axiosClient.get(`/spotify/users`)
         .then(res => {
           setUserData(res.data);
         })

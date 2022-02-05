@@ -23,7 +23,7 @@ const SavedTracks: FC = () => {
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(`http://localhost:8000/api/spotify/saved`).then(res => {
+    AxiosClient.get(`/spotify/saved`).then(res => {
       const {data: {items, next, total}} = res;
       setTracks(items);
       setNext(next);
@@ -35,7 +35,7 @@ const SavedTracks: FC = () => {
 
   const loadMoreTracks = (): void => {
     if (next) {
-      AxiosClient.put(`http://localhost:8000/api/spotify/saved`, {
+      AxiosClient.put(`/spotify/saved`, {
         next: next,
       }).then(res => {
         const {data: {items, next}} = res;

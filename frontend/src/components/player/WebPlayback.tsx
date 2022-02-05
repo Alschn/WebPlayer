@@ -12,7 +12,7 @@ const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
   const {isAuthenticated} = useAuth();
 
   const fetchSpotifyToken = () => {
-    return axiosClient.get(`http://localhost:8000/api/spotify/token`)
+    return axiosClient.get(`/spotify/token`)
       .then(res => res.data.token)
       .catch(err => console.log(err));
   };

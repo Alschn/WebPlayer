@@ -18,7 +18,7 @@ const Album: FC = () => {
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(`http://localhost:8000/api/spotify/albums/${id}`).then(res => {
+    AxiosClient.get(`/spotify/albums/${id}`).then(res => {
       console.log(res.data);
       const {data: {artists, tracks: {items, next}, ...rest}} = res;
       setArtists(artists);

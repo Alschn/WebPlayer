@@ -45,7 +45,7 @@ const Playlist: FC = () => {
   // playlist info
   const [playlistInfo, setPlaylistInfo] = useState<SpotifyPlaylistInfo | null>(null);
 
-  // playlists's tracks
+  // playlists' tracks
   const [tracks, setTracks] = useState<SpotifyPlaylistTrackObject[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [next, setNext] = useState<string | null>(null);
@@ -57,7 +57,7 @@ const Playlist: FC = () => {
 
 
   useEffect(() => {
-    AxiosClient.get(`http://localhost:8000/api/spotify/playlists/${id}`).then(res => {
+    AxiosClient.get(`/spotify/playlists/${id}`).then(res => {
       const {tracks: {items, next, total}, ...rest} = res.data;
       if (shouldUpdate > 0) {
         // no need to fetch tracks again, they stay the same
@@ -75,7 +75,7 @@ const Playlist: FC = () => {
 
   const loadMoreTracks = (): void => {
     if (next) {
-      loadMoreItems(`http://localhost:8000/api/spotify/playlists/${id}`, next).then(res => {
+      loadMoreItems(`/spotify/playlists/${id}`, next).then(res => {
         const {items, next} = res.data;
         setTracks(prevState => [...prevState, ...items]);
         setNext(next);

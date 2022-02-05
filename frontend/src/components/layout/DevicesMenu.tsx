@@ -18,7 +18,7 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
   const [devices, setDevices] = useState<SpotifyDeviceObject[]>([]);
 
   useEffect(() => {
-    anchorEl != null && AxiosClient.get('http://localhost:8000/api/spotify/devices')
+    anchorEl != null && AxiosClient.get('/spotify/devices')
       .then(res => {
         const {data: {devices}} = res;
         setDevices([...devices].reverse());

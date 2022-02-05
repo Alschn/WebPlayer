@@ -3,7 +3,7 @@ import axiosClient from "../utils/axiosClient";
 
 const SpotifyLogin: FC = () => {
   const handleSpotifyLogin = () => {
-    axiosClient.get('http://localhost:8000/api/spotify-url').then(
+    axiosClient.get('/spotify-url').then(
       (res) => {
         const {url} = res.data;
         window.location.replace(url);

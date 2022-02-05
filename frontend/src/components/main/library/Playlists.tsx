@@ -16,7 +16,7 @@ const Playlists: FC = () => {
 
   useEffect(() => {
     AxiosClient.get(
-      `http://localhost:8000/api/spotify/playlists`
+      `/spotify/playlists`
     ).then(res => {
       const {items, next} = res.data;
       setNext(next);
@@ -26,7 +26,7 @@ const Playlists: FC = () => {
 
   useEffect(() => {
     AxiosClient.get(
-      `http://localhost:8000/api/spotify/saved`
+      `/spotify/saved`
     ).then(res => {
       const {data: {items, total}} = res;
       setSavedTracks(items);
@@ -35,7 +35,7 @@ const Playlists: FC = () => {
   }, []);
 
   const loadMorePlaylists = (): void => {
-    if (next) loadMoreItems('http://localhost:8000/api/spotify/playlists', next)
+    if (next) loadMoreItems('/spotify/playlists', next)
       .then(res => {
           const {items, next} = res.data;
           setNext(next);

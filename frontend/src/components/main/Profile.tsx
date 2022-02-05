@@ -35,7 +35,7 @@ const Profile: FC = () => {
   useEffect(() => {
     // fetch profile info if visiting other user's profile
     if (url_id !== id) {
-      AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}`)
+      AxiosClient.get(`/spotify/users/${url_id}`)
         .then(res => {
           const {data} = res;
           setProfileInfo(data);
@@ -43,7 +43,7 @@ const Profile: FC = () => {
     }
 
     // fetch 6 public playlists
-    AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}/playlists`)
+    AxiosClient.get(`/spotify/users/${url_id}/playlists`)
       .then(res => {
         const {data: {items, total}} = res;
         setTotalPlaylists(total);
@@ -57,14 +57,14 @@ const Profile: FC = () => {
   useEffect(() => {
     if (url_id === id) {
       // fetch 6 top artists
-      AxiosClient.get('http://localhost:8000/api/spotify/top/artists?limit=6')
+      AxiosClient.get('/spotify/top/artists?limit=6')
         .then(res => {
           const {data: {items}} = res;
           setTopArtists([...items]);
         }).catch(err => console.log(err));
 
       // fetch 4 top tracks
-      AxiosClient.get('http://localhost:8000/api/spotify/top/tracks?limit=4')
+      AxiosClient.get('/spotify/top/tracks?limit=4')
         .then(res => {
           const {data: {items}} = res;
           setTopTracks([...items]);
