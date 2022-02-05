@@ -1,8 +1,8 @@
-import React, {FC, useState} from "react";
+import {FC, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
-import AccessTimeIcon from "@material-ui/icons/AccessTime";
-import ExplicitIcon from "@material-ui/icons/Explicit";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ExplicitIcon from "@mui/icons-material/Explicit";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
 import {Link} from "react-router-dom";
@@ -39,8 +39,8 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
   const handleDoubleClick = (row: string): void => {
     if (selected) selected.classList.remove('Mui-selected');
     playSongWithUri(row, playbackState?.context.uri)
-      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`))
-  }
+      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`));
+  };
 
   const handleClick = useSingleAndDoubleClick(handleSingleClick, handleDoubleClick);
 
@@ -54,7 +54,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
           hasMore={next != null}
           loader={<h2>Loading more tracks ...</h2>}
           dataLength={tracks.length}
-          scrollableTarget='content'
+          scrollableTarget="content"
         >
           <Table aria-label="simple table" size="small">
             <TableHead className="playlist__tracks-header">
@@ -104,7 +104,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
           hasMore={next != null}
           loader={<h2>Loading more tracks ...</h2>}
           dataLength={tracks.length}
-          scrollableTarget='content'
+          scrollableTarget="content"
         >
           <Table aria-label="playlist-tracks-table" size="small">
             <TableHead className="playlist__tracks-header">

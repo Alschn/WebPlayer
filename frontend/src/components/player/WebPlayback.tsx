@@ -1,4 +1,4 @@
-import React, {FC, Fragment, ReactNode, useCallback} from "react";
+import {FC, Fragment, ReactNode, useCallback} from "react";
 import {WebPlaybackSDK} from "react-spotify-web-playback-sdk";
 import axiosClient from "../../utils/axiosClient";
 import useAuth from "../../hooks/useAuth";

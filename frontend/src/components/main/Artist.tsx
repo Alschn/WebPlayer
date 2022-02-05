@@ -1,10 +1,10 @@
-import React, {FC, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 import {SpotifyAlbumObject, SpotifyArtistObject, SpotifyTrackObject} from "../../types/spotify";
-import {Button, capitalize, Grid, IconButton} from "@material-ui/core";
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import {Button, capitalize, Grid, IconButton} from "@mui/material";
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import {getArtistData} from "../../utils/api";
 import SpotifyArtistTable from "../layout/SpotifyArtistTable";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";

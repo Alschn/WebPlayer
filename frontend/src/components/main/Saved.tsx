@@ -1,9 +1,9 @@
-import React, {FC, useContext, useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {FC, useContext, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
 import {Link} from "react-router-dom";
 import UserContext from "../../context/userContext";
 import AxiosClient from "../../utils/axiosClient";
-import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import SpotifyTable from "../layout/SpotifyTable";
 
 interface SpotifyPlaylistTrack {

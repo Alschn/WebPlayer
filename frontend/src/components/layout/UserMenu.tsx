@@ -1,6 +1,5 @@
-import {Divider, ListItem, Popover} from "@material-ui/core";
-import {List} from "@material-ui/core";
-import React, {FC} from "react";
+import {Divider, List, ListItem, Popover} from "@mui/material";
+import {FC} from "react";
 import {useHistory} from "react-router-dom";
 import {performLogout} from "../../utils/api";
 

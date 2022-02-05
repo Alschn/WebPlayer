@@ -1,12 +1,12 @@
-import React, {FC, useEffect, useState} from "react";
-import {Grid, List, ListItem, Popover} from "@material-ui/core";
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import {FC, useEffect, useState} from "react";
+import {Grid, List, ListItem, Popover} from "@mui/material";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AxiosClient from "../../utils/axiosClient";
 import {deviceType, SpotifyDeviceObject} from "../../types/spotify";
-import VolumeUpRoundedIcon from '@material-ui/icons/VolumeUpRounded';
-import ComputerIcon from '@material-ui/icons/Computer';
-import SmartphoneIcon from '@material-ui/icons/Smartphone';
-import SpeakerIcon from '@material-ui/icons/Speaker';
+import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
+import ComputerIcon from '@mui/icons-material/Computer';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import SpeakerIcon from '@mui/icons-material/Speaker';
 import {transferPlaybackToDevice} from "../player/api";
 
 interface DevicesMenuProps {
@@ -21,9 +21,9 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
     anchorEl != null && AxiosClient.get('http://localhost:8000/api/spotify/devices')
       .then(res => {
         const {data: {devices}} = res;
-        setDevices([...devices].reverse())
+        setDevices([...devices].reverse());
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   }, [anchorEl]);
 
   const getIconByType = (type: deviceType) => {
@@ -33,16 +33,16 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
       case 'smartphone':
         return <SmartphoneIcon/>;
       case 'speaker':
-        return <SpeakerIcon/>
+        return <SpeakerIcon/>;
       default:
         return <ComputerIcon/>;
     }
-  }
+  };
 
   const selectDevice = (id: string) => {
     transferPlaybackToDevice(id).then(res => {
-      console.log(res.data) // does not work for some reason
-    }).catch(err => console.log(err))
+      console.log(res.data); // does not work for some reason
+    }).catch(err => console.log(err));
   };
 
   const open = Boolean(anchorEl);

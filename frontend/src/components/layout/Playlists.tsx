@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {FC, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
 import AxiosClient from "../../utils/axiosClient";
 import {useHistory} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";

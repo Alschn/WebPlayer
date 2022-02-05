@@ -1,4 +1,4 @@
-import React, {createContext, FC, ReactNode} from "react";
+import {createContext, FC, ReactNode} from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 interface AuthContextProps {

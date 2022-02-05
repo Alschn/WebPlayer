@@ -1,7 +1,7 @@
-import React, {FC, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {Redirect, useHistory} from "react-router-dom";
-import axios from "axios";
 import useQuery from "../hooks/useQuery";
+import axiosClient from "../utils/axiosClient";
 
 type redirectType = 'CB_SUCCESS' | 'CB_FAILURE' | null;
 
@@ -20,24 +20,24 @@ const SpotifyCallback: FC = () => {
 
   useEffect(() => {
     if (code && !token) (async () => {
-      const token_response = await axios.post('http://localhost:8000/api/auth/spotify-token', {
+      const token_response = await axiosClient.post('http://localhost:8000/api/auth/spotify-token', {
         code: code,
-      })
+      });
 
-      const auth_response = await axios.post('http://localhost:8000/api/auth/login', {
+      const auth_response = await axiosClient.post('http://localhost:8000/api/auth/login', {
         access_token: token_response.data.access_token,
         refresh_token: token_response.data.refresh_token,
         expires_in: token_response.data.expires_in,
-      })
+      });
 
       setToken(auth_response.data.key);
       setRedirectState('CB_SUCCESS');
-    })()
+    })();
     else {
       setRedirectState('CB_FAILURE');
     }
     return () => setRedirectState(null);
-  }, [token, code, error, history])
+  }, [token, code, error, history]);
 
   if (redirectState === 'CB_SUCCESS') {
     return (<Redirect to={{
@@ -48,7 +48,7 @@ const SpotifyCallback: FC = () => {
     return (<Redirect to={{
       pathname: "/",
       state: {authenticated: false}
-    }}/>)
+    }}/>);
   }
 
   return (
@@ -57,7 +57,7 @@ const SpotifyCallback: FC = () => {
       <h1>{code}</h1>
       <h2>{error}</h2>
     </div>
-  )
+  );
 };
 
 export default SpotifyCallback;

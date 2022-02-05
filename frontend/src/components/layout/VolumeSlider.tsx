@@ -1,11 +1,11 @@
-import React, {ChangeEvent, FC, MouseEvent, useState} from 'react';
-import Grid from '@material-ui/core/Grid';
-import VolumeDown from '@material-ui/icons/VolumeDown';
-import VolumeOffIcon from '@material-ui/icons/VolumeOff';
-import VolumeMuteIcon from '@material-ui/icons/VolumeMute';
-import VolumeUpIcon from '@material-ui/icons/VolumeUp';
-import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
-import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
+import {FC, MouseEvent, useMemo, useState} from 'react';
+import Grid from '@mui/material/Grid';
+import VolumeDown from '@mui/icons-material/VolumeDown';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import SpotifySlider from "./SpotifySlider";
 import {setVolume} from "../player/api";
 import {useHistory} from 'react-router-dom';
@@ -13,10 +13,10 @@ import DevicesMenu from "./DevicesMenu";
 
 
 const VolumeSlider: FC = () => {
-  let history = useHistory();
+  const history = useHistory();
   const [value, setValue] = useState(30);
 
-  const handleChange = (event: ChangeEvent<any>, newValue: any): void => {
+  const handleChange = (event: any, newValue: any, activeThumb: any): void => {
     handleSetVolume(newValue);
   };
 
@@ -24,14 +24,14 @@ const VolumeSlider: FC = () => {
     setVolume(Math.floor(volume)).then(() => setValue(volume));
   };
 
-  const getVolumeIcon = (): JSX.Element => {
-    if (60 <= value) return <VolumeUpIcon/>
-    else if (5 < value) return <VolumeDown/>
-    else if (0 < value && value <= 5) return <VolumeMuteIcon/>
+  const VolumeIcon = useMemo(() => {
+    if (60 <= value) return <VolumeUpIcon/>;
+    else if (5 < value) return <VolumeDown/>;
+    else if (0 < value && value <= 5) return <VolumeMuteIcon/>;
     else return <VolumeOffIcon/>;
-  };
+  }, [value]);
 
-  const goToQueue = (): any => history.push('/queue');
+  const goToQueue = (): void => history.push('/queue');
 
   // Devices Menu
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
@@ -53,13 +53,13 @@ const VolumeSlider: FC = () => {
       </Grid>
 
       <Grid item className="volume-slider-icon" onClick={() => handleSetVolume(0)}>
-        {getVolumeIcon()}
+        {VolumeIcon}
       </Grid>
       <Grid item xs className="volume-slider">
         <SpotifySlider value={value} onChange={handleChange} aria-labelledby="volume-slider"/>
       </Grid>
     </Grid>
   );
-}
+};
 
 export default VolumeSlider;

@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import AxiosClient from "../../utils/axiosClient";
 import {getMsToTime} from "../../utils/dataFormat";
@@ -70,7 +70,7 @@ const Playlist: FC = () => {
       setPlaylistInfo(rest);
     }).catch(
       err => console.log(err)
-    )
+    );
   }, [id, shouldUpdate]);
 
   const loadMoreTracks = (): void => {
@@ -79,14 +79,14 @@ const Playlist: FC = () => {
         const {items, next} = res.data;
         setTracks(prevState => [...prevState, ...items]);
         setNext(next);
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(err));
     }
   };
 
   const getPlaylistLength = (): string => {
     if (tracks) {
       let length = 0;
-      tracks.forEach(({track: {duration_ms}}) => length += duration_ms)
+      tracks.forEach(({track: {duration_ms}}) => length += duration_ms);
       return getMsToTime(length);
     }
     return '';
@@ -94,7 +94,7 @@ const Playlist: FC = () => {
 
   const getPlaylistImage = (): string | undefined => {
     if (playlistInfo && playlistInfo.images.length > 0) {
-      return playlistInfo.images[0].url
+      return playlistInfo.images[0].url;
     }
     return undefined;
   };
@@ -105,7 +105,7 @@ const Playlist: FC = () => {
 
   const handleClose = () => {
     if (isOwner) setIsOpen(false);
-  }
+  };
 
   const isOwner = playlistInfo && playlistInfo.owner.id === user_id;
 

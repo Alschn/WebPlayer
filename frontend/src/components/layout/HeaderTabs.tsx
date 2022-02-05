@@ -1,16 +1,11 @@
-import React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import {useHistory} from 'react-router-dom';
-import {Grid} from "@material-ui/core";
+import {Grid, Tab, Tabs} from "@mui/material";
+import {ChangeEvent} from "react";
 
 
 export default function HeaderTabs() {
-  let history = useHistory();
-
-  const handleRouteChange = (event: React.ChangeEvent<{}>, newValue: string) => {
-    history.push(newValue);
-  };
+  const history = useHistory();
+  const handleRouteChange = (event: ChangeEvent<any>, newValue: string) => history.push(newValue);
 
   return (
     <Grid container>

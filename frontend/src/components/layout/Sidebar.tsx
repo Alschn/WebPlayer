@@ -1,11 +1,11 @@
-import React, {FC, useState} from "react";
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import LibraryMusicOutlinedIcon from '@material-ui/icons/LibraryMusicOutlined';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import AddIcon from '@material-ui/icons/Add';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import {Grid} from "@material-ui/core";
+import {FC, useState} from "react";
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import LibraryMusicOutlinedIcon from '@mui/icons-material/LibraryMusicOutlined';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddIcon from '@mui/icons-material/Add';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import {Grid} from "@mui/material";
 import {useHistory} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
 import useUserData from "../../hooks/useUserData";
@@ -32,7 +32,7 @@ const Sidebar: FC = () => {
           const {id} = data;
           history.push(`/playlists/${id}`);
         }
-      ).catch(err => console.log(err))
+      ).catch(err => console.log(err));
     }
   };
 

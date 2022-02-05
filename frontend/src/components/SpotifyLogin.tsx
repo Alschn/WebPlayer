@@ -1,15 +1,15 @@
-import React, {FC} from "react";
-import axios from "axios";
+import {FC} from "react";
+import axiosClient from "../utils/axiosClient";
 
 const SpotifyLogin: FC = () => {
   const handleSpotifyLogin = () => {
-    axios.get('http://localhost:8000/api/spotify-url').then(
+    axiosClient.get('http://localhost:8000/api/spotify-url').then(
       (res) => {
         const {url} = res.data;
         window.location.replace(url);
       }
     ).catch(err => console.error(err));
-  }
+  };
 
   return (
     <>
@@ -17,7 +17,7 @@ const SpotifyLogin: FC = () => {
         Spotify
       </button>
     </>
-  )
+  );
 };
 
 export default SpotifyLogin;

@@ -1,12 +1,12 @@
-import {Grid} from "@material-ui/core";
-import React, {FC} from "react";
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import SkipNextIcon from '@material-ui/icons/SkipNext';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
-import RepeatIcon from '@material-ui/icons/Repeat';
-import RepeatOneIcon from '@material-ui/icons/RepeatOne';
-import ShuffleIcon from '@material-ui/icons/Shuffle';
+import {Grid} from "@mui/material";
+import {FC, useMemo} from "react";
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
+import RepeatIcon from '@mui/icons-material/Repeat';
+import RepeatOneIcon from '@mui/icons-material/RepeatOne';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 import VolumeSlider from "./VolumeSlider";
 import PlayerSlider from "./PlayerSlider";
 import {usePlaybackState, useSpotifyPlayer} from "react-spotify-web-playback-sdk";
@@ -57,20 +57,20 @@ const Footer: FC = () => {
     }
   };
 
-  const getTrackInfo = () => {
+  const TrackInfo = useMemo(() => {
     const track = playbackState?.track_window.current_track;
     if (track) {
       // @ts-ignore
       const artists = getArtistsFromSDK(track.artists);
       const title = track.name;
-      const track_id = track.id // idk if it should be album or track id
+      const track_id = track.id; // idk if it should be album or track id
       const album = getTrackImage(track.album.images);
       return (
         <Grid container alignItems="center" className="footer__left-container">
-          <Grid item className="footer_left-album" xs={2}>
+          <Grid item className="footer_left-album" xs={3} sm={2}>
             <img src={album} alt=""/>
           </Grid>
-          <Grid item className="footer__left-desc" xs={10}>
+          <Grid item className="footer__left-desc" xs={9} sm={10}>
             <Grid container>
               <Grid item xs={12} className="footer__left-title">
                 <Link to={`/tracks/${track_id}`}>
@@ -86,16 +86,16 @@ const Footer: FC = () => {
       );
     }
     return null;
-  };
+  }, [playbackState]);
 
   return (
-    <Grid container justify="space-between" alignItems="center">
+    <Grid container justifyContent="space-between" alignItems="center">
       <Grid item xs={3} className="footer__left">
-        {getTrackInfo()}
+        {TrackInfo}
       </Grid>
 
       <Grid item xs={6} className="footer__center">
-        <Grid container justify="center" alignItems="center" className="player__root">
+        <Grid container justifyContent="center" alignItems="center" className="player__root">
           <Grid item xs={12} className="player__icons">
             {isShuffled() ?
               <ShuffleIcon onClick={() => setShuffle(false)} className="player__icons-green"/> :
@@ -116,7 +116,7 @@ const Footer: FC = () => {
       </Grid>
 
       <Grid item xs={3} className="footer__right">
-        <Grid container justify="flex-end" alignItems="center">
+        <Grid container justifyContent="flex-end" alignItems="center">
           <VolumeSlider/>
         </Grid>
       </Grid>

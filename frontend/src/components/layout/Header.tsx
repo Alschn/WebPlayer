@@ -1,13 +1,13 @@
-import React, {FC, MouseEvent, useState} from "react";
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import {Avatar, Grid} from "@material-ui/core";
+import {FC, MouseEvent, useState} from "react";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {Avatar, Grid} from "@mui/material";
 import {useHistory} from "react-router-dom";
 import HeaderTabs from "./HeaderTabs";
 import {SearchBox} from "../main/Search";
 import UserMenu from "./UserMenu";
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import useUserData from "../../hooks/useUserData";
 
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
@@ -36,7 +36,7 @@ const Header: FC = () => {
       default:
         return null;
     }
-  }
+  };
 
   return (
     <Grid container className="header">

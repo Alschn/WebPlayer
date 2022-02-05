@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {useHistory} from "react-router-dom";
 import AxiosClient from "../../../utils/axiosClient";
@@ -22,7 +22,7 @@ const Playlists: FC = () => {
       setNext(next);
       setPlaylists(items);
     }).catch(err => console.log(err));
-  }, [])
+  }, []);
 
   useEffect(() => {
     AxiosClient.get(
@@ -54,7 +54,7 @@ const Playlists: FC = () => {
       hasMore={next != null}
       loader={<h2>Loading more playlists ...</h2>}
       dataLength={playlists.length}
-      scrollableTarget='content'
+      scrollableTarget="content"
     >
       <Grid container className="library__playlists">
         <Grid item xs={12}>
@@ -82,7 +82,7 @@ const Playlists: FC = () => {
         </Grid>
 
         {playlists.length > 0 && playlists.map(({name, description, images, id}) => (
-          <Grid item xs={2} container justify="center">
+          <Grid item xs={2} container justifyContent="center">
             <div
               className="library__playlists-playlist"
               onClick={() => goToPlaylist(id)}

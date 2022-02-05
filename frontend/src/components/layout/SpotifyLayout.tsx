@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, Fragment, ReactNode} from "react";
+import {Grid} from "@mui/material";
+import {FC, Fragment, ReactNode} from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -12,7 +12,7 @@ interface SpotifyLayoutProps {
 const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
   return (
     <Fragment>
-      <Grid container justify="space-between" className="main" >
+      <Grid container justifyContent="space-between" className="main">
         <Grid item xs={3} lg={2} className="sidebar">
           <Sidebar/>
         </Grid>
@@ -29,7 +29,7 @@ const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
         <Footer/>
       </Grid>
     </Fragment>
-  )
-}
+  );
+};
 
 export default SpotifyLayout;

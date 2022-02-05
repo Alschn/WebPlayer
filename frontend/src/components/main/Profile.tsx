@@ -1,5 +1,5 @@
-import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 import {Link, useHistory, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
@@ -38,8 +38,8 @@ const Profile: FC = () => {
       AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}`)
         .then(res => {
           const {data} = res;
-          setProfileInfo(data)
-        }).catch(err => console.log(err))
+          setProfileInfo(data);
+        }).catch(err => console.log(err));
     }
 
     // fetch 6 public playlists
@@ -48,7 +48,7 @@ const Profile: FC = () => {
         const {data: {items, total}} = res;
         setTotalPlaylists(total);
         setPublicPlaylists(items);
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(err));
 
     // clear public playlist when switching to different profile
     return () => setPublicPlaylists([]);
@@ -61,20 +61,20 @@ const Profile: FC = () => {
         .then(res => {
           const {data: {items}} = res;
           setTopArtists([...items]);
-        }).catch(err => console.log(err))
+        }).catch(err => console.log(err));
 
       // fetch 4 top tracks
       AxiosClient.get('http://localhost:8000/api/spotify/top/tracks?limit=4')
         .then(res => {
           const {data: {items}} = res;
           setTopTracks([...items]);
-        }).catch(err => console.log(err))
-      console.log(topTracks)
+        }).catch(err => console.log(err));
+      console.log(topTracks);
     }
   }, []);
 
   const getUsername = (): string | undefined => {
-    if (url_id === id) return username
+    if (url_id === id) return username;
     else try {
       return profileInfo?.display_name;
     } catch {
@@ -83,7 +83,7 @@ const Profile: FC = () => {
   };
 
   const getUserFollowers = (): number | undefined => {
-    if (url_id === id) return followers
+    if (url_id === id) return followers;
     else try {
       return profileInfo?.followers?.total;
     } catch {
@@ -106,11 +106,11 @@ const Profile: FC = () => {
 
   const getImageOrUndefined = (images: any[]) => {
     try {
-      return images[0].url
+      return images[0].url;
     } catch {
-      return undefined
+      return undefined;
     }
-  }
+  };
 
   const renderMostPopularArtists = () => (
     <Grid container className="profile__popular_artists">
@@ -220,7 +220,7 @@ const Profile: FC = () => {
         ))}
       </Grid>
     </Grid>
-  )
+  );
 };
 
 export default Profile;

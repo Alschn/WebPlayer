@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {useParams} from "react-router-dom";
 import Albums from './library/Albums';
 import Podcasts from "./library/Podcasts";

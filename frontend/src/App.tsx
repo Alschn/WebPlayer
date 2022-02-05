@@ -1,4 +1,4 @@
-import React, {FC, Fragment} from 'react';
+import {FC, Fragment} from 'react';
 import './App.scss';
 import {AuthContextProvider} from "./context/authContext";
 import Router from "./routes";
@@ -18,6 +18,6 @@ const App: FC = () => {
       </AuthContextProvider>
     </Fragment>
   );
-}
+};
 
 export default App;
