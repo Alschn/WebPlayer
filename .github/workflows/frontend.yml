@@ -2,8 +2,6 @@ name: WebPlayer Tests frontend
 
 on:
   push:
-    branches:
-      - '!master'
 
   pull_request:
     branches:

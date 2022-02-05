@@ -2,8 +2,6 @@ name: WebPlayer Backend Tests
 
 on:
   push:
-    branches:
-      - '!master'
 
   pull_request:
     branches:
