@@ -3,7 +3,7 @@ name: WebPlayer Backend Tests
 on:
   push:
     branches:
-      - dev
+      - '!master'
 
   pull_request:
     branches:
@@ -19,22 +19,21 @@ jobs:
 
     services:
       postgres:
-        image: postgres:10.8
+        image: postgres:14.0
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: psycopg2 prerequisites
         run: sudo apt-get install libpq-dev
       - name: Install dependencies
@@ -45,4 +44,4 @@ jobs:
       - name: Django tests
         run: coverage run manage.py test
       - name: Tests coverage
-        run: coverage report
+        run: coverage report -m
