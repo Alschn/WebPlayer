@@ -13,12 +13,13 @@ const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
   return (
     <Fragment>
       <Grid container justifyContent="space-between" className="main">
+        <Header/>
+
         <Grid item xs={3} lg={2} className="sidebar">
           <Sidebar/>
         </Grid>
 
         <Grid item xs={9} lg={10}>
-          <Header/>
           <div className="content" id="content">
             {children}
           </div>

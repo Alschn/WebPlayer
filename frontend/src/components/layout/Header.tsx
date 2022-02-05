@@ -13,7 +13,7 @@ import useUserData from "../../hooks/useUserData";
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
 const Header: FC = () => {
-  let history = useHistory();
+  const history = useHistory();
   const {username, imageURL, id} = useUserData();
 
   // User Menu
@@ -40,25 +40,31 @@ const Header: FC = () => {
 
   return (
     <Grid container className="header">
-      <Grid item className="header__left">
-        <ChevronLeftIcon className="header__back" onClick={pageBack}/>
-        <ChevronRightIcon className="header__forward" onClick={pageForward}/>
+      <Grid item xs={3} lg={2} className="header-spacing"/>
+
+      <Grid container item xs={9} lg={10} className="header-content">
+        <Grid item className="header__left">
+          <ChevronLeftIcon className="header__back" onClick={pageBack}/>
+          <ChevronRightIcon className="header__forward" onClick={pageForward}/>
+        </Grid>
+
+        <Grid item className="header__location">
+          {getLocationBasedPart()}
+        </Grid>
+
+        <Grid item xs={2} className="header__right">
+          {username && (
+            <div className="header__right-user" onClick={handleOpenMenu}>
+              {imageURL && <Avatar alt="avatar" src={imageURL}/>}
+              {username && <span className="header__right-user-name">{username}</span>}
+              {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+            </div>
+          )}
+          <UserMenu profileID={id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
+        </Grid>
       </Grid>
 
-      <Grid item className="header__location">
-        {getLocationBasedPart()}
-      </Grid>
 
-      <Grid item xs={2} className="header__right">
-        {username && (
-          <div className="header__right-user" onClick={handleOpenMenu}>
-            {imageURL && <Avatar alt="avatar" src={imageURL}/>}
-            {username && <span className="header__right-user-name">{username}</span>}
-            {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
-          </div>
-        )}
-        <UserMenu profileID={id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
-      </Grid>
     </Grid>
   );
 };
