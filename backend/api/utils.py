@@ -3,8 +3,7 @@ from datetime import timedelta
 from typing import Optional, Dict, Union, List, Literal
 
 from allauth.socialaccount.models import SocialToken
-# noinspection PyUnresolvedReferences
-from config import CLIENT_ID, CLIENT_SECRET
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 from requests import post, put, get, Response
@@ -53,8 +52,8 @@ def refresh_spotify_token(user: User) -> None:
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET
+        'client_id': settings.CLIENT_ID,
+        'client_secret': settings.CLIENT_SECRET
     }).json()
 
     access_token: str = response.get('access_token')
@@ -63,8 +62,10 @@ def refresh_spotify_token(user: User) -> None:
     update_user_token(user, access_token, expires_in, refresh_token)
 
 
-def execute_spotify_api_call(user: User, endpoint: str, data=None, post_=False, put_=False, other_base_url=None) \
-    -> Union[Response, Dict[str, str]]:
+def execute_spotify_api_call(
+    user: User, endpoint: str, data=None,
+    post_=False, put_=False, other_base_url=None
+) -> Union[Response, Dict[str, str]]:
     token = get_user_token(user)
     spotify_token = token.token
     headers = {
@@ -221,7 +222,9 @@ def update_playlist(user: User, playlist_id: str, payload: Dict[str, str]) -> Un
     )
 
 
-def get_artist(user: User, artist_id: str, endpoint_type: ArtistEndpointType = "", **kwargs) -> Union[Response, Dict[str, str]]:
+def get_artist(
+    user: User, artist_id: str, endpoint_type: ArtistEndpointType = "", **kwargs
+) -> Union[Response, Dict[str, str]]:
     endpoint = f"artists/{artist_id}{endpoint_type}"
 
     if endpoint_type == '/albums':

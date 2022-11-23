@@ -1,17 +1,17 @@
 from datetime import timedelta
 from typing import Optional
 
-from allauth.socialaccount.models import SocialToken, SocialAccount
+import requests
+from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp
 from allauth.socialaccount.providers.spotify.views import SpotifyOAuth2Adapter
-# noinspection PyUnresolvedReferences
-from config import REDIRECT_URI, CLIENT_ID, CLIENT_SECRET, DOMAIN_URL
+from dj_rest_auth.registration.serializers import SocialLoginSerializer
+from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.views import LogoutView
+from django.conf import settings
 from django.utils import timezone
-from requests import Request, post
-from rest_auth.registration.serializers import SocialLoginSerializer
-from rest_auth.registration.views import SocialLoginView
-from rest_auth.views import LogoutView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -61,65 +61,85 @@ SCOPES = [
     "user-read-email", "user-read-private",
 ]
 
+SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize'
+SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
 class GetSpotifyAuthURL(APIView):
-    """api/spotify-url"""
+    """/api/spotify-url"""
 
-    def get(self, request):
+    def get(self, request: Request, *args, **kwargs) -> Response:
         """Client requests spotify url prepared by the backend."""
 
         scopes = ' '.join(SCOPES)
-        url = Request('GET', 'https://accounts.spotify.com/authorize', params={
+        url = requests.Request('GET', SPOTIFY_AUTHORIZE_URL, params={
             'scope': scopes,
             'response_type': 'code',
-            'redirect_uri': REDIRECT_URI,
-            'client_id': CLIENT_ID
+            'redirect_uri': settings.REDIRECT_URI,
+            'client_id': settings.CLIENT_ID
         }).prepare().url
         return Response({'url': url}, status=status.HTTP_200_OK)
 
 
 class GetSpotifyAccessToken(APIView):
-    """api/auth/spotify-token"""
+    """/api/auth/spotify-token"""
 
-    def post(self, request):
+    def post(self, request: Request, *args, **kwargs) -> Response:
         """Sends authorization code to Spotify api endpoint.
         Responds with access_token, refresh_token, expires_in, token_type."""
         code = request.data.get('code')
 
-        if code:
-            response = post('https://accounts.spotify.com/api/token', data={
-                'grant_type': 'authorization_code',
-                'code': code,
-                'redirect_uri': REDIRECT_URI,
-                'client_id': CLIENT_ID,
-                'client_secret': CLIENT_SECRET
-            }).json()
-            return Response(response, status=status.HTTP_200_OK)
-        return Response({'Error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+        if not code:
+            return Response({'error': 'Code not found in request'}, status=status.HTTP_400_BAD_REQUEST)
+
+        response = requests.post(SPOTIFY_TOKEN_URL, data={
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': settings.REDIRECT_URI,
+            'client_id': settings.CLIENT_ID,
+            'client_secret': settings.CLIENT_SECRET
+        }).json()
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class SpotifyLogin(SocialLoginView):
-    """api/auth/login"""
+    """/api/auth/login"""
+
     adapter_class = SpotifyOAuth2Adapter
     serializer_class = SocialLoginSerializer
 
-    def post(self, request, *args, **kwargs):
-        login_response = super(SpotifyLogin, self).post(request, *args, **kwargs)
-        access_token = request.data.get("access_token")
-        refresh_token = request.data.get("refresh_token")
-        expires_in = request.data.get("expires_in")
+    def finalize_response(self, request: Request, response: Response, *args, **kwargs) -> Response:
+        """Create social token and update response data if response was successful."""
 
-        if not login_response.data.get('key'):
-            return Response({'Error': "Key was not returned in response"}, status=status.HTTP_404_NOT_FOUND)
+        if response.status_code != status.HTTP_200_OK:
+            return super().finalize_response(request, response, *args, **kwargs)
 
-        token = SocialToken.objects.get(token=access_token)
-        token.token_secret = refresh_token
-        token.expires_at = timezone.now() + timedelta(seconds=expires_in)
-        token.save(update_fields=['token_secret', 'expires_at'])
-        return Response(login_response.data, status=status.HTTP_201_CREATED)
+        raw_response = response.data
 
-    # This fixes issue with login view in the latest version of drf
+        access_token = request.data['access_token']
+        refresh_token = request.data['refresh_token']
+        expires_in = request.data['expires_in']
+
+        social_account = SocialAccount.objects.get(user=request.user)
+
+        token = SocialToken.objects.update_or_create(
+            app=SocialApp.objects.get(provider='spotify'),
+            account=social_account,
+            defaults={
+                'token': access_token,
+                'token_secret': refresh_token,
+                'expires_at': timezone.now() + timedelta(seconds=expires_in)
+            }
+        )
+        response.status_code = status.HTTP_201_CREATED
+        response.data = {
+            'key': raw_response['key'],
+            'user': social_account.extra_data
+        }
+        return super().finalize_response(request, response, *args, **kwargs)
+
     def get_serializer(self, *args, **kwargs):
+        # This fixes issue with login view in the latest version of drf
         serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
@@ -342,6 +362,7 @@ class GetUserPlaylists(APIView):
 
 class GetSavedItems(APIView):
     """api/spotify/saved"""
+
     def get(self, request):
         sender = request.user
         saved_tracks = get_saved_items(sender)
@@ -413,6 +434,7 @@ class UsersPlaylists(APIView):
 
 class FollowOthers(APIView):
     """api/spotify/follow/{ids}"""
+
     # to do
 
     def get(self):

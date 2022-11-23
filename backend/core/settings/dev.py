@@ -12,8 +12,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 ROOT_DIR = BASE_DIR.parent
 
 # Quick-start development settings - unsuitable for production
@@ -45,8 +50,10 @@ INSTALLED_APPS = [
     # cors headers
     'corsheaders',
     # rest_auth
-    'rest_auth',
-    'rest_auth.registration',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    # 'rest_auth',
+    # 'rest_auth.registration',
     # all_auth
     'allauth',
     'allauth.account',
@@ -185,3 +192,13 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # social accounts
 SITE_ID = 1
+
+# Spotify API related settings
+
+REDIRECT_URI = os.environ.get('REDIRECT_URI_DEV') if DEBUG else os.environ.get('REDIRECT_URI')
+
+CLIENT_ID = os.environ.get('CLIENT_ID')
+
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+
+DOMAIN_URL = 'http://localhost:8000' if DEBUG else ''

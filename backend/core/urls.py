@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
@@ -28,21 +29,22 @@ schema_view = get_schema_view(
         license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=[permissions.AllowAny],
 )
 
-# noinspection PyUnresolvedReferences
 urlpatterns = [
     path('admin/', admin.site.urls),
     # applications
     path('api/', include('api.urls')),
     # rest auth
-    path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('rest-auth/', include('dj_rest_auth.urls')),
+    path('rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.urls')),
     # docs
-    path(r'api/swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path(r'api/redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    # react router
-    re_path('.*', TemplateView.as_view(template_name='index.html')),
+    path(r'docs/swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path(r'docs/redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
+if not settings.DEBUG:
+    # react static files
+    urlpatterns += re_path('.*', TemplateView.as_view(template_name='index.html'))
