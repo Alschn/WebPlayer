@@ -60,7 +60,7 @@ const SavedTracks: FC = () => {
           <h4>PLAYLIST</h4>
           <h1 id="favourite-tracks-title">Favourite tracks</h1>
           <p className="playlist__info-right__stats">
-            <img src={imageURL} alt="user-avatar"/>
+            <img src={imageURL} alt=""/>
             <Link to={`/profiles/${id}`}>{username}</Link> · {totalCount} tracks
           </p>
         </Grid>

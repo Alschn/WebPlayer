@@ -32,9 +32,7 @@ const PrivateRoute = ({component: Component, path, exact=true}: PrivateRouteProp
       </SpotifyLayout>
     </Route>
   ) : (
-    <Redirect
-      to="/"
-    />
+    <Redirect to="/"/>
   )
 };
 

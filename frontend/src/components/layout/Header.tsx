@@ -12,6 +12,17 @@ import useUserData from "../../hooks/useUserData";
 
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
+const LocationBasedHeaderTabs = () => {
+  const history = useHistory();
+  const loc = history.location.pathname;
+
+  if (libraryPaths.includes(loc)) return <HeaderTabs/>;
+
+  else if (loc === '/search') return <SearchBox/>;
+
+  return null;
+};
+
 const Header: FC = () => {
   const history = useHistory();
   const {username, imageURL, id} = useUserData();
@@ -25,19 +36,6 @@ const Header: FC = () => {
 
   const pageForward = () => history.goForward();
 
-  const getLocationBasedPart = (): JSX.Element | null => {
-    const loc = history.location.pathname;
-
-    if (libraryPaths.includes(loc)) return <HeaderTabs/>;
-
-    switch (loc) {
-      case '/search':
-        return <SearchBox/>;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Grid container className="header">
       <Grid item xs={3} lg={2} className="header-spacing"/>
@@ -49,7 +47,7 @@ const Header: FC = () => {
         </Grid>
 
         <Grid item className="header__location">
-          {getLocationBasedPart()}
+          <LocationBasedHeaderTabs/>
         </Grid>
 
         <Grid item xs={2} className="header__right">

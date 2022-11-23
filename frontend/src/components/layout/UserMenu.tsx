@@ -2,6 +2,8 @@ import {Divider, List, ListItem, Popover} from "@mui/material";
 import {FC} from "react";
 import {useHistory} from "react-router-dom";
 import {performLogout} from "../../utils/api";
+import useAuth from "../../hooks/useAuth";
+import useUserData from "../../hooks/useUserData";
 
 interface UserMenuProps {
   profileID: string | undefined,
@@ -10,6 +12,8 @@ interface UserMenuProps {
 }
 
 const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
+  const {setToken} = useAuth();
+  const {clearUser} = useUserData();
   let history = useHistory();
 
   const goToAccount = () => window.location.replace('https://www.spotify.com/');
@@ -21,9 +25,9 @@ const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
   const logout = () => {
     performLogout().then(() => {
       localStorage.removeItem('token');
-      localStorage.removeItem('expirationDate');
-      history.push('/');
-    }).catch(err => console.log(err))
+      setToken(null);
+      clearUser();
+    }).catch(err => console.log(err));
   };
 
   const open = Boolean(anchorEl);
@@ -65,6 +69,6 @@ const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
       </List>
     </Popover>
   );
-}
+};
 
 export default UserMenu;
