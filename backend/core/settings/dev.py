@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-r+99v*lem4_ik4$bnt)l1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     # django utils
     'django_filters',
+    'django_extensions',
     # cors headers
     'corsheaders',
     # rest_auth
@@ -62,7 +63,8 @@ INSTALLED_APPS = [
     # openapi documentation
     'drf_yasg',
     # apps
-    'api',
+    'spotify_adapter',
+    'spotify_auth',
 ]
 
 MIDDLEWARE = [
