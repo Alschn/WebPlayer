@@ -7,10 +7,10 @@ from spotify_auth.views.spotify_url import GetSpotifyAuthURLView
 
 urlpatterns = [
     # auth endpoints
-    path('url', GetSpotifyAuthURLView.as_view()),
-    path('access', GetSpotifyAccessTokenView.as_view()),
-    path('login', SpotifyLoginView.as_view()),
+    path('url/', GetSpotifyAuthURLView.as_view()),
+    path('access/', GetSpotifyAccessTokenView.as_view()),
+    path('login/', SpotifyLoginView.as_view()),
 
     # Spotify token used to initialize SDK
-    path('token', GetCurrentSpotifyTokenView.as_view()),
+    path('token/', GetCurrentSpotifyTokenView.as_view()),
 ]

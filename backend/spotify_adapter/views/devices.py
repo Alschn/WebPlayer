@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class AvailableDevicesView(APIView):
-    """/api/spotify/devices"""
+    """/api/spotify/devices/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

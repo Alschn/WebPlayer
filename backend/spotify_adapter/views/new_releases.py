@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 
 class NewReleasesView(APIView):
-    """/api/spotify/new-releases"""
+    """/api/spotify/new-releases/"""
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         pass

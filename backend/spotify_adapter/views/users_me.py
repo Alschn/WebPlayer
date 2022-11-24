@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 
 class GetCurrentUserView(APIView):
-    """/api/spotify/users"""
+    """/api/spotify/users/"""
 
     permission_classes = [IsAuthenticated]
 

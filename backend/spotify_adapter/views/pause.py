@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class PauseSongView(APIView):
-    """/api/spotify/pause"""
+    """/api/spotify/player/pause/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class SeekPositionView(APIView):
-    """/api/spotify/seek"""
+    """/api/spotify/player/seek/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

@@ -9,7 +9,7 @@ from spotify_adapter.utils import get_saved_items, get_next_items
 
 
 class GetSavedItemsView(APIView):
-    """api/spotify/saved"""
+    """/api/spotify/saved/"""
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         sender = request.user

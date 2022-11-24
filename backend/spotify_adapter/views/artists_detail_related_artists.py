@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class GetRelatedArtistsView(APIView):
-    """/api/spotify/artists/{artist_id}/related-artists"""
+    """/api/spotify/artists/{artist_id}/related-artists/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

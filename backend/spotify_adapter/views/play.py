@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class PlaySongView(APIView):
-    """api/spotify/play"""
+    """/api/spotify/player/play/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

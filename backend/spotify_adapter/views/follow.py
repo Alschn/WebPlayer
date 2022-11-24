@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 
 class FollowUsersView(APIView):
-    """/api/spotify/follow/{ids}"""
+    """/api/spotify/follow/{ids}/"""
 
     # to do
 

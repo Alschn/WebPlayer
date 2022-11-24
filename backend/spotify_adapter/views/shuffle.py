@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class SetShuffleView(APIView):
-    """/api/spotify/shuffle"""
+    """/api/spotify/player/shuffle/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

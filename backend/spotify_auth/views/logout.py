@@ -3,6 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class LogoutView(BaseLogoutView):
-    """/api/auth/logout"""
+    """/api/auth/logout/"""
 
     permission_classes = [IsAuthenticated]

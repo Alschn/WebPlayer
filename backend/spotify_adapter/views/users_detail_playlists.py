@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class UsersPlaylistsView(APIView):
-    """/api/spotify/users/{user_id}/playlists"""
+    """/api/spotify/users/{user_id}/playlists/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

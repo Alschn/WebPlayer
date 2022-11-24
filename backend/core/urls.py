@@ -39,11 +39,7 @@ urlpatterns = [
     # applications
     path('api/spotify/', include('spotify_adapter.urls')),
     path('api/auth/spotify/', include('spotify_auth.urls')),
-    path('api/auth/logout', LogoutView.as_view(), name='logout'),
-    # rest auth, all auth
-    path('rest-auth/', include('dj_rest_auth.urls')),
-    path('rest-auth/registration/', include('dj_rest_auth.registration.urls')),
-    path('accounts/', include('allauth.urls')),
+    path('api/auth/logout/', LogoutView.as_view(), name='logout'),
     # docs
     path(r'docs/swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path(r'docs/redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

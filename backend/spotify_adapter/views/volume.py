@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class SetVolumeView(APIView):
-    """/api/spotify/volume"""
+    """/api/spotify/player/volume/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class SetRepeatModeView(APIView):
-    """/api/spotify/repeat"""
+    """/api/spotify/player/repeat/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 

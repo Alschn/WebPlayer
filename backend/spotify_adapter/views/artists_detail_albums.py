@@ -11,7 +11,7 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class GetArtistsAlbumsView(APIView):
-    """/api/spotify/artists/{artist_id}/albums"""
+    """/api/spotify/artists/{artist_id}/albums/"""
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
