@@ -9,8 +9,8 @@ import {
   SpotifyPublicUserObject,
   SpotifyTrackObject
 } from "../../types/spotify";
-import AxiosClient from "../../utils/axiosClient";
 import useUserData from "../../hooks/useUserData";
+import AxiosClient from "../../api/AxiosClient";
 
 const Profile: FC = () => {
   // url parameter - user id

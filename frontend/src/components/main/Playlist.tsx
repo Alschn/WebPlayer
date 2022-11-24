@@ -1,7 +1,6 @@
 import {Grid} from "@mui/material";
 import {FC, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import AxiosClient from "../../utils/axiosClient";
 import {getMsToTime} from "../../utils/dataFormat";
 import {
   SpotifyExternalUrlObject,
@@ -11,9 +10,10 @@ import {
   SpotifyPublicUserObject
 } from "../../types/spotify";
 import SpotifyTable from "../layout/SpotifyTable";
-import {loadMoreItems} from "../../utils/api";
 import EditPlaylistDialog from "./playlist/EditPlaylistDialog";
 import useUserData from "../../hooks/useUserData";
+import AxiosClient from "../../api/AxiosClient";
+import {loadMoreItems} from "../../api/spotify_adapter";
 
 export interface SpotifyPlaylistInfo {
   collaborative: boolean,

@@ -1,10 +1,12 @@
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {API_URL} from "../config";
 
-const AxiosClient = axios.create({
+export const axiosConfig: AxiosRequestConfig = {
+  headers: {'Content-Type': 'application/json'},
   baseURL: API_URL,
-  headers: {'Content-Type': 'application/json'}
-});
+};
+
+const AxiosClient = axios.create(axiosConfig);
 
 // before sending request attach auth token
 AxiosClient.interceptors.request.use(

@@ -1,8 +1,8 @@
 import {FC} from "react";
-import axiosClient from "../utils/axiosClient";
+import AxiosClient from "../api/AxiosClient";
 
 const handleSpotifyLogin = () => {
-  axiosClient.get('/spotify-url').then(
+  AxiosClient.get('/spotify/url/').then(
     (res) => {
       const {url} = res.data;
       window.location.replace(url);

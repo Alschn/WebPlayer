@@ -1,10 +1,9 @@
 import {FC, useEffect, useState} from "react";
 import {Grid} from "@mui/material";
-import AxiosClient from "../../utils/axiosClient";
 import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
-import {loadMoreItems} from "../../utils/api";
+import {getPlaylists, loadMoreItems} from "../../api/spotify_adapter";
 
 interface SidebarPlaylistsProps {
   newPlaylist?: SpotifySimplifiedPlaylistObject | null,
@@ -16,9 +15,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(
-      `/spotify/playlists`
-    ).then(res => {
+    getPlaylists().then(res => {
       const {items, next} = res.data;
       setNext(next);
       setPlaylists(items);

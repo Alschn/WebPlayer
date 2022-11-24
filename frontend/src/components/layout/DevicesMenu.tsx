@@ -1,13 +1,13 @@
 import {FC, useEffect, useState} from "react";
 import {Grid, List, ListItem, Popover} from "@mui/material";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import AxiosClient from "../../utils/axiosClient";
 import {deviceType, SpotifyDeviceObject} from "../../types/spotify";
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 import ComputerIcon from '@mui/icons-material/Computer';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import SpeakerIcon from '@mui/icons-material/Speaker';
 import {transferPlaybackToDevice} from "../player/api";
+import {getDevices} from "../../api/spotify_adapter";
 
 interface DevicesMenuProps {
   anchorEl: Element | null,
@@ -18,12 +18,12 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
   const [devices, setDevices] = useState<SpotifyDeviceObject[]>([]);
 
   useEffect(() => {
-    anchorEl != null && AxiosClient.get('/spotify/devices')
-      .then(res => {
-        const {data: {devices}} = res;
-        setDevices([...devices].reverse());
-      })
-      .catch(err => console.log(err));
+    if (anchorEl == null) return;
+
+    getDevices().then(res => {
+      const {data: {devices}} = res;
+      setDevices([...devices].reverse());
+    }).catch(err => console.log(err));
   }, [anchorEl]);
 
   const getIconByType = (type: deviceType) => {
@@ -70,7 +70,7 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
         </ListItem>
 
         {devices.length > 0 && devices.map(({name, type, is_active, id}) => (
-          <ListItem button onClick={() => selectDevice(id)}> {/* not working for some reason*/}
+          <ListItem onClick={() => selectDevice(id)}> {/* not working for some reason*/}
             {is_active ? (
                 <Grid container className="device-active" alignItems="center">
                   <Grid item xs={2} className="device-icon">

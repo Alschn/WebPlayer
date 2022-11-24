@@ -2,9 +2,9 @@ import {FC, useContext, useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import {Link} from "react-router-dom";
 import UserContext from "../../context/userContext";
-import AxiosClient from "../../utils/axiosClient";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import SpotifyTable from "../layout/SpotifyTable";
+import AxiosClient from "../../api/AxiosClient";
 
 interface SpotifyPlaylistTrack {
   added_at: string,
@@ -30,7 +30,7 @@ const SavedTracks: FC = () => {
       setTotalCount(total);
     }).catch(
       err => console.log(err)
-    )
+    );
   }, []);
 
   const loadMoreTracks = (): void => {
@@ -43,7 +43,7 @@ const SavedTracks: FC = () => {
         setNext(next);
       }).catch(
         err => console.log(err)
-      )
+      );
     }
   };
 

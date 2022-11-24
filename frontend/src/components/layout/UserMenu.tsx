@@ -1,9 +1,9 @@
 import {Divider, List, ListItem, Popover} from "@mui/material";
 import {FC} from "react";
 import {useNavigate} from "react-router-dom";
-import {performLogout} from "../../utils/api";
 import useAuth from "../../hooks/useAuth";
 import useUserData from "../../hooks/useUserData";
+import {performLogout} from "../../api/spotify_adapter";
 
 interface UserMenuProps {
   profileID: string | undefined,

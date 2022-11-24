@@ -5,10 +5,10 @@ import {Button, capitalize, Grid, IconButton} from "@mui/material";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import {getArtistData} from "../../utils/api";
 import SpotifyArtistTable from "../layout/SpotifyArtistTable";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
 import {getYearFromDate} from "../../utils/dataFormat";
+import {getArtistData} from "../../api/spotify_adapter";
 
 
 const Artist: FC = () => {

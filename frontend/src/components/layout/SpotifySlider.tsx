@@ -1,6 +1,7 @@
 import Slider from "@mui/material/Slider";
 import {styled} from "@mui/styles";
 
+// todo style this new way
 const SpotifySlider = styled(Slider)(() => ({
   '&.MuiSlider-root': {
     color: "#9e9e9e",

@@ -1,6 +1,6 @@
 import {createContext, FC, ReactNode, useEffect, useState} from "react";
-import axiosClient from "../utils/axiosClient";
 import useAuth from "../hooks/useAuth";
+import AxiosClient from "../api/AxiosClient";
 
 interface UserContextProps {
   username: string | undefined;
@@ -32,7 +32,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({children}) =>
 
   useEffect(() => {
     if (!userData && token) {
-      axiosClient.get(`/spotify/users`)
+      AxiosClient.get(`/spotify/users/`)
         .then(res => {
           setUserData(res.data);
         })

@@ -2,9 +2,9 @@ import {Grid} from "@mui/material";
 import {FC, useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {useNavigate} from "react-router-dom";
-import AxiosClient from "../../../utils/axiosClient";
 import {getArtistsString} from "../../../utils/dataFormat";
-import {loadMoreItems} from "../../../utils/api";
+import AxiosClient from "../../../api/AxiosClient";
+import {getPlaylists, loadMoreItems} from "../../../api/spotify_adapter";
 
 const Playlists: FC = () => {
   const navigate = useNavigate();
@@ -15,9 +15,7 @@ const Playlists: FC = () => {
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(
-      `/spotify/playlists`
-    ).then(res => {
+    getPlaylists().then(res => {
       const {items, next} = res.data;
       setNext(next);
       setPlaylists(items);

@@ -1,10 +1,10 @@
 import {FC, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import AxiosClient from "../../utils/axiosClient";
 import {SpotifySimplifiedTrackObject} from "../../types/spotify";
 import {Grid} from "@mui/material";
 import {getPlaylistLength} from "../../utils/dataFormat";
 import SpotifyTable from "../layout/SpotifyTable";
+import AxiosClient from "../../api/AxiosClient";
 
 
 const Album: FC = () => {

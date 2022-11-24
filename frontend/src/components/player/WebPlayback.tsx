@@ -1,7 +1,7 @@
 import {FC, Fragment, ReactNode, useCallback} from "react";
 import {WebPlaybackSDK} from "react-spotify-web-playback-sdk";
-import axiosClient from "../../utils/axiosClient";
 import useAuth from "../../hooks/useAuth";
+import AxiosClient from "../../api/AxiosClient";
 
 
 interface WebPlaybackProps {
@@ -9,9 +9,9 @@ interface WebPlaybackProps {
 }
 
 const fetchSpotifyToken = () => {
-  return axiosClient.get(`/spotify/token`)
-    .then(res => res.data.token)
-    .catch(err => console.log(err));
+  return AxiosClient.get(`/spotify/token/`).then(
+    res => res.data.token
+  ).catch(err => console.log(err));
 };
 
 const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
