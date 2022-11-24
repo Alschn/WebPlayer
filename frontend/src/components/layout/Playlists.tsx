@@ -1,7 +1,7 @@
 import {FC, useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import AxiosClient from "../../utils/axiosClient";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
 import {loadMoreItems} from "../../utils/api";
@@ -11,7 +11,7 @@ interface SidebarPlaylistsProps {
 }
 
 const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
-  let history = useHistory();
+  const navigate = useNavigate();
   const [playlists, setPlaylists] = useState<SpotifySimplifiedPlaylistObject[]>([]);
   const [next, setNext] = useState<string | null>(null);
 
@@ -23,14 +23,14 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
       setNext(next);
       setPlaylists(items);
     }).catch(err => console.log(err));
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (newPlaylist) {
       // whenever new playlist is created, update the list
       setPlaylists(prevState => [newPlaylist, ...prevState]);
     }
-  }, [newPlaylist])
+  }, [newPlaylist]);
 
   const loadMorePlaylists = (): void => {
     if (next) {
@@ -44,8 +44,8 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
   };
 
   const goToPlaylistRoute = (playlist_id: string): void => {
-    history.push(`/playlists/${playlist_id}`);
-  }
+    navigate(`/playlists/${playlist_id}`);
+  };
 
   return (
     <Grid className="playlists" id="sidebar-playlists">
@@ -54,7 +54,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
         hasMore={next != null}
         loader={<p>Loading more playlists ...</p>}
         dataLength={playlists.length}
-        scrollableTarget='sidebar-playlists'
+        scrollableTarget="sidebar-playlists"
       >
         {playlists && playlists.map(
           ({name, id, collaborative}, index) => (
@@ -68,7 +68,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
         )}
       </InfiniteScroll>
     </Grid>
-  )
-}
+  );
+};
 
 export default SidebarPlaylists;

@@ -6,18 +6,14 @@ import {getMsToTime} from "../../utils/dataFormat";
 import {
   SpotifyExternalUrlObject,
   SpotifyFollowersObject,
-  SpotifyImageObject, SpotifyPlaylistTrackObject,
+  SpotifyImageObject,
+  SpotifyPlaylistTrackObject,
   SpotifyPublicUserObject
 } from "../../types/spotify";
 import SpotifyTable from "../layout/SpotifyTable";
 import {loadMoreItems} from "../../utils/api";
 import EditPlaylistDialog from "./playlist/EditPlaylistDialog";
 import useUserData from "../../hooks/useUserData";
-
-
-interface Parameters {
-  id: string,
-}
 
 export interface SpotifyPlaylistInfo {
   collaborative: boolean,
@@ -38,7 +34,7 @@ export interface SpotifyPlaylistInfo {
 
 const Playlist: FC = () => {
   // url parameter
-  let {id} = useParams<Parameters>();
+  let {id} = useParams();
 
   const {id: user_id} = useUserData();
 
@@ -57,7 +53,7 @@ const Playlist: FC = () => {
 
 
   useEffect(() => {
-    AxiosClient.get(`/spotify/playlists/${id}`).then(res => {
+    AxiosClient.get(`/spotify/playlists/${id as string}`).then(res => {
       const {tracks: {items, next, total}, ...rest} = res.data;
       if (shouldUpdate > 0) {
         // no need to fetch tracks again, they stay the same
@@ -75,7 +71,7 @@ const Playlist: FC = () => {
 
   const loadMoreTracks = (): void => {
     if (next) {
-      loadMoreItems(`/spotify/playlists/${id}`, next).then(res => {
+      loadMoreItems(`/spotify/playlists/${id as string}`, next).then(res => {
         const {items, next} = res.data;
         setTracks(prevState => [...prevState, ...items]);
         setNext(next);
@@ -158,9 +154,9 @@ const Playlist: FC = () => {
       </Grid>
 
       {next &&
-      <button onClick={loadMoreTracks}>
-        Load more
-      </button>}
+        <button onClick={loadMoreTracks}>
+          Load more
+        </button>}
 
       <div className="playlist__recommended">
 

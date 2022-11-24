@@ -8,16 +8,16 @@ interface WebPlaybackProps {
   children: ReactNode;
 }
 
+const fetchSpotifyToken = () => {
+  return axiosClient.get(`/spotify/token`)
+    .then(res => res.data.token)
+    .catch(err => console.log(err));
+};
+
 const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
   const {isAuthenticated} = useAuth();
 
-  const fetchSpotifyToken = () => {
-    return axiosClient.get(`/spotify/token`)
-      .then(res => res.data.token)
-      .catch(err => console.log(err));
-  };
-
-  const getOAuthToken = useCallback(callback => {
+  const getOAuthToken: Spotify.PlayerInit['getOAuthToken'] = useCallback((callback: (token: any) => void) => {
     const token = fetchSpotifyToken();
     callback(token);
   }, []);
@@ -29,10 +29,11 @@ const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
   );
 
   return (
+    // something is wrong with web playback sdk
     <WebPlaybackSDK
-      deviceName="Web Player"
+      initialDeviceName={"Web Player"}
       getOAuthToken={getOAuthToken}
-      volume={0.3}
+      initialVolume={0.3}
       connectOnInitialized
     >
       {children}

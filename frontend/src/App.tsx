@@ -1,9 +1,8 @@
 import {FC} from 'react';
-import {AuthContextProvider} from "./context/authContext";
-import Router from "./routes";
+import {AuthContextProvider} from "./context/AuthContext";
 import {UserContextProvider} from "./context/userContext";
 import WebPlayback from "./components/player/WebPlayback";
-import './App.scss';
+import Router from "./routing/Router";
 
 const App: FC = () => {
   return (

@@ -6,7 +6,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '@mui/icons-material/Add';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid} from "@mui/material";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
 import useUserData from "../../hooks/useUserData";
 import {createNewPlaylist} from "../../utils/api";
@@ -14,7 +14,7 @@ import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
 
 
 const Sidebar: FC = () => {
-  let history = useHistory();
+  const navigate = useNavigate();
   const {id: user_id} = useUserData();
 
   const [newPlaylist, setNewPlaylist] = useState<SpotifySimplifiedPlaylistObject | null>(null);
@@ -22,7 +22,7 @@ const Sidebar: FC = () => {
   const handleSettingsOnClick = (): void => {
   };
 
-  const handleGoToRoute = (route: string): void => history.push(route);
+  const handleGoToRoute = (route: string): void => navigate(route);
 
   const handleCreatePlaylist = (): void => {
     if (user_id) {
@@ -30,7 +30,7 @@ const Sidebar: FC = () => {
         ({data}) => {
           setNewPlaylist(data);
           const {id} = data;
-          history.push(`/playlists/${id}`);
+          navigate(`/playlists/${id}`);
         }
       ).catch(err => console.log(err));
     }

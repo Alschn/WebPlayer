@@ -1,10 +1,10 @@
-import {FC, useState} from "react";
+import {ChangeEvent, FC, useState} from "react";
 import SearchIcon from '@mui/icons-material/Search';
 
 export const SearchBox = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 

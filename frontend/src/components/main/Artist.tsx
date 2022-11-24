@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {SpotifyAlbumObject, SpotifyArtistObject, SpotifyTrackObject} from "../../types/spotify";
 import {Button, capitalize, Grid, IconButton} from "@mui/material";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
@@ -10,15 +10,12 @@ import SpotifyArtistTable from "../layout/SpotifyArtistTable";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
 import {getYearFromDate} from "../../utils/dataFormat";
 
-interface Parameters {
-  id: string,
-}
 
 const Artist: FC = () => {
   // url parameter
-  let {id} = useParams<Parameters>();
+  let {id} = useParams();
 
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const playbackState = usePlaybackState();
 
@@ -37,22 +34,22 @@ const Artist: FC = () => {
   const [artistIsFollowed, setArtistIsFollowed] = useState<boolean>(false);
 
   useEffect(() => {
-    getArtistData(id).then(res => {
+    getArtistData(id as string).then(res => {
       const {data} = res;
       setArtistInfo(data);
     }).catch(err => console.log(err));
 
-    getArtistData(id, "tracks").then(res => {
+    getArtistData(id as string, "tracks").then(res => {
       const {data} = res;
       setArtistTracks(data.tracks);
     }).catch(err => console.log(err));
 
-    getArtistData(id, "albums").then(res => {
+    getArtistData(id as string, "albums").then(res => {
       const {data} = res;
       setArtistAlbums(data.items);
     }).catch(err => console.log(err));
 
-    getArtistData(id, "related-artists").then(res => {
+    getArtistData(id as string, "related-artists").then(res => {
       const {data} = res;
       setArtistRelated(data.artists);
     }).catch(err => console.log(err));
@@ -60,7 +57,7 @@ const Artist: FC = () => {
     // check if user is following this artist
   }, [id]);
 
-  const handleGoToRoute = (route: string): void => history.push(route);
+  const handleGoToRoute = (route: string): void => navigate(route);
 
   const handlePlayRandomArtistTrack = (): void => {
 
@@ -88,7 +85,7 @@ const Artist: FC = () => {
     if (!playbackState) setArtistIsPlayed(false);
     else if (!playbackState.paused) setArtistIsPlayed(false);
     else if (!playbackState?.context) setArtistIsPlayed(false);
-    else setArtistIsPlayed(Boolean(playbackState.context.uri?.includes(id)));
+    else setArtistIsPlayed(Boolean(playbackState.context.uri?.includes(id as string)));
   }, [playbackState, id]);
 
   const getImage = (images: any) => {

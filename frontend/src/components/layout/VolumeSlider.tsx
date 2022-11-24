@@ -8,12 +8,12 @@ import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import SpotifySlider from "./SpotifySlider";
 import {setVolume} from "../player/api";
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import DevicesMenu from "./DevicesMenu";
 
 
 const VolumeSlider: FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [value, setValue] = useState(30);
 
   const handleChange = (event: any, newValue: any, activeThumb: any): void => {
@@ -31,7 +31,7 @@ const VolumeSlider: FC = () => {
     else return <VolumeOffIcon/>;
   }, [value]);
 
-  const goToQueue = (): void => history.push('/queue');
+  const goToQueue = (): void => navigate('/queue');
 
   // Devices Menu
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);

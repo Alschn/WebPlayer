@@ -6,14 +6,10 @@ import Artists from "./library/Artists";
 import Playlists from "./library/Playlists";
 import PageNotFound from "../PageNotFound";
 
-interface Parameters {
-  subpage: string;
-}
-
 const Library: FC = () => {
-  let {subpage} = useParams<Parameters>();
+  let {subpage} = useParams();
 
-  switch (subpage) {
+  switch (subpage as string) {
     case 'playlists':
       return <Playlists/>;
     case 'podcasts':

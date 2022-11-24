@@ -1,6 +1,6 @@
 import {Divider, List, ListItem, Popover} from "@mui/material";
 import {FC} from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {performLogout} from "../../utils/api";
 import useAuth from "../../hooks/useAuth";
 import useUserData from "../../hooks/useUserData";
@@ -14,13 +14,13 @@ interface UserMenuProps {
 const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
   const {setToken} = useAuth();
   const {clearUser} = useUserData();
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const goToAccount = () => window.location.replace('https://www.spotify.com/');
 
-  const goToProfile = () => history.push(`/profiles/${profileID}`);
+  const goToProfile = () => navigate(`/profiles/${profileID}`);
 
-  const goToSettings = () => history.push('/settings');
+  const goToSettings = () => navigate('/settings');
 
   const logout = () => {
     performLogout().then(() => {
@@ -49,21 +49,21 @@ const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
       }}
     >
       <List className="user-menu">
-        <ListItem button onClick={goToAccount}>
+        <ListItem onClick={goToAccount}>
           Account
         </ListItem>
 
-        <ListItem button onClick={goToProfile}>
+        <ListItem onClick={goToProfile}>
           Profile
         </ListItem>
 
-        <ListItem button onClick={goToSettings}>
+        <ListItem onClick={goToSettings}>
           Settings
         </ListItem>
 
         <Divider className="user-menu-divider"/>
 
-        <ListItem button onClick={logout}>
+        <ListItem onClick={logout}>
           Logout
         </ListItem>
       </List>

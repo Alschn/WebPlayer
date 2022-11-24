@@ -2,7 +2,7 @@ import {FC, MouseEvent, useState} from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {Avatar, Grid} from "@mui/material";
-import {useHistory} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import HeaderTabs from "./HeaderTabs";
 import {SearchBox} from "../main/Search";
 import UserMenu from "./UserMenu";
@@ -13,8 +13,8 @@ import useUserData from "../../hooks/useUserData";
 const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
 
 const LocationBasedHeaderTabs = () => {
-  const history = useHistory();
-  const loc = history.location.pathname;
+  const location = useLocation();
+  const loc = location.pathname;
 
   if (libraryPaths.includes(loc)) return <HeaderTabs/>;
 
@@ -24,7 +24,7 @@ const LocationBasedHeaderTabs = () => {
 };
 
 const Header: FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {username, imageURL, id} = useUserData();
 
   // User Menu
@@ -32,9 +32,9 @@ const Header: FC = () => {
   const handleOpenMenu = (event: MouseEvent<any>): void => setAnchorEl(event.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
 
-  const pageBack = () => history.goBack();
+  const pageBack = () => navigate(-1);
 
-  const pageForward = () => history.goForward();
+  const pageForward = () => navigate(1);
 
   return (
     <Grid container className="header">

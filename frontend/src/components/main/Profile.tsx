@@ -1,6 +1,6 @@
 import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
 import {FC, useEffect, useState} from "react";
-import {Link, useHistory, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
 import {
@@ -12,15 +12,11 @@ import {
 import AxiosClient from "../../utils/axiosClient";
 import useUserData from "../../hooks/useUserData";
 
-interface Parameters {
-  id: string;
-}
-
 const Profile: FC = () => {
   // url parameter - user id
-  let {id: url_id} = useParams<Parameters>();
+  let {id: url_id} = useParams();
 
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const {username, imageURL: image_url, id, followers} = useUserData();
 
@@ -35,7 +31,7 @@ const Profile: FC = () => {
   useEffect(() => {
     // fetch profile info if visiting other user's profile
     if (url_id !== id) {
-      AxiosClient.get(`/spotify/users/${url_id}`)
+      AxiosClient.get(`/spotify/users/${url_id as string}`)
         .then(res => {
           const {data} = res;
           setProfileInfo(data);
@@ -43,7 +39,7 @@ const Profile: FC = () => {
     }
 
     // fetch 6 public playlists
-    AxiosClient.get(`/spotify/users/${url_id}/playlists`)
+    AxiosClient.get(`/spotify/users/${url_id as string}/playlists`)
       .then(res => {
         const {data: {items, total}} = res;
         setTotalPlaylists(total);
@@ -100,9 +96,9 @@ const Profile: FC = () => {
     }
   };
 
-  const goToPlaylist = (playlist_id: string) => history.push(`/playlists/${playlist_id}`);
+  const goToPlaylist = (playlist_id: string) => navigate(`/playlists/${playlist_id}`);
 
-  const goToArtist = (artist_id: string) => history.push(`/artists/${artist_id}`);
+  const goToArtist = (artist_id: string) => navigate(`/artists/${artist_id}`);
 
   const getImageOrUndefined = (images: any[]) => {
     try {

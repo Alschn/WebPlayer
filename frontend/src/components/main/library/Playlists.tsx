@@ -1,13 +1,13 @@
 import {Grid} from "@mui/material";
 import {FC, useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import AxiosClient from "../../../utils/axiosClient";
 import {getArtistsString} from "../../../utils/dataFormat";
 import {loadMoreItems} from "../../../utils/api";
 
 const Playlists: FC = () => {
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const [savedTracks, setSavedTracks] = useState<any[]>([]);
   const [total, setTotal] = useState<number | null>(null);
@@ -44,9 +44,9 @@ const Playlists: FC = () => {
       ).catch(err => console.log(err));
   };
 
-  const goToPlaylist = (id: string): any => history.push(`/playlists/${id}`);
+  const goToPlaylist = (id: string): any => navigate(`/playlists/${id}`);
 
-  const goToFavourite = (): any => history.push('/saved');
+  const goToFavourite = (): any => navigate('/saved');
 
   return (
     <InfiniteScroll

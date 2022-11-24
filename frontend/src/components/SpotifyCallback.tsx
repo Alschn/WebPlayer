@@ -1,14 +1,13 @@
 import {FC, useEffect, useState} from "react";
-import {Redirect, useHistory} from "react-router-dom";
 import useQueryParams from "../hooks/useQuery";
 import axiosClient from "../utils/axiosClient";
 import useAuth from "../hooks/useAuth";
+import {Navigate} from "react-router-dom";
 
 
 const SpotifyCallback: FC = () => {
   const {setToken, isAuthenticated} = useAuth();
-  let query = useQueryParams();
-  let history = useHistory();
+  const query = useQueryParams();
 
   const [code] = useState<string | null>(query.get("code"));
   const [error] = useState<string | null>(query.get("error"));
@@ -36,7 +35,7 @@ const SpotifyCallback: FC = () => {
 
   if (isAuthenticated) {
     return (
-      <Redirect to="/home"/>
+      <Navigate to="/home"/>
     );
   }
 

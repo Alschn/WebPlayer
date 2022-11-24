@@ -6,19 +6,16 @@ import {Grid} from "@mui/material";
 import {getPlaylistLength} from "../../utils/dataFormat";
 import SpotifyTable from "../layout/SpotifyTable";
 
-interface Parameters {
-  id: string,
-}
 
 const Album: FC = () => {
-  let {id} = useParams<Parameters>();
+  const {id} = useParams();
   const [tracks, setTracks] = useState<SpotifySimplifiedTrackObject[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [albumInfo, setAlbumInfo] = useState<any>({});
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(`/spotify/albums/${id}`).then(res => {
+    AxiosClient.get(`/spotify/albums/${id as string}`).then(res => {
       console.log(res.data);
       const {data: {artists, tracks: {items, next}, ...rest}} = res;
       setArtists(artists);
@@ -27,7 +24,7 @@ const Album: FC = () => {
       setAlbumInfo(rest);
     }).catch(
       err => console.log(err)
-    )
+    );
   }, [id]);
 
   const getAuthor = (): string | undefined => {

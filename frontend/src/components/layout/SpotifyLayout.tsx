@@ -1,15 +1,16 @@
 import {Grid} from "@mui/material";
-import {FC, Fragment, ReactNode} from "react";
+import {FC, Fragment} from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import {Outlet} from "react-router-dom";
 import "./layout.scss";
 
 interface SpotifyLayoutProps {
-  children: ReactNode;
+
 }
 
-const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
+const SpotifyLayout: FC<SpotifyLayoutProps> = () => {
   return (
     <Fragment>
       <Grid container justifyContent="space-between" className="main">
@@ -21,7 +22,7 @@ const SpotifyLayout: FC<SpotifyLayoutProps> = ({children}) => {
 
         <Grid item xs={9} lg={10}>
           <div className="content" id="content">
-            {children}
+            <Outlet/>
           </div>
         </Grid>
       </Grid>

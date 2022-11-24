@@ -1,4 +1,4 @@
-import React, {FC, useState} from "react";
+import {FC, useState} from "react";
 import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
 import ExplicitIcon from "@mui/icons-material/Explicit";
 import {getTrackImage} from "../../utils/formatComponents";

@@ -9,25 +9,20 @@ import PageNotFound from "../../PageNotFound";
 
 type ArtistSubPageType = 'albums' | 'appears-on' | 'compilations' | 'singles' | 'related-artists';
 
-interface Parameters {
-  id: string,
-  page: ArtistSubPageType;
-}
-
 const ArtistSubPage: FC = () => {
-  let {id, page} = useParams<Parameters>();
+  let {id, page} = useParams();
 
-  switch (page) {
+  switch (page as ArtistSubPageType) {
     case 'albums':
-      return <ArtistAlbums artistId={id}/>;
+      return <ArtistAlbums artistId={id as string}/>;
     case 'appears-on':
-      return <AppearsOn artistId={id}/>;
+      return <AppearsOn artistId={id as string}/>;
     case 'compilations':
-      return <Compilations artistId={id}/>;
+      return <Compilations artistId={id as string}/>;
     case 'related-artists':
-      return <RelatedArtists artistId={id}/>;
+      return <RelatedArtists artistId={id as string}/>;
     case 'singles':
-      return <ArtistSingles artistId={id}/>;
+      return <ArtistSingles artistId={id as string}/>;
     default:
       return <PageNotFound/>;
   }

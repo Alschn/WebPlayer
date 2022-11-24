@@ -1,12 +1,12 @@
 import {FC} from "react";
 import SpotifyLoginButton from "./SpotifyLoginButton";
-import {Redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 const Welcome: FC = () => {
   const {isAuthenticated} = useAuth();
 
-  if (isAuthenticated) return <Redirect to="/home"/>;
+  if (isAuthenticated) return <Navigate to="/home"/>;
 
   return (
     <div className="App">
