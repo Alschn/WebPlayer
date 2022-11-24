@@ -16,10 +16,12 @@ BASE_URL_ME = "https://api.spotify.com/v1/me/"
 
 
 def get_user_token(user: User) -> Optional[SocialToken]:
-    user_tokens = SocialToken.objects.filter(account__user=user)
-    if user_tokens.exists():
-        return user_tokens.first()
-    return None
+    social_token = SocialToken.objects.filter(account__user=user)
+
+    if not social_token.exists():
+        return None
+
+    return social_token.first()
 
 
 def is_spotify_authenticated(user: User) -> bool:
@@ -33,13 +35,14 @@ def is_spotify_authenticated(user: User) -> bool:
 
 
 def update_user_token(user: User, access_token: str, expires_in: int, refresh_token: str) -> None:
-    tokens = get_user_token(user)
-    if not tokens:
+    token = get_user_token(user)
+    if not token:
         return
-    tokens.token = access_token
-    tokens.token_secret = refresh_token
-    tokens.expires_at = timezone.now() + timedelta(seconds=expires_in)
-    tokens.save(update_fields=['token', 'token_secret', 'expires_at'])
+
+    token.token = access_token
+    token.token_secret = refresh_token
+    token.expires_at = timezone.now() + timedelta(seconds=expires_in)
+    token.save(update_fields=['token', 'token_secret', 'expires_at'])
 
 
 def refresh_spotify_token(user: User) -> None:

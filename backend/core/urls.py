@@ -21,11 +21,13 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from spotify_auth.views import LogoutView
+
 schema_view = get_schema_view(
     openapi.Info(
         title="WebPlayer API",
         default_version='v1',
-        description="API built with Django Rest Framework.",
+        description="Spotify Web API adapter built with Django Rest Framework.",
         license=openapi.License(name="MIT License"),
     ),
     public=True,
@@ -35,8 +37,10 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     # applications
-    path('api/', include('api.urls')),
-    # rest auth
+    path('api/spotify/', include('spotify_adapter.urls')),
+    path('api/auth/spotify/', include('spotify_auth.urls')),
+    path('api/auth/logout', LogoutView.as_view(), name='logout'),
+    # rest auth, all auth
     path('rest-auth/', include('dj_rest_auth.urls')),
     path('rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.urls')),
