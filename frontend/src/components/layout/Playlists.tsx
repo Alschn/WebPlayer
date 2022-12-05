@@ -3,7 +3,7 @@ import {Grid} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
-import {getPlaylists, loadMoreItems} from "../../api/spotify_adapter";
+import {getPlaylists, loadMoreItems} from "../../api/spotify";
 
 interface SidebarPlaylistsProps {
   newPlaylist?: SpotifySimplifiedPlaylistObject | null,

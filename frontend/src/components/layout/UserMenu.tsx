@@ -3,7 +3,7 @@ import {FC} from "react";
 import {useNavigate} from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useUserData from "../../hooks/useUserData";
-import {performLogout} from "../../api/spotify_adapter";
+import {performLogout} from "../../api/spotify";
 
 interface UserMenuProps {
   profileID: string | undefined,

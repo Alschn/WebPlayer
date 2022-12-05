@@ -7,6 +7,15 @@ interface SpotifyAccessResponse {
   expires_in: number,
 }
 
+interface SpotifyUrlResponse {
+  url: string;
+}
+
+export const getSpotifyAuthUrl = (): Promise<Response<SpotifyUrlResponse>> => {
+  return AxiosClient.get('/auth/spotify/url/');
+};
+
+
 export const getSpotifyAccessToken = (code: string): Promise<Response<SpotifyAccessResponse>> => {
   return AxiosClient.post('/auth/spotify/access/', {
     code: code,

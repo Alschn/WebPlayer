@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import useQueryParams from "../hooks/useQuery";
+import useQueryParams from "../hooks/useQueryParams";
 import useAuth from "../hooks/useAuth";
 import {Navigate} from "react-router-dom";
 import {getSpotifyAccessToken, loginWithSpotify} from "../api/auth";

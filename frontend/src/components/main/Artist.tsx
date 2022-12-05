@@ -8,7 +8,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SpotifyArtistTable from "../layout/SpotifyArtistTable";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
 import {getYearFromDate} from "../../utils/dataFormat";
-import {getArtistData} from "../../api/spotify_adapter";
+import {getArtistData} from "../../api/spotify";
 
 
 const Artist: FC = () => {

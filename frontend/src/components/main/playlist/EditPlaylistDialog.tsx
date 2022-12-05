@@ -2,7 +2,7 @@ import {Dialog, DialogContent, DialogTitle, IconButton, TextField} from "@mui/ma
 import CloseIcon from '@mui/icons-material/Close';
 import {FC, useState} from "react";
 import {SpotifyPlaylistInfo} from "../Playlist";
-import {editPlaylist} from "../../../api/spotify_adapter";
+import {editPlaylist} from "../../../api/spotify";
 
 interface EditPlaylistDialogProps {
   open: boolean;

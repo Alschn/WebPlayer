@@ -13,7 +13,7 @@ import SpotifyTable from "../layout/SpotifyTable";
 import EditPlaylistDialog from "./playlist/EditPlaylistDialog";
 import useUserData from "../../hooks/useUserData";
 import AxiosClient from "../../api/AxiosClient";
-import {loadMoreItems} from "../../api/spotify_adapter";
+import {loadMoreItems} from "../../api/spotify";
 
 export interface SpotifyPlaylistInfo {
   collaborative: boolean,

@@ -7,7 +7,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import SpeakerIcon from '@mui/icons-material/Speaker';
 import {transferPlaybackToDevice} from "../player/api";
-import {getDevices} from "../../api/spotify_adapter";
+import {getDevices} from "../../api/spotify";
 
 interface DevicesMenuProps {
   anchorEl: Element | null,

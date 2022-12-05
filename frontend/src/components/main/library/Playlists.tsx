@@ -4,7 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {useNavigate} from "react-router-dom";
 import {getArtistsString} from "../../../utils/dataFormat";
 import AxiosClient from "../../../api/AxiosClient";
-import {getPlaylists, loadMoreItems} from "../../../api/spotify_adapter";
+import {getPlaylists, loadMoreItems} from "../../../api/spotify";
 
 const Playlists: FC = () => {
   const navigate = useNavigate();

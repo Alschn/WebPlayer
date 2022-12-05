@@ -2,6 +2,7 @@ import {FC} from "react";
 import SpotifyLoginButton from "./SpotifyLoginButton";
 import {Navigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import {Box} from "@mui/material";
 
 const Welcome: FC = () => {
   const {isAuthenticated} = useAuth();
@@ -9,11 +10,17 @@ const Welcome: FC = () => {
   if (isAuthenticated) return <Navigate to="/home"/>;
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+      bgcolor={"#191414"}
+    >
+      <Box>
         <SpotifyLoginButton/>
-      </header>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

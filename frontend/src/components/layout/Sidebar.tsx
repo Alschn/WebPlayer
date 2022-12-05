@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
 import useUserData from "../../hooks/useUserData";
 import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
-import {createNewPlaylist} from "../../api/spotify_adapter";
+import {createNewPlaylist} from "../../api/spotify";
 
 
 const Sidebar: FC = () => {
