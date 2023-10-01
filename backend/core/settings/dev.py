@@ -42,26 +42,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
     # rest_framework
     'rest_framework',
     'rest_framework.authtoken',
+
     # django utils
     'django_filters',
     'django_extensions',
+
     # cors headers
     'corsheaders',
+
     # rest_auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    # 'rest_auth',
-    # 'rest_auth.registration',
+
     # all_auth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.spotify',
+
     # openapi documentation
-    'drf_yasg',
+    'drf_spectacular',
+
     # apps
     'spotify_adapter',
     'spotify_auth',
@@ -77,6 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -154,9 +160,11 @@ USE_L10N = True
 USE_TZ = True
 
 # Authentication
+
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
+    # Needed to log in by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
+
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -169,6 +177,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         ('rest_framework.authentication.TokenAuthentication',)
     ),
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# DRF spectacular settings
+# https://drf-spectacular.readthedocs.io/en/latest/settings.html
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'WebPlayer API',
+    'DESCRIPTION': 'Spotify Web API adapter built with Django Rest Framework.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -190,9 +210,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS headers
+# https://pypi.org/project/django-cors-headers/
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 # social accounts
+
 SITE_ID = 1
 
 # Spotify API related settings
