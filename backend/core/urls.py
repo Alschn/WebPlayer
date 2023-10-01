@@ -41,4 +41,6 @@ urlpatterns = [
 
 if not settings.DEBUG:
     # react static files
-    urlpatterns += re_path('.*', TemplateView.as_view(template_name='index.html'))
+    urlpatterns += [
+        re_path('.*', TemplateView.as_view(template_name='index.html'))
+    ]
