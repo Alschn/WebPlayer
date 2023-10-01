@@ -1,13 +1,13 @@
-import React, {FC, useEffect, useState} from "react";
-import {Grid, List, ListItem, Popover} from "@material-ui/core";
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import AxiosClient from "../../utils/axiosClient";
+import {FC, useEffect, useState} from "react";
+import {Grid, List, ListItem, Popover} from "@mui/material";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {deviceType, SpotifyDeviceObject} from "../../types/spotify";
-import VolumeUpRoundedIcon from '@material-ui/icons/VolumeUpRounded';
-import ComputerIcon from '@material-ui/icons/Computer';
-import SmartphoneIcon from '@material-ui/icons/Smartphone';
-import SpeakerIcon from '@material-ui/icons/Speaker';
+import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
+import ComputerIcon from '@mui/icons-material/Computer';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import SpeakerIcon from '@mui/icons-material/Speaker';
 import {transferPlaybackToDevice} from "../player/api";
+import {getDevices} from "../../api/spotify";
 
 interface DevicesMenuProps {
   anchorEl: Element | null,
@@ -18,12 +18,12 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
   const [devices, setDevices] = useState<SpotifyDeviceObject[]>([]);
 
   useEffect(() => {
-    anchorEl != null && AxiosClient.get('http://localhost:8000/api/spotify/devices')
-      .then(res => {
-        const {data: {devices}} = res;
-        setDevices([...devices].reverse())
-      })
-      .catch(err => console.log(err))
+    if (anchorEl == null) return;
+
+    getDevices().then(res => {
+      const {data: {devices}} = res;
+      setDevices([...devices].reverse());
+    }).catch(err => console.log(err));
   }, [anchorEl]);
 
   const getIconByType = (type: deviceType) => {
@@ -33,16 +33,16 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
       case 'smartphone':
         return <SmartphoneIcon/>;
       case 'speaker':
-        return <SpeakerIcon/>
+        return <SpeakerIcon/>;
       default:
         return <ComputerIcon/>;
     }
-  }
+  };
 
   const selectDevice = (id: string) => {
     transferPlaybackToDevice(id).then(res => {
-      console.log(res.data) // does not work for some reason
-    }).catch(err => console.log(err))
+      console.log(res.data); // does not work for some reason
+    }).catch(err => console.log(err));
   };
 
   const open = Boolean(anchorEl);
@@ -70,7 +70,7 @@ const DevicesMenu: FC<DevicesMenuProps> = ({anchorEl, handleClose}) => {
         </ListItem>
 
         {devices.length > 0 && devices.map(({name, type, is_active, id}) => (
-          <ListItem button onClick={() => selectDevice(id)}> {/* not working for some reason*/}
+          <ListItem onClick={() => selectDevice(id)}> {/* not working for some reason*/}
             {is_active ? (
                 <Grid container className="device-active" alignItems="center">
                   <Grid item xs={2} className="device-icon">

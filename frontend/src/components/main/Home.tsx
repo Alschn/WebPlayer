@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, Fragment} from "react";
+import {Grid} from "@mui/material";
+import {FC, Fragment} from "react";
 
 const Home: FC = () => {
   return (

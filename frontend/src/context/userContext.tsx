@@ -1,6 +1,6 @@
-import React, {createContext, FC, ReactNode, useEffect, useState} from "react";
-import axiosClient from "../utils/axiosClient";
-import useLocalStorage from "../hooks/useLocalStorage";
+import {createContext, FC, ReactNode, useEffect, useState} from "react";
+import useAuth from "../hooks/useAuth";
+import AxiosClient from "../api/AxiosClient";
 
 interface UserContextProps {
   username: string | undefined;
@@ -9,6 +9,7 @@ interface UserContextProps {
   id: string | undefined;
   followers: number | undefined;
   hasPremium: boolean | undefined;
+  clearUser: () => void,
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -18,6 +19,7 @@ export const UserContext = createContext<UserContextProps>({
   id: undefined,
   followers: undefined,
   hasPremium: undefined,
+  clearUser: () => {}
 });
 
 interface UserContextProviderProps {
@@ -25,16 +27,16 @@ interface UserContextProviderProps {
 }
 
 export const UserContextProvider: FC<UserContextProviderProps> = ({children}) => {
-  const [token] = useLocalStorage('token');
-  const [userData, setUserData] = useState<UserContextProps>();
+  const {token} = useAuth();
+  const [userData, setUserData] = useState<UserContextProps | undefined>(undefined);
 
   useEffect(() => {
     if (!userData && token) {
-      axiosClient.get(`http://localhost:8000/api/spotify/users`)
+      AxiosClient.get(`/spotify/users/`)
         .then(res => {
-          setUserData(res.data)
+          setUserData(res.data);
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
     }
   }, [userData, token]);
 
@@ -46,6 +48,7 @@ export const UserContextProvider: FC<UserContextProviderProps> = ({children}) =>
       id: userData?.id,
       followers: userData?.followers,
       hasPremium: userData?.hasPremium,
+      clearUser: () => setUserData(undefined),
     }}>
       {children}
     </UserContext.Provider>

@@ -1,8 +1,7 @@
-import React, {FC, useEffect, useState} from 'react';
-import Grid from '@material-ui/core/Grid';
+import {FC, useEffect, useState} from 'react';
+import {Grid} from '@mui/material';
 import {getMsToTime} from "../../utils/dataFormat";
 import SpotifySlider from './SpotifySlider';
-import axiosClient from "../../utils/axiosClient";
 import {useSpotifyPlayer} from "react-spotify-web-playback-sdk";
 
 interface PlayerSliderProps {
@@ -20,15 +19,15 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
 
   useEffect(() => {
     dur === 0 ? setValue(0) : setValue(100 * pos / dur);
-  }, [pos, dur])
+  }, [pos, dur]);
 
   const handleChange = (event: any, newValue: any): void => {
     const positionToSeek = Math.floor((newValue * dur) / 100);
-    player?.seek(positionToSeek).then(() => setValue(newValue))
+    player?.seek(positionToSeek).then(() => setValue(newValue));
   };
 
   return (
-    <Grid container className="player-slider" justify="center">
+    <Grid container className="player-slider" justifyContent="center">
       <Grid item>
         {getMsToTime(pos, true)}
       </Grid>
@@ -42,6 +41,6 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
       </Grid>
     </Grid>
   );
-}
+};
 
 export default PlayerSlider;

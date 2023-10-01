@@ -1,6 +1,6 @@
-import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
-import {Link, useHistory, useParams} from "react-router-dom";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
+import {FC, useEffect, useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
 import {
@@ -9,18 +9,14 @@ import {
   SpotifyPublicUserObject,
   SpotifyTrackObject
 } from "../../types/spotify";
-import AxiosClient from "../../utils/axiosClient";
 import useUserData from "../../hooks/useUserData";
-
-interface Parameters {
-  id: string;
-}
+import AxiosClient from "../../api/AxiosClient";
 
 const Profile: FC = () => {
   // url parameter - user id
-  let {id: url_id} = useParams<Parameters>();
+  let {id: url_id} = useParams();
 
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const {username, imageURL: image_url, id, followers} = useUserData();
 
@@ -35,20 +31,20 @@ const Profile: FC = () => {
   useEffect(() => {
     // fetch profile info if visiting other user's profile
     if (url_id !== id) {
-      AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}`)
+      AxiosClient.get(`/spotify/users/${url_id as string}`)
         .then(res => {
           const {data} = res;
-          setProfileInfo(data)
-        }).catch(err => console.log(err))
+          setProfileInfo(data);
+        }).catch(err => console.log(err));
     }
 
     // fetch 6 public playlists
-    AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}/playlists`)
+    AxiosClient.get(`/spotify/users/${url_id as string}/playlists`)
       .then(res => {
         const {data: {items, total}} = res;
         setTotalPlaylists(total);
         setPublicPlaylists(items);
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(err));
 
     // clear public playlist when switching to different profile
     return () => setPublicPlaylists([]);
@@ -57,24 +53,24 @@ const Profile: FC = () => {
   useEffect(() => {
     if (url_id === id) {
       // fetch 6 top artists
-      AxiosClient.get('http://localhost:8000/api/spotify/top/artists?limit=6')
+      AxiosClient.get('/spotify/top/artists?limit=6')
         .then(res => {
           const {data: {items}} = res;
           setTopArtists([...items]);
-        }).catch(err => console.log(err))
+        }).catch(err => console.log(err));
 
       // fetch 4 top tracks
-      AxiosClient.get('http://localhost:8000/api/spotify/top/tracks?limit=4')
+      AxiosClient.get('/spotify/top/tracks?limit=4')
         .then(res => {
           const {data: {items}} = res;
           setTopTracks([...items]);
-        }).catch(err => console.log(err))
-      console.log(topTracks)
+        }).catch(err => console.log(err));
+      console.log(topTracks);
     }
   }, []);
 
   const getUsername = (): string | undefined => {
-    if (url_id === id) return username
+    if (url_id === id) return username;
     else try {
       return profileInfo?.display_name;
     } catch {
@@ -83,7 +79,7 @@ const Profile: FC = () => {
   };
 
   const getUserFollowers = (): number | undefined => {
-    if (url_id === id) return followers
+    if (url_id === id) return followers;
     else try {
       return profileInfo?.followers?.total;
     } catch {
@@ -100,17 +96,17 @@ const Profile: FC = () => {
     }
   };
 
-  const goToPlaylist = (playlist_id: string) => history.push(`/playlists/${playlist_id}`);
+  const goToPlaylist = (playlist_id: string) => navigate(`/playlists/${playlist_id}`);
 
-  const goToArtist = (artist_id: string) => history.push(`/artists/${artist_id}`);
+  const goToArtist = (artist_id: string) => navigate(`/artists/${artist_id}`);
 
   const getImageOrUndefined = (images: any[]) => {
     try {
-      return images[0].url
+      return images[0].url;
     } catch {
-      return undefined
+      return undefined;
     }
-  }
+  };
 
   const renderMostPopularArtists = () => (
     <Grid container className="profile__popular_artists">
@@ -220,7 +216,7 @@ const Profile: FC = () => {
         ))}
       </Grid>
     </Grid>
-  )
+  );
 };
 
 export default Profile;

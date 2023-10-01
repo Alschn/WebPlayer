@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import {FC} from "react";
 
 const ArtistSingles: FC<{ artistId: string }> = ({artistId}) => {
   return (

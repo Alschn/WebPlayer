@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC} from "react";
+import {Grid} from "@mui/material";
+import {FC} from "react";
 
 const Queue: FC = () => {
   return (
@@ -18,7 +18,7 @@ const Queue: FC = () => {
         {/* tracks */}
       </Grid>
     </Grid>
-  )
+  );
 };
 
 export default Queue;

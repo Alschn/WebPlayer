@@ -1,8 +1,8 @@
-import {Dialog, DialogContent, DialogTitle, IconButton, TextField} from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
-import React, {FC, useState} from "react";
-import {editPlaylist} from "../../../utils/api";
+import {Dialog, DialogContent, DialogTitle, IconButton, TextField} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import {FC, useState} from "react";
 import {SpotifyPlaylistInfo} from "../Playlist";
+import {editPlaylist} from "../../../api/spotify";
 
 interface EditPlaylistDialogProps {
   open: boolean;

@@ -1,6 +1,6 @@
-import React, {FC, useState} from "react";
-import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
-import ExplicitIcon from "@material-ui/icons/Explicit";
+import {FC, useState} from "react";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
+import ExplicitIcon from "@mui/icons-material/Explicit";
 import {getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
 import useSingleAndDoubleClick from "../../hooks/useSingleAndDoubleClick";
@@ -19,6 +19,7 @@ const SpotifyArtistTable: FC<SpotifyTableProps> = ({tracks}) => {
   const playbackState = usePlaybackState();
 
   const handleSingleClick = (index: number): void => {
+    // to be changed !
     const select = document.getElementById(`track-${index}`);
     if (select && select !== selected) {
       setSelected(((prev: Element | null) => {
@@ -33,7 +34,7 @@ const SpotifyArtistTable: FC<SpotifyTableProps> = ({tracks}) => {
   const handleDoubleClick = (row: string): void => {
     if (selected) selected.classList.remove('Mui-selected');
     playSongWithUri(row, playbackState?.context.uri)
-      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`))
+      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`));
   };
 
   const handleClick = useSingleAndDoubleClick(handleSingleClick, handleDoubleClick);

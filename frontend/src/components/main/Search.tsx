@@ -1,10 +1,10 @@
-import React, {FC, useState} from "react";
-import SearchIcon from '@material-ui/icons/Search';
+import {ChangeEvent, FC, useState} from "react";
+import SearchIcon from '@mui/icons-material/Search';
 
 export const SearchBox = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
@@ -15,7 +15,7 @@ export const SearchBox = () => {
   return (
     <div className="header__search-wrapper">
       <div className="header__search">
-        <SearchIcon color='primary' className="header_search-icon" onClick={submitInput}/>
+        <SearchIcon color="primary" className="header_search-icon" onClick={submitInput}/>
         <input
           type="search"
           placeholder="Artists, tracks or podcasts"
@@ -42,7 +42,7 @@ const Search: FC = () => {
         <h1>Browse all categories</h1>
       </div>
     </div>
-  )
+  );
 };
 
 export default Search;

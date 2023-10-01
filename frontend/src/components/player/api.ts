@@ -1,54 +1,48 @@
-import axiosClient from "../../utils/axiosClient";
 import {SpotifyRepeatType} from "../../types/spotify";
-import AxiosClient from "../../utils/axiosClient";
+import AxiosClient from "../../api/AxiosClient";
+import {Response} from "../../api/types";
 
-export const playSong = (): void => {
-  axiosClient.put("http://localhost:8000/api/spotify/play", {}).then(() => {
-  }).catch(err => console.log(err));
+export const playSong = (): Promise<Response<any>> => {
+  return AxiosClient.put("/spotify/player/play/", {});
 };
 
-export const pauseSong = (): void => {
-  axiosClient.put("http://localhost:8000/api/spotify/pause", {}).then(() => {
-  }).catch(err => console.log(err));
+export const pauseSong = (): Promise<Response<any>> => {
+  return AxiosClient.put("/spotify/player/pause/", {});
 };
 
-export const skipSong = (forward = true): void => {
-  axiosClient.post("http://localhost:8000/api/spotify/skip", {
+export const skipSong = (forward = true): Promise<Response<any>> => {
+  return AxiosClient.post("/spotify/player/skip/", {
     forward: forward,
-  }).then(() => {
-  }).catch(err => console.log(err));
-}
+  });
+};
 
-export const setRepeatMode = (mode: SpotifyRepeatType): void => {
-  axiosClient.put('http://localhost:8000/api/spotify/repeat', {
+export const setRepeatMode = (mode: SpotifyRepeatType): Promise<Response<any>> => {
+  return AxiosClient.put('/spotify/player/repeat/', {
     mode: mode
-  }).then(() => {
-  }).catch(err => console.log(err));
+  });
 };
 
-export const setShuffle = (shuffle: boolean): void => {
-  axiosClient.put('http://localhost:8000/api/spotify/shuffle', {
+export const setShuffle = (shuffle: boolean): Promise<Response<any>> => {
+  return AxiosClient.put('/spotify/player/shuffle/', {
     shuffle: shuffle
-  }).then(() => {
-  }).catch(err => console.log(err));
+  });
 };
 
-export const setVolume = (volume: number): Promise<any> => {
-  return axiosClient.put('http://localhost:8000/api/spotify/volume', {
+export const setVolume = (volume: number): Promise<Response<any>> => {
+  return AxiosClient.put('/spotify/player/volume/', {
     volume: volume
-  }).catch(err => console.log(err))
-}
+  });
+};
 
-export const playSongWithUri = (uri: string, context_uri: string | null | undefined): Promise<any> => {
-  return axiosClient.post('http://localhost:8000/api/spotify/play', {
+export const playSongWithUri = (uri: string, context_uri: string | null | undefined): Promise<Response<any>> => {
+  return AxiosClient.post('/spotify/player/play/', {
     uris: [uri],
     context_uri: context_uri,
-  }).catch(err => console.log(err))
+  });
 };
 
-
-export const transferPlaybackToDevice = (device_id: string) => {
-  return AxiosClient.put('http://localhost:8000/api/spotify/devices', {
+export const transferPlaybackToDevice = (device_id: string): Promise<Response<any>> => {
+  return AxiosClient.put('/spotify/devices/', {
     device_id: device_id,
   });
 };

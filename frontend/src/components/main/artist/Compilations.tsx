@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+import {FC} from "react";
 
 const Compilations: FC<{ artistId: string }> = ({artistId}) => {
   return (

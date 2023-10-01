@@ -13,36 +13,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="WebPlayer API",
-        default_version='v1',
-        description="API built with Django Rest Framework.",
-        license=openapi.License(name="MIT License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
+from core.schema.views import (
+    SchemaAPIView,
+    SchemaRedocView,
+    SchemaSwaggerView
 )
+from spotify_auth.views import LogoutView
 
-# noinspection PyUnresolvedReferences
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     # applications
-    path('api/', include('api.urls')),
-    # rest auth
-    path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
-    path('accounts/', include('allauth.urls')),
+    path('api/spotify/', include('spotify_adapter.urls')),
+    path('api/auth/spotify/', include('spotify_auth.urls')),
+    path('api/auth/logout/', LogoutView.as_view(), name='logout'),
+
     # docs
-    path(r'api/swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path(r'api/redoc', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    # react router
-    re_path('.*', TemplateView.as_view(template_name='index.html')),
+    path('schema/', SchemaAPIView.as_view(), name='schema'),
+    path('schema/swagger/', SchemaSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('schema/redoc/', SchemaRedocView.as_view(url_name='schema'), name='redoc'),
 ]
+
+if not settings.DEBUG:
+    # react static files
+    urlpatterns += [
+        re_path('.*', TemplateView.as_view(template_name='index.html'))
+    ]

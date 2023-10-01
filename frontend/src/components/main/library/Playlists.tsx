@@ -1,13 +1,13 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useHistory} from "react-router-dom";
-import AxiosClient from "../../../utils/axiosClient";
+import {useNavigate} from "react-router-dom";
 import {getArtistsString} from "../../../utils/dataFormat";
-import {loadMoreItems} from "../../../utils/api";
+import AxiosClient from "../../../api/AxiosClient";
+import {getPlaylists, loadMoreItems} from "../../../api/spotify";
 
 const Playlists: FC = () => {
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const [savedTracks, setSavedTracks] = useState<any[]>([]);
   const [total, setTotal] = useState<number | null>(null);
@@ -15,18 +15,16 @@ const Playlists: FC = () => {
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(
-      `http://localhost:8000/api/spotify/playlists`
-    ).then(res => {
+    getPlaylists().then(res => {
       const {items, next} = res.data;
       setNext(next);
       setPlaylists(items);
     }).catch(err => console.log(err));
-  }, [])
+  }, []);
 
   useEffect(() => {
     AxiosClient.get(
-      `http://localhost:8000/api/spotify/saved`
+      `/spotify/saved`
     ).then(res => {
       const {data: {items, total}} = res;
       setSavedTracks(items);
@@ -35,7 +33,7 @@ const Playlists: FC = () => {
   }, []);
 
   const loadMorePlaylists = (): void => {
-    if (next) loadMoreItems('http://localhost:8000/api/spotify/playlists', next)
+    if (next) loadMoreItems('/spotify/playlists', next)
       .then(res => {
           const {items, next} = res.data;
           setNext(next);
@@ -44,9 +42,9 @@ const Playlists: FC = () => {
       ).catch(err => console.log(err));
   };
 
-  const goToPlaylist = (id: string): any => history.push(`/playlists/${id}`);
+  const goToPlaylist = (id: string): any => navigate(`/playlists/${id}`);
 
-  const goToFavourite = (): any => history.push('/saved');
+  const goToFavourite = (): any => navigate('/saved');
 
   return (
     <InfiniteScroll
@@ -54,7 +52,7 @@ const Playlists: FC = () => {
       hasMore={next != null}
       loader={<h2>Loading more playlists ...</h2>}
       dataLength={playlists.length}
-      scrollableTarget='content'
+      scrollableTarget="content"
     >
       <Grid container className="library__playlists">
         <Grid item xs={12}>
@@ -82,7 +80,7 @@ const Playlists: FC = () => {
         </Grid>
 
         {playlists.length > 0 && playlists.map(({name, description, images, id}) => (
-          <Grid item xs={2} container justify="center">
+          <Grid item xs={2} container justifyContent="center">
             <div
               className="library__playlists-playlist"
               onClick={() => goToPlaylist(id)}

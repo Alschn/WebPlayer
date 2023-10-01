@@ -1,24 +1,21 @@
-import React, {FC, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import AxiosClient from "../../utils/axiosClient";
 import {SpotifySimplifiedTrackObject} from "../../types/spotify";
-import {Grid} from "@material-ui/core";
+import {Grid} from "@mui/material";
 import {getPlaylistLength} from "../../utils/dataFormat";
 import SpotifyTable from "../layout/SpotifyTable";
+import AxiosClient from "../../api/AxiosClient";
 
-interface Parameters {
-  id: string,
-}
 
 const Album: FC = () => {
-  let {id} = useParams<Parameters>();
+  const {id} = useParams();
   const [tracks, setTracks] = useState<SpotifySimplifiedTrackObject[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [albumInfo, setAlbumInfo] = useState<any>({});
   const [next, setNext] = useState<string | null>(null);
 
   useEffect(() => {
-    AxiosClient.get(`http://localhost:8000/api/spotify/albums/${id}`).then(res => {
+    AxiosClient.get(`/spotify/albums/${id as string}`).then(res => {
       console.log(res.data);
       const {data: {artists, tracks: {items, next}, ...rest}} = res;
       setArtists(artists);
@@ -27,7 +24,7 @@ const Album: FC = () => {
       setAlbumInfo(rest);
     }).catch(
       err => console.log(err)
-    )
+    );
   }, [id]);
 
   const getAuthor = (): string | undefined => {

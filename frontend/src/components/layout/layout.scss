@@ -7,8 +7,8 @@ $main-height: calc(#{$content-height} - #{$header-height});
 $sidebar-top-height: 245px;
 $sidebar-playlists-height: calc(#{$content-height} - #{$sidebar-top-height} - 15px);
 
-$spotify-gray: #191414;
 $spotify-green: #1DB954;
+$spotify-gray: #191414;
 $gray-font: #888;
 $lighter-gray-font: #bebebe;
 $gray-border: #262626;
@@ -24,6 +24,8 @@ $gray-card-hover: rgba(124, 124, 124, 0.2);
 .main {
   height: $content-height;
   overflow: hidden;
+
+  background: $spotify-gray;
 }
 
 
@@ -31,99 +33,103 @@ $gray-card-hover: rgba(124, 124, 124, 0.2);
   Header
 */
 .header {
-  background: black;
-  padding-left: 25px;
+  position: absolute;
   color: white;
   font-weight: bold;
   height: $header-height;
 
-  .header__location {
-    padding-left: 40px;
-    flex-grow: 1;
-  }
+  .header-content {
+    padding-left: 25px;
 
-  .header__search-wrapper {
-    display: flex;
-    align-items: center;
-    height: 100%;
+    .header__left {
+      position: relative;
 
-    .header__search {
-      display: flex;
-      align-items: center;
-      border-radius: 30px;
-      height: 80%;
-      width: 25%;
+      .header__back, .header__forward {
+        color: #f6f6f6;
+        background: #373636;
+        padding: 3px;
+        border-radius: 15px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
 
-      background-color: white;
+      .header__back {
+        margin-right: 10px;
+      }
+    }
 
-      .header_search-icon {
-        padding: 0 8px;
-        font-size: 30px;
+    .header__location {
+      position: relative;
+      padding-left: 40px;
+      flex-grow: 1;
 
-        &:hover {
-          cursor: pointer;
+      .header__search-wrapper {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        .header__search {
+          display: flex;
+          align-items: center;
+          border-radius: 30px;
+          height: 80%;
+          width: 25%;
+
+          background-color: white;
+
+          .header_search-icon {
+            padding: 0 8px;
+            font-size: 30px;
+
+            &:hover {
+              cursor: pointer;
+            }
+          }
+
+          input {
+            width: 80%;
+            height: 65%;
+            border: none;
+            font-size: 14px;
+            background: none;
+
+            &:focus {
+              outline-width: 0;
+            }
+          }
         }
       }
 
-      input {
-        width: 80%;
-        height: 65%;
-        border: none;
-        font-size: 14px;
-        background: none;
-
-        &:focus {
-          outline-width: 0;
-        }
+      .header__tabs * {
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
       }
     }
-  }
 
-
-  .header__tabs * {
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-  }
-
-  .header__left {
-
-    .header__back, .header__forward {
-      color: #f6f6f6;
-      background: #373636;
-      padding: 3px;
-      border-radius: 15px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-
-    .header__back {
-      margin-right: 10px;
-    }
-  }
-
-  .header__right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .header__right-user {
+    .header__right {
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-wrap: nowrap;
 
-      background: #373737; // make it black later
-      border-radius: 25px;
+      .header__right-user {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
 
-      .MuiAvatar-root {
-        margin-right: 5px;
-        width: 30px;
-        height: 30px;
-      }
+        background: #373737; // make it black later
+        border-radius: 25px;
 
-      .header__right-user-name {
-        font-weight: 500;
+        .MuiAvatar-root {
+          margin-right: 5px;
+          width: 30px;
+          height: 30px;
+        }
+
+        .header__right-user-name {
+          font-weight: 500;
+        }
       }
     }
   }
@@ -250,6 +256,9 @@ $gray-card-hover: rgba(124, 124, 124, 0.2);
   Content - section in the middle
 */
 .content {
+  // header has position: relative, so there is need to move content downwards by its height
+  margin-top: $header-height;
+
   padding-left: 25px;
   background: $spotify-gray;
   height: $main-height;
