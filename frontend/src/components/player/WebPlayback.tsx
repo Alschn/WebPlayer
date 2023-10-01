@@ -33,15 +33,14 @@ const WebPlayback = ({children}: WebPlaybackProps) => {
   if (!isAuthenticated) return children;
 
   return (
-    <>
-      <WebPlaybackSDK
-        initialDeviceName={PLAYBACK_INITIAL_DEVICE_NAME}
-        initialVolume={PLAYBACK_INITIAL_VOLUME}
-        getOAuthToken={getOAuthToken}
-        connectOnInitialized
-      />
+    <WebPlaybackSDK
+      initialDeviceName={PLAYBACK_INITIAL_DEVICE_NAME}
+      initialVolume={PLAYBACK_INITIAL_VOLUME}
+      getOAuthToken={getOAuthToken}
+      connectOnInitialized
+    >
       {children}
-    </>
+    </WebPlaybackSDK>
   );
 };
 

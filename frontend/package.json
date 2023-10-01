@@ -22,7 +22,7 @@
     "react-dom": "^18.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.4.3",
-    "react-spotify-web-playback-sdk": "^3.0.1",
+    "react-spotify-web-playback-sdk": "^3.0.2",
     "sass": "^1.56.1"
   },
   "devDependencies": {

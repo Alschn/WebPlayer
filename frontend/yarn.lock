@@ -1934,10 +1934,10 @@ react-router@6.4.3:
   dependencies:
     "@remix-run/router" "1.0.3"
 
-react-spotify-web-playback-sdk@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/react-spotify-web-playback-sdk/-/react-spotify-web-playback-sdk-3.0.1.tgz#b147e0732e62dbd9a9b20eae943875d6b3bc5b0b"
-  integrity sha512-ubhP/SPiFq9ng25OdAOxfFNarraBRnGrFVHUGTbh0hxzSzUvteAtGHifqAsxrY3oWoOJ1vslll0Awg5YqYog/g==
+react-spotify-web-playback-sdk@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-spotify-web-playback-sdk/-/react-spotify-web-playback-sdk-3.0.2.tgz#80aa3d17f0c3ae4251d5870292dee9120981e99b"
+  integrity sha512-FqCgDEAZkNk6qJ80L38YyxIa0B/SBBaaStvKiYtf5CT+dVCMNEFhDDMUml2JQ7EIiuGraHNaae7Q6ZEmnv9vCA==
   dependencies:
     "@types/spotify-web-playback-sdk" "^0.1.12"
 
