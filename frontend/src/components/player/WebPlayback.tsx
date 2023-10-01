@@ -1,43 +1,47 @@
-import {FC, Fragment, ReactNode, useCallback} from "react";
+import {type PropsWithChildren, useCallback} from "react";
 import {WebPlaybackSDK} from "react-spotify-web-playback-sdk";
 import useAuth from "../../hooks/useAuth";
 import AxiosClient from "../../api/AxiosClient";
 
+type WebPlaybackProps = PropsWithChildren;
 
-interface WebPlaybackProps {
-  children: ReactNode;
+type UseGetOAuthToken = () => Spotify.PlayerInit['getOAuthToken'];
+
+function fetchSpotifyToken() {
+  return AxiosClient.get<{ token: string }>(`/auth/spotify/token/`);
 }
 
-const fetchSpotifyToken = () => {
-  return AxiosClient.get(`/spotify/token/`).then(
-    res => res.data.token
-  ).catch(err => console.log(err));
+const useGetOAuthToken: UseGetOAuthToken = () => {
+  return useCallback(async (callback: (token: string) => void) => {
+    try {
+      const res = await fetchSpotifyToken();
+      callback(res.data.token);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 };
 
-const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
+const PLAYBACK_INITIAL_DEVICE_NAME = 'Web Player';
+const PLAYBACK_INITIAL_VOLUME = 0.3;
+
+const WebPlayback = ({children}: WebPlaybackProps) => {
   const {isAuthenticated} = useAuth();
 
-  const getOAuthToken: Spotify.PlayerInit['getOAuthToken'] = useCallback((callback: (token: any) => void) => {
-    const token = fetchSpotifyToken();
-    callback(token);
-  }, []);
+  const getOAuthToken = useGetOAuthToken();
 
-  if (!isAuthenticated) return (
-    <Fragment>
-      {children}
-    </Fragment>
-  );
+  if (!isAuthenticated) return children;
 
   return (
-    // something is wrong with web playback sdk
-    <WebPlaybackSDK
-      initialDeviceName={"Web Player"}
-      getOAuthToken={getOAuthToken}
-      initialVolume={0.3}
-      connectOnInitialized
-    >
+    <>
+      <WebPlaybackSDK
+        initialDeviceName={PLAYBACK_INITIAL_DEVICE_NAME}
+        initialVolume={PLAYBACK_INITIAL_VOLUME}
+        getOAuthToken={getOAuthToken}
+        connectOnInitialized
+      />
       {children}
-    </WebPlaybackSDK>
+    </>
   );
 };
 
