@@ -56,10 +56,10 @@ from spotify_adapter.views.users import (
     UsersDetailView,
     CurrentUserView,
     CurrentUserTopTracksView,
-    CurrentUserTopArtistsSerializer,
     PlaylistDetailFollowersContainsView,
     PlaylistDetailFollowersView,
 )
+from spotify_adapter.views.users.me_top_artists import CurrentUserTopArtistsView
 
 urlpatterns = [
     # Albums
@@ -137,7 +137,7 @@ urlpatterns = [
 
     # Users
     path('me/', CurrentUserView.as_view()),
-    path('me/top/artists/', CurrentUserTopArtistsSerializer.as_view()),
+    path('me/top/artists/', CurrentUserTopArtistsView.as_view()),
     path('me/top/tracks/', CurrentUserTopTracksView.as_view()),
     path('me/following/', CurrentUserFollowing.as_view()),
     path('me/following/contains/', CurrentUserFollowingContainsView.as_view()),
