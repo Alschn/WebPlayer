@@ -1,5 +1,6 @@
 from typing import Any
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -26,8 +27,10 @@ class FeaturedPlaylistsView(APIView):
     https://developer.spotify.com/documentation/web-api/reference/get-featured-playlists
     """
 
-    # todo: response serializer
-
+    @extend_schema(
+        parameters=[FeaturedPlaylistsParamsSerializer],
+        # todo: response serializer
+    )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = FeaturedPlaylistsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)

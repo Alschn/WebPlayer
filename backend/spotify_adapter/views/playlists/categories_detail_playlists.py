@@ -1,5 +1,6 @@
 from typing import Any
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -24,8 +25,10 @@ class CategoriesDetailPlaylistsView(APIView):
     https://developer.spotify.com/documentation/web-api/reference/get-a-categories-playlists
     """
 
-    # todo: response serializer
-
+    @extend_schema(
+        parameters=[CategoriesDetailParamsSerializer],
+        # todo: response serializer
+    )
     def get(self, request: Request, category_id: str, *args: Any, **kwargs: Any) -> Response:
         serializer = CategoriesDetailParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -35,5 +38,10 @@ class CategoriesDetailPlaylistsView(APIView):
         offset = serializer.validated_data.get('offset')
 
         client = get_spotify_client(request.user)
-        data = client.category_playlists(category_id, country=country, limit=limit, offset=offset)
+        data = client.category_playlists(
+            category_id,
+            country=country,
+            limit=limit,
+            offset=offset
+        )
         return Response(data, status=status.HTTP_200_OK)

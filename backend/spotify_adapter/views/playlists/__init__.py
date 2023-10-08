@@ -3,6 +3,6 @@ from .featured_playlists import FeaturedPlaylistsView
 from .me_playlists import CurrentUserPlaylistsView
 from .playlist_detail_images import PlaylistsDetailImagesView
 # from .playlists import
-from .playlists_detail import GetPlaylistView
+from .playlists_detail import PlaylistDetailView
 from .playlists_detail_tracks import PlaylistsDetailTracksView
 from .users_detail_playlists import UsersPlaylistsView

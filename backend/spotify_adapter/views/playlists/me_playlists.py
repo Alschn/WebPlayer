@@ -1,5 +1,6 @@
 from typing import Any
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -10,7 +11,7 @@ from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
-class CurrentUserParamsPlaylistsView(serializers.Serializer):
+class CurrentUserPlaylistsParamsSerializer(serializers.Serializer):
     limit = serializers.IntegerField(required=False, min_value=1, max_value=50, default=20)
     offset = serializers.IntegerField(required=False)
 
@@ -25,8 +26,12 @@ class CurrentUserPlaylistsView(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
+    @extend_schema(
+        parameters=[CurrentUserPlaylistsParamsSerializer],
+        # todo: response serializer
+    )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = CurrentUserParamsPlaylistsView(data=request.query_params)
+        serializer = CurrentUserPlaylistsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
         client = get_spotify_client(request.user)

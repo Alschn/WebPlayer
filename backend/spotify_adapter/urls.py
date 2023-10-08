@@ -36,7 +36,7 @@ from spotify_adapter.views.playlists import (
     PlaylistsDetailImagesView,
     PlaylistsDetailTracksView,
     UsersPlaylistsView,
-    GetPlaylistView,
+    PlaylistDetailView,
     CurrentUserPlaylistsView,
 )
 from spotify_adapter.views.search import SearchView
@@ -112,7 +112,7 @@ urlpatterns = [
 
     # Playlists
     path('me/playlists/', CurrentUserPlaylistsView.as_view()),
-    path('playlists/<str:playlist_id>/', GetPlaylistView.as_view()),
+    path('playlists/<str:playlist_id>/', PlaylistDetailView.as_view()),
     path('playlists/<str:playlist_id>/tracks/', PlaylistsDetailTracksView.as_view()),
     path('playlists/<str:playlist_id>/images/', PlaylistsDetailImagesView.as_view()),
     path('users/<str:user_id>/playlists/', UsersPlaylistsView.as_view()),
