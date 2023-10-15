@@ -1,27 +1,6 @@
-from .albums_detail import GetAlbumView
-from .artists_detail import GetArtistView
-from .artists_detail_albums import GetArtistsAlbumsView
-from .artists_detail_related_artists import GetRelatedArtistsView
-from .artists_detail_tracks import GetArtistsTopTracksView
-from .devices import AvailableDevicesView
-from .follow import FollowUsersView
-from .new_releases import NewReleasesView
-from .pause import PauseSongView
-from .play import PlaySongView
-from .playlists import GetUserPlaylistsView
-from .playlists_detail import GetPlaylistView
-from .playlists_detail import GetPlaylistView
-from .queue import QueueView
-from .recommendations import RecommendationsView
-from .repeat import SetRepeatModeView
-from .saved import GetSavedItemsView
-from .seek import SeekPositionView
-from .shuffle import SetShuffleView
-from .skip import SkipSongView
-from .song import GetCurrentSongView
-from .top_artists import GetTopArtistsView
-from .top_tracks import GetTopTracksView
-from .users_detail import GetUserView
-from .users_detail_playlists import UsersPlaylistsView
-from .users_me import GetCurrentUserView
-from .volume import SetVolumeView
+"""
+Views are organized in sub packages by resource type, following the Spotify API reference.
+
+See:
+https://developer.spotify.com/documentation/web-api
+"""

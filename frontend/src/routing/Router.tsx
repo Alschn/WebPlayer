@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import SpotifyLayout from "../components/layout/SpotifyLayout";
 import Welcome from "../components/Welcome";
 import Artist from "../components/main/Artist";
@@ -16,34 +16,74 @@ import Search from "../components/main/Search";
 import Queue from "../components/main/Queue";
 import PrivateRoute from "./PrivateRoute";
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Welcome/>
+  },
+  {
+    path: '/callback',
+    element: <SpotifyCallback/>
+  },
+  {
+    path: '/',
+    element: (
+      <PrivateRoute>
+        <SpotifyLayout/>
+      </PrivateRoute>
+    ),
+    children: [
+      {
+        path: '/home',
+        element: <Home/>
+      },
+      {
+        path: '/profiles/:profile_id',
+        element: <Profile/>
+      },
+      {
+        path: '/playlists/:playlist_id',
+        element: <Playlist/>
+      },
+      {
+        path: '/artists/:artist_id/:page',
+        element: <ArtistSubPage/>
+      },
+      {
+        path: '/artists/:artist_id',
+        element: <Artist/>
+      },
+      {
+        path: '/albums/:album_id',
+        element: <Album/>
+      },
+      {
+        path: '/search',
+        element: <Search/>
+      },
+      {
+        path: '/saved',
+        element: <SavedTracks/>
+      },
+      {
+        path: '/library/:subpage',
+        element: <Library/>
+      },
+      {
+        path: '/queue',
+        element: <Queue/>
+      }
+    ]
+  },
+  {
+    path: '*',
+    element: <PageNotFound/>
+  }
+]);
+
 const Router: FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index path="/" element={<Welcome/>}/>
-
-        <Route path="/" element={
-          <PrivateRoute>
-            <SpotifyLayout/>
-          </PrivateRoute>
-        }>
-          <Route path="/home" element={<Home/>}/>
-          <Route path="/profiles/:id" element={<Profile/>}/>
-          <Route path="/playlists/:id" element={<Playlist/>}/>
-          <Route path="/artists/:id/:page" element={<ArtistSubPage/>}/>
-          <Route path="/artists/:id" element={<Artist/>}/>
-          <Route path="/albums/:id" element={<Album/>}/>
-          <Route path="/search" element={<Search/>}/>
-          <Route path="/saved" element={<SavedTracks/>}/>
-          <Route path="/library/:subpage" element={<Library/>}/>
-          <Route path="/queue" element={<Queue/>}/>
-        </Route>
-
-        <Route path="/callback" element={<SpotifyCallback/>}/>
-
-        <Route path="*" element={<PageNotFound/>}/>
-      </Routes>
-    </BrowserRouter>
+    <RouterProvider router={router}/>
   );
 };
 

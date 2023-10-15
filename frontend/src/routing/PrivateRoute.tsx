@@ -11,7 +11,7 @@ const PrivateRoute: FC<PrivateRouteProps> = ({children}) => {
   const {isAuthenticated} = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" state={{from: location}}/>;
+    return <Navigate to="/"/>;
   }
 
   return children;

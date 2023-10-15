@@ -11,7 +11,11 @@ from rest_framework.response import Response
 
 
 class SpotifyLoginView(SocialLoginView):
-    """/api/auth/spotify/login"""
+    """
+    POST    /api/auth/spotify/login/
+
+    todo: rewrite, better docs, swagger
+    """
 
     adapter_class = SpotifyOAuth2Adapter
     serializer_class = SocialLoginSerializer
@@ -30,7 +34,7 @@ class SpotifyLoginView(SocialLoginView):
 
         social_account = SocialAccount.objects.get(user=request.user)
 
-        token = SocialToken.objects.update_or_create(
+        SocialToken.objects.update_or_create(
             app=SocialApp.objects.get(provider='spotify'),
             account=social_account,
             defaults={

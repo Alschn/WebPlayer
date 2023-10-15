@@ -2,7 +2,7 @@ from typing import Any
 
 import requests
 from django.conf import settings
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,19 +28,32 @@ SCOPES = [
 SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize'
 
 
+class GetSpotifyAuthUrlSerializer(serializers.Serializer):
+    url = serializers.CharField()
+
+
 class GetSpotifyAuthURLView(APIView):
-    """/api/auth/spotify/url/"""
+    """
+    GET     /api/auth/spotify/url/   - Get the url to redirect the user to for spotify authorization
+    """
+    serializer_class = GetSpotifyAuthUrlSerializer
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        """Client requests spotify url prepared by the backend."""
+        url = build_spotify_authorize_url(SCOPES)
+        return Response({'url': url}, status=status.HTTP_200_OK)
 
-        scopes = ' '.join(SCOPES)
 
-        url = requests.Request('GET', SPOTIFY_AUTHORIZE_URL, params={
-            'scope': scopes,
+def build_spotify_authorize_url(scopes: list[str]) -> str:
+    scope = ' '.join(scopes)
+
+    request_obj = requests.Request(
+        'GET',
+        SPOTIFY_AUTHORIZE_URL,
+        params={
+            'scope': scope,
             'response_type': 'code',
             'redirect_uri': settings.REDIRECT_URI,
             'client_id': settings.CLIENT_ID
-        }).prepare().url
-
-        return Response({'url': url}, status=status.HTTP_200_OK)
+        }
+    ).prepare()
+    return request_obj.url
