@@ -1,8 +1,10 @@
-import {ChangeEvent, FC, useState} from "react";
+import {type ChangeEvent, type FC, useState} from "react";
 import SearchIcon from '@mui/icons-material/Search';
+import {useDebounce} from "../../hooks/useDebounce";
 
 export const SearchBox = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const debouncedQuery = useDebounce(searchQuery, 500);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);

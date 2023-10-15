@@ -7,9 +7,9 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import SpotifySlider from "./SpotifySlider";
-import {setVolume} from "../player/api";
 import {useNavigate} from 'react-router-dom';
 import DevicesMenu from "./DevicesMenu";
+import {setVolume} from "../../api/spotify";
 
 
 const VolumeSlider: FC = () => {

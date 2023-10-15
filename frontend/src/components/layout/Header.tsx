@@ -8,9 +8,14 @@ import {SearchBox} from "../main/Search";
 import UserMenu from "./UserMenu";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import useUserData from "../../hooks/useUserData";
+import useAuth from "../../hooks/useAuth";
 
-const libraryPaths = ['/library/playlists', '/library/podcasts', '/library/artists', '/library/albums'];
+const libraryPaths = [
+  '/library/playlists',
+  '/library/podcasts',
+  '/library/artists',
+  '/library/albums'
+];
 
 const LocationBasedHeaderTabs = () => {
   const location = useLocation();
@@ -25,7 +30,7 @@ const LocationBasedHeaderTabs = () => {
 
 const Header: FC = () => {
   const navigate = useNavigate();
-  const {username, imageURL, id} = useUserData();
+  const {user} = useAuth();
 
   // User Menu
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
@@ -51,18 +56,18 @@ const Header: FC = () => {
         </Grid>
 
         <Grid item xs={2} className="header__right">
-          {username && (
-            <div className="header__right-user" onClick={handleOpenMenu}>
-              {imageURL && <Avatar alt="avatar" src={imageURL}/>}
-              {username && <span className="header__right-user-name">{username}</span>}
-              {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
-            </div>
+          {!!user && (
+            <>
+              <div className="header__right-user" onClick={handleOpenMenu}>
+                {!!user.images && <Avatar alt="avatar" src={user.images[0].url}/>}
+                {!!user.display_name && <span className="header__right-user-name">{user.display_name}</span>}
+                {Boolean(anchorEl) ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+              </div>
+              <UserMenu profileID={user.id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
+            </>
           )}
-          <UserMenu profileID={id} anchorEl={anchorEl} handleClose={handleCloseMenu}/>
         </Grid>
       </Grid>
-
-
     </Grid>
   );
 };

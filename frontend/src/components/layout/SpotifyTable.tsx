@@ -7,25 +7,26 @@ import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime, getTimePassedSinceAdded} from "../../utils/dataFormat";
 import {Link} from "react-router-dom";
 import useSingleAndDoubleClick from "../../hooks/useSingleAndDoubleClick";
-import {playSongWithUri} from "../player/api";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
+import {playSongWithUri} from "../../api/spotify";
 
 
 interface SpotifyTableProps {
-  tableType: spotifyTableType,
+  tableType: SpotifyTableType,
   tracks: any[],
-  next: string | null;
+  hasNextPage: boolean;
   loadMore: () => void;
 }
 
-type spotifyTableType = "album" | "playlist";
+type SpotifyTableType = "album" | "playlist";
 
-const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}) => {
+const SpotifyTable: FC<SpotifyTableProps> = ({hasNextPage, tracks, loadMore, tableType}) => {
   const [selected, setSelected] = useState<Element | null>(null);
   const playbackState = usePlaybackState();
 
   const handleSingleClick = (index: number): void => {
     const select = document.getElementById(`track-${index}`);
+
     if (select && select !== selected) {
       setSelected(((prev: Element | null) => {
           if (prev) prev.classList.remove('Mui-selected');
@@ -38,8 +39,10 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
 
   const handleDoubleClick = (row: string): void => {
     if (selected) selected.classList.remove('Mui-selected');
-    playSongWithUri(row, playbackState?.context.uri)
-      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`));
+
+    playSongWithUri(row).then(() => {
+      console.log(`Playing song with uri ${row}; context ${playbackState?.context.uri}`);
+    });
   };
 
   const handleClick = useSingleAndDoubleClick(handleSingleClick, handleDoubleClick);
@@ -51,9 +54,10 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
       <TableContainer>
         <InfiniteScroll
           next={loadMore}
-          hasMore={next != null}
+          hasMore={hasNextPage}
           loader={<h2>Loading more tracks ...</h2>}
           dataLength={tracks.length}
+          scrollThreshold={0.9}
           scrollableTarget="content"
         >
           <Table aria-label="simple table" size="small">
@@ -69,9 +73,9 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
               {tracks.map(
                 ({artists, duration_ms, name, explicit, uri}, index) => (
                   <TableRow
-                    key={`track-${index}`}
-                    className="playlist__track-row"
+                    key={`album-track-${index}-${uri}`}
                     id={`track-${index + 1}`}
+                    className="playlist__track-row"
                     onClick={() => handleClick(uri, index + 1)}
                   >
                     <TableCell component="th" scope="row">{index + 1}</TableCell>
@@ -101,7 +105,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
       <TableContainer>
         <InfiniteScroll
           next={loadMore}
-          hasMore={next != null}
+          hasMore={hasNextPage}
           loader={<h2>Loading more tracks ...</h2>}
           dataLength={tracks.length}
           scrollableTarget="content"
@@ -131,9 +135,9 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
                   index
                 ) => (
                   <TableRow
-                    key={`track-${index + 1}`}
-                    className="playlist__track-row"
+                    key={`playlist-track-${index}-${uri}`}
                     id={`track-${index + 1}`}
+                    className="playlist__track-row"
                     onClick={() => handleClick(uri, index + 1)}
                   >
                     <TableCell component="th" scope="row">{index + 1}</TableCell>
@@ -163,6 +167,7 @@ const SpotifyTable: FC<SpotifyTableProps> = ({next, tracks, loadMore, tableType}
       </TableContainer>
     );
   }
+
   return null;
 };
 
