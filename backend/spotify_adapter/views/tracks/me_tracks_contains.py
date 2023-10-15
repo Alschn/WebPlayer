@@ -2,11 +2,13 @@ from typing import Any
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from spotify_adapter.utils import get_spotify_client
+from spotify_auth.permissions import HasSpotifyToken
 
 
 class MeTracksContainsParamsSerializer(serializers.Serializer):
@@ -26,6 +28,7 @@ class MeTracksContainsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/check-users-saved-tracks
     """
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[MeTracksContainsParamsSerializer],

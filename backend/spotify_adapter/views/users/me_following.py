@@ -1,11 +1,13 @@
 from typing import Any
 
 from rest_framework import status, serializers
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from spotify_adapter.utils import get_spotify_client
+from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserFollowingParamsSerializer(serializers.Serializer):
@@ -20,6 +22,7 @@ class CurrentUserFollowing(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-followed
     """
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     # todo: response serializer
 

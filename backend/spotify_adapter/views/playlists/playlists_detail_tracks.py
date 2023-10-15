@@ -1,10 +1,12 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from spotify_adapter.utils import get_spotify_client
+from spotify_auth.permissions import HasSpotifyToken
 
 
 class PlaylistsDetailsTracksParamsSerializer(serializers.Serializer):
@@ -88,6 +90,7 @@ class PlaylistsDetailTracksView(APIView):
 
     https://developer.spotify.com/documentation/web-api/reference/remove-tracks-playlist
     """
+    permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[PlaylistsDetailsTracksParamsSerializer],
