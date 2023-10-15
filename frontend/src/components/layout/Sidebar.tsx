@@ -8,32 +8,43 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
-import useUserData from "../../hooks/useUserData";
-import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
+import type {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
 import {createNewPlaylist} from "../../api/spotify";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
 
 
 const Sidebar: FC = () => {
   const navigate = useNavigate();
-  const {id: user_id} = useUserData();
+  const {user} = useAuth();
 
   const [newPlaylist, setNewPlaylist] = useState<SpotifySimplifiedPlaylistObject | null>(null);
 
-  const handleSettingsOnClick = (): void => {
+  const client = useQueryClient();
+
+  const createPlaylistMutation = useMutation({
+    mutationFn: (user_id: string) => createNewPlaylist(user_id),
+    onSuccess: async (res) => {
+      const data = res.data;
+      setNewPlaylist(data);
+      await client.invalidateQueries(['playlists']);
+      navigate(`/playlists/${data.id}`);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleSettingsOnClick = () => {
+    alert('todo: settings on click');
   };
 
-  const handleGoToRoute = (route: string): void => navigate(route);
+  const handleGoToRoute = (route: string) => navigate(route);
 
-  const handleCreatePlaylist = (): void => {
-    if (user_id) {
-      createNewPlaylist(user_id).then(
-        ({data}) => {
-          setNewPlaylist(data);
-          const {id} = data;
-          navigate(`/playlists/${id}`);
-        }
-      ).catch(err => console.log(err));
-    }
+  const handleCreatePlaylist = () => {
+    if (!user) return;
+
+    createPlaylistMutation.mutate(user.id);
   };
 
   return (

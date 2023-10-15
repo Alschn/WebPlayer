@@ -4,9 +4,9 @@ import ExplicitIcon from "@mui/icons-material/Explicit";
 import {getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
 import useSingleAndDoubleClick from "../../hooks/useSingleAndDoubleClick";
-import {playSongWithUri} from "../player/api";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
 import {SpotifyTrackObject} from "../../types/spotify";
+import {playSongWithUri} from "../../api/spotify";
 
 
 interface SpotifyTableProps {
@@ -21,6 +21,7 @@ const SpotifyArtistTable: FC<SpotifyTableProps> = ({tracks}) => {
   const handleSingleClick = (index: number): void => {
     // to be changed !
     const select = document.getElementById(`track-${index}`);
+
     if (select && select !== selected) {
       setSelected(((prev: Element | null) => {
           if (prev) prev.classList.remove('Mui-selected');
@@ -33,8 +34,10 @@ const SpotifyArtistTable: FC<SpotifyTableProps> = ({tracks}) => {
 
   const handleDoubleClick = (row: string): void => {
     if (selected) selected.classList.remove('Mui-selected');
-    playSongWithUri(row, playbackState?.context.uri)
-      .then(() => console.log(`Playing song with uri ${row}, context ${playbackState?.context.uri}`));
+
+    playSongWithUri(row).then(() => {
+      console.log(`Playing song with uri ${row}; context ${playbackState?.context.uri}`);
+    });
   };
 
   const handleClick = useSingleAndDoubleClick(handleSingleClick, handleDoubleClick);
@@ -48,7 +51,7 @@ const SpotifyArtistTable: FC<SpotifyTableProps> = ({tracks}) => {
           {tracks.map(
             ({artists, duration_ms, name, explicit, uri, album}, index) => (
               <TableRow
-                key={`track-${index}`}
+                key={`track-${uri}-${index}`}
                 className="playlist__track-row"
                 id={`track-${index + 1}`}
                 onClick={() => handleClick(uri, index + 1)}

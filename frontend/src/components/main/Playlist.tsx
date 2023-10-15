@@ -1,19 +1,19 @@
 import {Grid} from "@mui/material";
-import {FC, useEffect, useState} from "react";
+import {FC, useMemo, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {getMsToTime} from "../../utils/dataFormat";
 import {
   SpotifyExternalUrlObject,
   SpotifyFollowersObject,
   SpotifyImageObject,
-  SpotifyPlaylistTrackObject,
+  SpotifyPlaylistObject,
   SpotifyPublicUserObject
 } from "../../types/spotify";
 import SpotifyTable from "../layout/SpotifyTable";
 import EditPlaylistDialog from "./playlist/EditPlaylistDialog";
-import useUserData from "../../hooks/useUserData";
-import AxiosClient from "../../api/AxiosClient";
-import {loadMoreItems} from "../../api/spotify";
+import {getPlaylist, getPlaylistTracks} from "../../api/spotify";
+import useAuth from "../../hooks/useAuth";
+import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
 
 export interface SpotifyPlaylistInfo {
   collaborative: boolean,
@@ -33,133 +33,148 @@ export interface SpotifyPlaylistInfo {
 }
 
 const Playlist: FC = () => {
-  // url parameter
-  let {id} = useParams();
+  let {playlist_id} = useParams();
+  const playlistId = playlist_id as string;
 
-  const {id: user_id} = useUserData();
+  const {user} = useAuth();
+  const userId = user?.id as string;
 
-  // playlist info
-  const [playlistInfo, setPlaylistInfo] = useState<SpotifyPlaylistInfo | null>(null);
+  const {
+    data: playlistData
+  } = useQuery({
+    queryKey: ['playlist', playlistId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getPlaylist(queryKey[1]);
+      return res.data as SpotifyPlaylistObject;
+    },
+  });
 
-  // playlists' tracks
-  const [tracks, setTracks] = useState<SpotifyPlaylistTrackObject[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [next, setNext] = useState<string | null>(null);
+  const {
+    data: tracksData,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['playlist', playlistId, 'tracks'] as const,
+    queryFn: async ({pageParam = {}}) => {
+      const res = await getPlaylistTracks(playlistId, pageParam);
+      return res.data;
+    },
+    getNextPageParam: (lastPage) => {
+      const next = lastPage.next;
+      if (!next) return undefined;
+      const url = new URL(next);
+      const limit = url.searchParams.get('limit');
+      const offset = url.searchParams.get('offset');
+      return {limit, offset};
+    },
+    // initialData: () => {
+    //   if (!playlistData) return;
+    //
+    //   return {
+    //     pages: [
+    //       playlistData!.tracks
+    //     ],
+    //     pageParams: [{}]
+    //   };
+    // },
+    enabled: Boolean(playlistData),
+    refetchOnWindowFocus: false,
+  });
+
+  const tracks = useMemo(() => {
+    if (!tracksData) return [];
+    return tracksData.pages.flatMap(page => page.items);
+  }, [tracksData]);
+
+  const totalCount = useMemo(() => {
+    return tracksData?.pages[0]?.total || 0;
+  }, [tracksData]);
 
   // edit playlist dialog
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  // force state update from dialog
-  const [shouldUpdate, setShouldUpdate] = useState<number>(0);
 
+  const loadMoreTracks = async () => {
+    if (!hasNextPage) return;
 
-  useEffect(() => {
-    AxiosClient.get(`/spotify/playlists/${id as string}`).then(res => {
-      const {tracks: {items, next, total}, ...rest} = res.data;
-      if (shouldUpdate > 0) {
-        // no need to fetch tracks again, they stay the same
-        setPlaylistInfo(rest);
-        return;
-      }
-      setTracks(items);
-      setNext(next);
-      setTotalCount(total);
-      setPlaylistInfo(rest);
-    }).catch(
-      err => console.log(err)
-    );
-  }, [id, shouldUpdate]);
-
-  const loadMoreTracks = (): void => {
-    if (next) {
-      loadMoreItems(`/spotify/playlists/${id as string}`, next).then(res => {
-        const {items, next} = res.data;
-        setTracks(prevState => [...prevState, ...items]);
-        setNext(next);
-      }).catch(err => console.log(err));
-    }
+    await fetchNextPage();
   };
 
   const getPlaylistLength = (): string => {
-    if (tracks) {
-      let length = 0;
-      tracks.forEach(({track: {duration_ms}}) => length += duration_ms);
-      return getMsToTime(length);
-    }
-    return '';
+    if (!tracks) return '';
+
+    const length = tracks.reduce(
+      (acc, {track: {duration_ms}}) => acc + duration_ms,
+      0
+    );
+
+    return getMsToTime(length);
   };
 
-  const getPlaylistImage = (): string | undefined => {
-    if (playlistInfo && playlistInfo.images.length > 0) {
-      return playlistInfo.images[0].url;
-    }
-    return undefined;
-  };
+  const isOwner = playlistData && playlistData.owner.id === userId;
 
   const handleOpen = () => {
-    if (isOwner) setIsOpen(true);
-  };
+    if (!isOwner) return;
+    setIsOpen(true);
 
+  };
   const handleClose = () => {
-    if (isOwner) setIsOpen(false);
-  };
+    if (!isOwner) return;
+    setIsOpen(false);
 
-  const isOwner = playlistInfo && playlistInfo.owner.id === user_id;
+  };
 
   return (
     <div className="playlist__root">
-      {playlistInfo && <Grid container alignItems="flex-end">
-        <EditPlaylistDialog
-          open={isOpen}
-          handleClose={handleClose}
-          playlistInfo={playlistInfo}
-          forceUpdate={() => setShouldUpdate(prevState => prevState + 1)}
-        />
-
-        <Grid item className="playlist__info-left">
-          <img src={getPlaylistImage()} alt="" width={300} height={300}/>
+      {!!playlistData && (
+        <Grid container alignItems="flex-end">
+          <EditPlaylistDialog
+            open={isOpen}
+            handleClose={handleClose}
+            playlistInfo={playlistData}
+          />
+          <Grid item className="playlist__info-left">
+            <img
+              src={playlistData?.images[0]?.url}
+              width={300}
+              height={300}
+              alt={playlistData?.name ?? ""}
+            />
+          </Grid>
+          <Grid item className="playlist__info-right">
+            <h4>PLAYLIST</h4>
+            <h1 onClick={handleOpen} className={isOwner ? "playlist-owner-hover" : ""}>
+              {playlistData?.name}
+            </h1>
+            <p className={
+              isOwner ?
+                "playlist__info-right__description playlist-owner-hover" :
+                "playlist__info-right__description"
+            }
+               onClick={handleOpen}
+            >
+              {playlistData?.description}
+            </p>
+            <p className="playlist__info-right__stats">
+              <Link
+                to={`/profiles/${playlistData?.owner.id}`}
+              >{playlistData?.owner.display_name}
+              </Link>
+              · {playlistData?.followers.total} likes
+              · {totalCount} tracks, {getPlaylistLength()}
+            </p>
+          </Grid>
         </Grid>
-
-        <Grid item className="playlist__info-right">
-          <h4>PLAYLIST</h4>
-          <h1 onClick={handleOpen} className={isOwner ? "playlist-owner-hover" : ""}>
-            {playlistInfo.name}
-          </h1>
-          <p className={
-            isOwner ?
-              "playlist__info-right__description playlist-owner-hover" :
-              "playlist__info-right__description"
-          }
-             onClick={handleOpen}
-          >
-            {playlistInfo.description}
-          </p>
-          <p className="playlist__info-right__stats">
-            <Link
-              to={`/profiles/${playlistInfo.owner.id}`}
-            >{playlistInfo.owner.display_name}
-            </Link>
-            · {playlistInfo.followers.total} likes
-            · {totalCount} tracks, {getPlaylistLength()}
-          </p>
-        </Grid>
-      </Grid>}
-
+      )}
       <Grid item xs={12} className="playlist__tracks">
         <SpotifyTable
           tableType="playlist"
           tracks={tracks}
-          next={next}
+          hasNextPage={Boolean(hasNextPage)}
           loadMore={loadMoreTracks}
         />
       </Grid>
-
-      {next &&
-        <button onClick={loadMoreTracks}>
-          Load more
-        </button>}
-
       <div className="playlist__recommended">
-
+        {/* todo */}
       </div>
     </div>
   );

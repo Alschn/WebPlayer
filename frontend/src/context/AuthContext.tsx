@@ -1,4 +1,7 @@
-import {createContext, Dispatch, FC, ReactNode, SetStateAction, useState} from "react";
+import {createContext, Dispatch, FC, ReactNode, SetStateAction, useMemo, useState} from "react";
+import {useQuery} from "@tanstack/react-query";
+import {getCurrentUser} from "../api/spotify";
+import {Box, CircularProgress} from "@mui/material";
 
 export interface UserProfile {
   email: string;
@@ -32,7 +35,6 @@ interface AuthContextProps {
   token: string | null;
   setToken: Dispatch<SetStateAction<string | null>>;
   user: UserProfile | null,
-  setUser: Dispatch<SetStateAction<UserProfile | null>>;
 }
 
 export const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -43,20 +45,49 @@ interface AuthContextProviderProps {
 
 export const AuthContextProvider: FC<AuthContextProviderProps> = ({children}) => {
   const [token, setToken] = useState(() => {
-    const token = localStorage.getItem('token');
-    return token ? token : null;
+    return localStorage.getItem('token');
   });
 
-  // todo merge user context with auth context
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const isAuthenticated = !!token;
+
+  const {
+    data: userProfile,
+    isLoading: isLoadingUserProfile,
+  } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const res = await getCurrentUser();
+      return res.data as UserProfile;
+    },
+    refetchOnWindowFocus: false,
+    enabled: isAuthenticated
+  });
+
+  const user = useMemo(() => {
+    return userProfile ?? null;
+  }, [userProfile]);
+
+  if (isLoadingUserProfile) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress/>
+      </Box>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{
-      isAuthenticated: token != null,
+      isAuthenticated: !!token,
       token: token,
       setToken: setToken,
       user: user,
-      setUser: setUser
     }}>
       {children}
     </AuthContext.Provider>

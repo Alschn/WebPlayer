@@ -3,26 +3,40 @@ import CloseIcon from '@mui/icons-material/Close';
 import {FC, useState} from "react";
 import {SpotifyPlaylistInfo} from "../Playlist";
 import {editPlaylist} from "../../../api/spotify";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 interface EditPlaylistDialogProps {
   open: boolean;
   handleClose: () => void;
-  forceUpdate: () => void;
   playlistInfo: SpotifyPlaylistInfo;
 }
 
-const EditPlaylistDialog: FC<EditPlaylistDialogProps> = ({open, handleClose, playlistInfo, forceUpdate}) => {
+const EditPlaylistDialog: FC<EditPlaylistDialogProps> = ({open, handleClose, playlistInfo}) => {
+  const playlistId = playlistInfo.id;
   const [playlistTitle, setPlaylistTitle] = useState<string | undefined>(playlistInfo.name);
   const [playlistDesc, setPlaylistDesc] = useState<string | undefined>(playlistInfo.description);
 
+  const client = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await editPlaylist(playlistId, data);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries(['playlist', playlistId]);
+      handleClose();
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
   const submitChanges = (): void => {
-    editPlaylist(playlistInfo.id, {
+    mutation.mutate({
       name: playlistTitle,
       description: playlistDesc,
-    }).then(() => {
-      forceUpdate();
-      handleClose();
-    }).catch(err => console.log(err));
+    });
   };
 
   return (
@@ -46,7 +60,6 @@ const EditPlaylistDialog: FC<EditPlaylistDialogProps> = ({open, handleClose, pla
           value={playlistTitle}
           onChange={(e) => setPlaylistTitle(e.target.value)}
         />
-
         <TextField
           id="playlist__edit-dialog-desc"
           variant="outlined"

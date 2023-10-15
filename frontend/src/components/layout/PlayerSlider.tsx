@@ -5,8 +5,8 @@ import SpotifySlider from './SpotifySlider';
 import {useSpotifyPlayer} from "react-spotify-web-playback-sdk";
 
 interface PlayerSliderProps {
-  position: number | undefined;
-  duration: number | undefined;
+  position?: number;
+  duration?: number;
 }
 
 
@@ -14,16 +14,18 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
   const [value, setValue] = useState(0);
   const player = useSpotifyPlayer();
 
-  const pos = position !== undefined ? position : 0;
-  const dur = duration !== undefined ? duration : 0;
+  const pos = position ?? 0;
+  const dur = duration ?? 0;
 
   useEffect(() => {
-    dur === 0 ? setValue(0) : setValue(100 * pos / dur);
+    const newValue = dur === 0 ? 0 : 100 * pos / dur;
+    setValue(newValue);
   }, [pos, dur]);
 
-  const handleChange = (event: any, newValue: any): void => {
+  const handleChange = (_event: unknown, newValue: any): void => {
+    if (!player) return;
     const positionToSeek = Math.floor((newValue * dur) / 100);
-    player?.seek(positionToSeek).then(() => setValue(newValue));
+    player.seek(positionToSeek).then(() => setValue(newValue));
   };
 
   return (
@@ -33,7 +35,11 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
       </Grid>
 
       <Grid item xs className="player-slider__root">
-        <SpotifySlider value={value} onChange={handleChange} aria-labelledby="player-slider-slider"/>
+        <SpotifySlider
+          value={value}
+          onChange={handleChange}
+          aria-labelledby="player-slider-slider"
+        />
       </Grid>
 
       <Grid item>

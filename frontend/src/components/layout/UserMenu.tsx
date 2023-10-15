@@ -2,7 +2,6 @@ import {Divider, List, ListItem, Popover} from "@mui/material";
 import {FC} from "react";
 import {useNavigate} from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import useUserData from "../../hooks/useUserData";
 import {performLogout} from "../../api/spotify";
 
 interface UserMenuProps {
@@ -13,7 +12,6 @@ interface UserMenuProps {
 
 const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
   const {setToken} = useAuth();
-  const {clearUser} = useUserData();
   const navigate = useNavigate();
 
   const goToAccount = () => window.location.replace('https://www.spotify.com/');
@@ -23,10 +21,9 @@ const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
   const goToSettings = () => navigate('/settings');
 
   const logout = () => {
-    performLogout().then(() => {
+    performLogout().finally(() => {
       localStorage.removeItem('token');
       setToken(null);
-      clearUser();
     }).catch(err => console.log(err));
   };
 
