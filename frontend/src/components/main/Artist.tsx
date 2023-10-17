@@ -1,24 +1,22 @@
-import React, {FC, useEffect, useState} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import {FC, useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import {SpotifyAlbumObject, SpotifyArtistObject, SpotifyTrackObject} from "../../types/spotify";
-import {Button, capitalize, Grid, IconButton} from "@material-ui/core";
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import {getArtistData} from "../../utils/api";
+import {Button, capitalize, Grid, IconButton} from "@mui/material";
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SpotifyArtistTable from "../layout/SpotifyArtistTable";
 import {usePlaybackState} from "react-spotify-web-playback-sdk";
 import {getYearFromDate} from "../../utils/dataFormat";
+import {useQuery} from "@tanstack/react-query";
+import {getArtist, getArtistAlbums, getArtistRelatedArtists, getArtistTopTracks} from "../../api/spotify";
 
-interface Parameters {
-  id: string,
-}
 
 const Artist: FC = () => {
-  // url parameter
-  let {id} = useParams<Parameters>();
+  let {artist_id} = useParams();
+  const artistId = artist_id as string;
 
-  let history = useHistory();
+  const navigate = useNavigate();
 
   const playbackState = usePlaybackState();
 
@@ -36,42 +34,62 @@ const Artist: FC = () => {
 
   const [artistIsFollowed, setArtistIsFollowed] = useState<boolean>(false);
 
-  useEffect(() => {
-    getArtistData(id).then(res => {
-      const {data} = res;
-      setArtistInfo(data);
-    }).catch(err => console.log(err));
+  const {
+    data: artistData
+  } = useQuery({
+    queryKey: ['artist', artistId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getArtist(queryKey[1]);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-    getArtistData(id, "tracks").then(res => {
-      const {data} = res;
-      setArtistTracks(data.tracks);
-    }).catch(err => console.log(err));
+  const {
+    data: tracksData
+  } = useQuery({
+    queryKey: ['artist', artistId, 'top-tracks'],
+    queryFn: async ({queryKey}) => {
+      const res = await getArtistTopTracks(queryKey[1]);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-    getArtistData(id, "albums").then(res => {
-      const {data} = res;
-      setArtistAlbums(data.items);
-    }).catch(err => console.log(err));
+  const {
+    data: albumsData
+  } = useQuery({
+    queryKey: ['artist', artistId, 'albums'],
+    queryFn: async ({queryKey}) => {
+      const res = await getArtistAlbums(queryKey[1]);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-    getArtistData(id, "related-artists").then(res => {
-      const {data} = res;
-      setArtistRelated(data.artists);
-    }).catch(err => console.log(err));
+  const {
+    data: relatedArtistsData
+  } = useQuery({
+    queryKey: ['artist', artistId, 'related-artists'],
+    queryFn: async ({queryKey}) => {
+      const res = await getArtistRelatedArtists(queryKey[1]);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-    // check if user is following this artist
-  }, [id]);
+  const handleGoToRoute = (route: string) => navigate(route);
 
-  const handleGoToRoute = (route: string): void => history.push(route);
-
-  const handlePlayRandomArtistTrack = (): void => {
-
+  const handlePlayRandomArtistTrack = () => {
+    alert('todo: handlePlayRandomArtistTrack');
   };
 
-  const handleFollowArtist = (): void => {
-
+  const handleFollowArtist = () => {
+    alert('todo: handleFollowArtist');
   };
 
-  const handleMoreButton = (): void => {
-
+  const handleMoreButton = () => {
+    alert('todo: handleMoreButton');
   };
 
   const handleChangeCount = () => {
@@ -84,17 +102,11 @@ const Artist: FC = () => {
   };
 
   useEffect(() => {
-    // this doesnt work that well - to do later
     if (!playbackState) setArtistIsPlayed(false);
     else if (!playbackState.paused) setArtistIsPlayed(false);
     else if (!playbackState?.context) setArtistIsPlayed(false);
-    else setArtistIsPlayed(Boolean(playbackState.context.uri?.includes(id)));
-  }, [playbackState, id]);
-
-  const getImage = (images: any) => {
-    if (images.length > 0) return images[0]?.url;
-    return;
-  };
+    else setArtistIsPlayed(Boolean(playbackState.context.uri?.includes(artistId)));
+  }, [playbackState, artistId]);
 
   return (
     <div className="artist">
@@ -143,7 +155,7 @@ const Artist: FC = () => {
             (_, idx) => idx < 6).map(
             ({album_group, images, name, release_date, id: album_id}, idx) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/albums/${album_id}`)}>
-                <img src={getImage(images)} alt="" width={200} height={200}/>
+                <img src={images[0]?.url} alt="" width={200} height={200}/>
                 <h3 className="release-title">{name}</h3>
                 <p
                   className="release-desc">
@@ -162,7 +174,7 @@ const Artist: FC = () => {
           </Grid>
 
           <Grid item xs={6} className="show-all">
-            <a href={`/artists/${id}/albums`}>Show discography</a>
+            <a href={`/artists/${artistId}/albums`}>Show discography</a>
           </Grid>
         </Grid>
 
@@ -172,7 +184,7 @@ const Artist: FC = () => {
             (_, idx) => idx < 6).map(
             ({name, images, release_date, album_type, id: album_id}, idx) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/albums/${album_id}`)}>
-                <img src={getImage(images)} alt="" width={200} height={200}/>
+                <img src={images[0]?.url} alt="" width={200} height={200}/>
                 <h3 className="release-title">{name}</h3>
                 <p className="release-desc">{getYearFromDate(release_date)} · {capitalize(album_type)}</p>
               </Grid>
@@ -187,17 +199,22 @@ const Artist: FC = () => {
           </Grid>
 
           <Grid item xs={6} className="show-all">
-            <a href={`/artists/${id}/singles`}>Show discography</a>
+            <a href={`/artists/${artistId}/singles`}>Show discography</a>
           </Grid>
         </Grid>
 
         <Grid container>
-          {artistAlbums.length > 0 && artistAlbums.filter(
+          {artistAlbums?.filter(
             (album) => album.album_type === 'single').filter(
             (_, idx) => idx < 6).map(
             (album, idx) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/albums/${album.id}`)}>
-                <img src={getImage(album.images)} alt="" width={200} height={200}/>
+                <img
+                  src={album.images[0]?.url}
+                  alt=""
+                  width={200}
+                  height={200}
+                />
                 <h3 className="release-title">{album.name}</h3>
                 <p className="release-desc">{getYearFromDate(album.release_date)} · Album</p>
               </Grid>
@@ -212,17 +229,22 @@ const Artist: FC = () => {
           </Grid>
 
           <Grid item xs={6} className="show-all">
-            <a href={`/artists/${id}/compilations`}>Show all</a>
+            <a href={`/artists/${artistId}/compilations`}>Show all</a>
           </Grid>
         </Grid>
 
         <Grid container>
-          {artistAlbums.length > 0 && artistAlbums.filter(
+          {artistAlbums?.filter(
             (album) => album.album_type === 'compilation').filter(
             (_, idx) => idx < 6).map(
             ({name, images, release_date, id: album_id}, idx) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/albums/${album_id}`)}>
-                <img src={getImage(images)} alt="" width={200} height={200}/>
+                <img
+                  src={images[0]?.url}
+                  alt=""
+                  width={200}
+                  height={200}
+                />
                 <h3 className="release-title">{name}</h3>
                 <p className="release-desc">{getYearFromDate(release_date)} · Album</p>
               </Grid>
@@ -237,16 +259,21 @@ const Artist: FC = () => {
           </Grid>
 
           <Grid item xs={6} className="show-all">
-            <a href={`/artists/${id}/related-artists`}>Show all</a>
+            <a href={`/artists/${artistId}/related-artists`}>Show all</a>
           </Grid>
         </Grid>
 
         <Grid container>
-          {artistRelated.length > 0 && artistRelated.filter(
+          {artistRelated?.filter(
             (_, idx) => idx < 6).map(
             ({name, type, images, id: artist_id}) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/artists/${artist_id}`)}>
-                <img src={getImage(images)} alt={""} width={200} height={200}/>
+                <img
+                  src={images[0]?.url}
+                  alt={""}
+                  width={200}
+                  height={200}
+                />
                 <h3>{name}</h3>
                 <p>{capitalize(type)}</p>
               </Grid>
@@ -261,17 +288,22 @@ const Artist: FC = () => {
           </Grid>
 
           <Grid item xs={6} className="show-all">
-            <a href={`/artists/${id}/appears-on`}>Show all</a>
+            <a href={`/artists/${artistId}/appears-on`}>Show all</a>
           </Grid>
         </Grid>
 
         <Grid container>
-          {artistAlbums.length > 0 && artistAlbums.filter(
+          {artistAlbums?.filter(
             (album) => album.album_group === 'appears_on').filter(
             (_, idx) => idx < 6).map(
             ({name, images, release_date, type, id: album_id}, idx) => (
               <Grid item xs={2} className="card-item" onClick={() => handleGoToRoute(`/albums/${album_id}`)}>
-                <img src={getImage(images)} alt="" width={200} height={200}/>
+                <img
+                  src={images[0]?.url}
+                  alt=""
+                  width={200}
+                  height={200}
+                />
                 <h3 className="release-title">{name}</h3>
                 <p className="release-desc">{getYearFromDate(release_date)} · {capitalize(type)}</p>
               </Grid>

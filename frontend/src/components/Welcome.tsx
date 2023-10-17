@@ -1,38 +1,27 @@
-import React, {FC} from "react";
-import logo from "../logo.svg";
-import SpotifyLogin from "./SpotifyLogin";
-import {Redirect, useLocation} from "react-router-dom";
+import {FC} from "react";
+import SpotifyLoginButton from "./SpotifyLoginButton";
+import {Navigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import {Box} from "@mui/material";
 
 const Welcome: FC = () => {
   const {isAuthenticated} = useAuth();
 
-  let location = useLocation();
-  // @ts-ignore
-  const redirectedWithAuth: boolean = location.state !== undefined && location.state.authenticated
-
-  if (isAuthenticated || redirectedWithAuth) return <Redirect to="/home"/>;
+  if (isAuthenticated) return <Navigate to="/home"/>;
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-
-        <SpotifyLogin/>
-      </header>
-    </div>
-  )
-}
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+      bgcolor={"#191414"}
+    >
+      <Box>
+        <SpotifyLoginButton/>
+      </Box>
+    </Box>
+  );
+};
 
 export default Welcome;

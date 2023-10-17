@@ -1,116 +1,87 @@
-import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
-import {Link, useHistory, useParams} from "react-router-dom";
+import {Grid, Table, TableBody, TableCell, TableContainer, TableRow} from "@mui/material";
+import {FC} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getArtistsWithLinks, getTrackImage} from "../../utils/formatComponents";
 import {getMsToTime} from "../../utils/dataFormat";
-import {
-  SpotifyArtistObject,
-  SpotifyPlaylistObject,
-  SpotifyPublicUserObject,
-  SpotifyTrackObject
-} from "../../types/spotify";
-import AxiosClient from "../../utils/axiosClient";
-import useUserData from "../../hooks/useUserData";
-
-interface Parameters {
-  id: string;
-}
+import {SpotifyPlaylistObject, SpotifyPublicUserObject} from "../../types/spotify";
+import {getCurrentUserTopArtists, getCurrentUserTopTracks, getUser, getUserPlaylists} from "../../api/spotify";
+import useAuth from "../../hooks/useAuth";
+import {useQuery} from "@tanstack/react-query";
 
 const Profile: FC = () => {
-  // url parameter - user id
-  let {id: url_id} = useParams<Parameters>();
+  const {user} = useAuth();
 
-  let history = useHistory();
+  let {profile_id} = useParams();
+  const profileId = profile_id as string;
 
-  const {username, imageURL: image_url, id, followers} = useUserData();
+  const navigate = useNavigate();
 
-  const [profileInfo, setProfileInfo] = useState<SpotifyPublicUserObject | undefined>(undefined);
+  const {
+    data: profileData,
+  } = useQuery({
+    queryKey: ['user', profileId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getUser(queryKey[1]);
+      console.log({profile: res.data});
+      return res.data as SpotifyPublicUserObject;
+    },
+    enabled: profileId !== user?.id,
+  });
 
-  const [totalPlaylists, setTotalPlaylists] = useState<number | null>(null);
-  const [publicPlaylists, setPublicPlaylists] = useState<SpotifyPlaylistObject[]>([]);
-
-  const [topTracks, setTopTracks] = useState<SpotifyTrackObject[]>([]);
-  const [topArtists, setTopArtists] = useState<SpotifyArtistObject[]>([]);
-
-  useEffect(() => {
-    // fetch profile info if visiting other user's profile
-    if (url_id !== id) {
-      AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}`)
-        .then(res => {
-          const {data} = res;
-          setProfileInfo(data)
-        }).catch(err => console.log(err))
+  const {
+    data: playlistsData,
+  } = useQuery({
+    queryKey: ['user-playlists', profileId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getUserPlaylists(queryKey[1]);
+      return res.data as SpotifyPlaylistObject;
     }
+  });
 
-    // fetch 6 public playlists
-    AxiosClient.get(`http://localhost:8000/api/spotify/users/${url_id}/playlists`)
-      .then(res => {
-        const {data: {items, total}} = res;
-        setTotalPlaylists(total);
-        setPublicPlaylists(items);
-      }).catch(err => console.log(err))
+  const {
+    data: topArtistsData,
+  } = useQuery({
+    queryKey: ['user-top-artists', profileId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getCurrentUserTopArtists(queryKey[1]);
+      return res.data;
+    },
+    enabled: profileId === user?.id,
+  });
 
-    // clear public playlist when switching to different profile
-    return () => setPublicPlaylists([]);
-  }, []);
+  const {
+    data: topTracksData,
+  } = useQuery({
+    queryKey: ['user-top-tracks', profileId] as const,
+    queryFn: async ({queryKey}) => {
+      const res = await getCurrentUserTopTracks(queryKey[1]);
+      return res.data;
+    },
+    enabled: profileId === user?.id,
+  });
 
-  useEffect(() => {
-    if (url_id === id) {
-      // fetch 6 top artists
-      AxiosClient.get('http://localhost:8000/api/spotify/top/artists?limit=6')
-        .then(res => {
-          const {data: {items}} = res;
-          setTopArtists([...items]);
-        }).catch(err => console.log(err))
-
-      // fetch 4 top tracks
-      AxiosClient.get('http://localhost:8000/api/spotify/top/tracks?limit=4')
-        .then(res => {
-          const {data: {items}} = res;
-          setTopTracks([...items]);
-        }).catch(err => console.log(err))
-      console.log(topTracks)
-    }
-  }, []);
-
-  const getUsername = (): string | undefined => {
-    if (url_id === id) return username
-    else try {
-      return profileInfo?.display_name;
-    } catch {
-      return undefined;
-    }
+  const getUsername = () => {
+    if (profileId === user?.id) return user?.display_name;
+    return profileData?.display_name;
   };
 
-  const getUserFollowers = (): number | undefined => {
-    if (url_id === id) return followers
-    else try {
-      return profileInfo?.followers?.total;
-    } catch {
-      return undefined;
-    }
+  const getUserFollowers = () => {
+    if (profileId === user?.id) return user?.followers.total;
+    return profileData?.followers?.total;
   };
 
   const getUserImage = (): string | undefined => {
-    if (url_id === id) return image_url;
-    else try {
-      return profileInfo?.images[0].url;
-    } catch {
-      return undefined;
-    }
+    if (profileId === user?.id) return user?.images[0]?.url;
+    return profileData?.images[0]?.url;
   };
 
-  const goToPlaylist = (playlist_id: string) => history.push(`/playlists/${playlist_id}`);
+  const goToPlaylist = (playlist_id: string) => navigate(`/playlists/${playlist_id}`);
 
-  const goToArtist = (artist_id: string) => history.push(`/artists/${artist_id}`);
+  const goToArtist = (artist_id: string) => navigate(`/artists/${artist_id}`);
 
   const getImageOrUndefined = (images: any[]) => {
-    try {
-      return images[0].url
-    } catch {
-      return undefined
-    }
-  }
+    return images[0]?.url;
+  };
 
   const renderMostPopularArtists = () => (
     <Grid container className="profile__popular_artists">
@@ -118,7 +89,7 @@ const Profile: FC = () => {
         <h2>The most popular artists this month</h2>
         <p>Visible only for you</p>
       </Grid>
-      {topArtists && topArtists.map(({id: artist_id, name, images}) => (
+      {topArtistsData?.map(({id: artist_id, name, images}) => (
         <Grid item xs={2} container>
           <div
             className="profile__popular_artists-artist"
@@ -150,7 +121,7 @@ const Profile: FC = () => {
       <TableContainer>
         <Table aria-label="most-popular-tracks-table" size="small">
           <TableBody>
-            {topTracks.length > 0 && topTracks.map(
+            {topTracksData?.items?.map(
               ({artists, duration_ms, name, explicit, album}, index) => (
                 <TableRow key={`track-${index}`} className="playlist__track-row">
                   <TableCell component="th" scope="row">{index + 1}</TableCell>
@@ -189,12 +160,12 @@ const Profile: FC = () => {
         <Grid item className="profile__info-right">
           <h4>PROFILE</h4>
           <h1>{getUsername()}</h1>
-          <p>{totalPlaylists} public playlists · {getUserFollowers()} followers</p>
+          <p>{playlistsData?.followers.total} public playlists · {getUserFollowers()} followers</p>
         </Grid>
       </Grid>
 
       {/* Render if user accesses their own profile */}
-      {url_id === id && (
+      {profileId === user?.id && (
         <>
           {renderMostPopularArtists()}
           {renderMostPopularTracks()}
@@ -202,7 +173,7 @@ const Profile: FC = () => {
       )}
 
       <Grid container className="profile__public_playlists">
-        {publicPlaylists.length > 0 && publicPlaylists.map(({name, images, id: playlist_id}) => (
+        {playlistsData?.tracks?.map(({name, images, id: playlist_id}) => (
           <Grid item xs={2} container>
             <div
               className="profile__public_playlists-playlist"
@@ -220,7 +191,7 @@ const Profile: FC = () => {
         ))}
       </Grid>
     </Grid>
-  )
+  );
 };
 
 export default Profile;

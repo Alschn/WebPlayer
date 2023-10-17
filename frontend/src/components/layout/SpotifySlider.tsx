@@ -1,8 +1,9 @@
-import {withStyles} from "@material-ui/core";
-import Slider from "@material-ui/core/Slider";
+import Slider from "@mui/material/Slider";
+import {styled} from "@mui/styles";
 
-const SpotifySlider = withStyles({
-  root: {
+// todo style this new way
+const SpotifySlider = styled(Slider)(() => ({
+  '&.MuiSlider-root': {
     color: "#9e9e9e",
     padding: "13px 0",
     height: 3,
@@ -11,30 +12,27 @@ const SpotifySlider = withStyles({
       '& .MuiSlider-thumb': {
         visibility: 'visible',
       }
-    },
+    }
   },
-  track: {
-    height: 4,
+  "& .MuiSlider-track": {
+    height: 2,
   },
-  rail: {
+  "& .MuiSlider-rail": {
     color: "#cccccc",
     height: 4,
   },
-  active: {},
-  thumb: {
-    height: 15,
-    width: 15,
+  "& .MuiSlider-active": {},
+  "& .MuiSlider-thumb": {
+    height: 10,
+    width: 10,
     backgroundColor: "#fff",
     border: "1px solid currentColor",
-    marginTop: -6,
-    marginLeft: -6,
     visibility: "hidden",
-    boxShadow: "#ebebeb 0 2px 2px",
-    "&:focus, &:hover, &$active": {
-      boxShadow: "#ccc 0 2px 3px 1px",
+    "&, &:focus, &:hover, &:active": {
+      boxShadow: "#ebebeb 0 1px 1px",
     },
     color: "#fff",
-  },
-})(Slider);
+  }
+}));
 
 export default SpotifySlider;

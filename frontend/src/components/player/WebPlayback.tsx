@@ -1,38 +1,42 @@
-import React, {FC, Fragment, ReactNode, useCallback} from "react";
+import {type PropsWithChildren, useCallback} from "react";
 import {WebPlaybackSDK} from "react-spotify-web-playback-sdk";
-import axiosClient from "../../utils/axiosClient";
 import useAuth from "../../hooks/useAuth";
+import AxiosClient from "../../api/AxiosClient";
 
+type WebPlaybackProps = PropsWithChildren;
 
-interface WebPlaybackProps {
-  children: ReactNode;
+type UseGetOAuthToken = () => Spotify.PlayerInit['getOAuthToken'];
+
+function fetchSpotifyToken() {
+  return AxiosClient.get<{ token: string }>(`/auth/spotify/token/`);
 }
 
-const WebPlayback: FC<WebPlaybackProps> = ({children}) => {
+const useGetOAuthToken: UseGetOAuthToken = () => {
+  return useCallback(async (callback: (token: string) => void) => {
+    try {
+      const res = await fetchSpotifyToken();
+      callback(res.data.token);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+};
+
+const PLAYBACK_INITIAL_DEVICE_NAME = 'Web Player';
+const PLAYBACK_INITIAL_VOLUME = 0.3;
+
+const WebPlayback = ({children}: WebPlaybackProps) => {
   const {isAuthenticated} = useAuth();
 
-  const fetchSpotifyToken = () => {
-    return axiosClient.get(`http://localhost:8000/api/spotify/token`)
-      .then(res => res.data.token)
-      .catch(err => console.log(err));
-  };
+  const getOAuthToken = useGetOAuthToken();
 
-  const getOAuthToken = useCallback(callback => {
-    const token = fetchSpotifyToken();
-    callback(token);
-  }, []);
-
-  if (!isAuthenticated) return (
-    <Fragment>
-      {children}
-    </Fragment>
-  );
+  if (!isAuthenticated) return children;
 
   return (
     <WebPlaybackSDK
-      deviceName="Web Player"
+      initialDeviceName={PLAYBACK_INITIAL_DEVICE_NAME}
+      initialVolume={PLAYBACK_INITIAL_VOLUME}
       getOAuthToken={getOAuthToken}
-      volume={0.3}
       connectOnInitialized
     >
       {children}

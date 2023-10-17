@@ -1,66 +1,70 @@
-import React, {FC, useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
-import AxiosClient from "../../utils/axiosClient";
-import {useHistory} from "react-router-dom";
+import {FC, useMemo} from "react";
+import {Grid} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
-import {loadMoreItems} from "../../utils/api";
+import {getMyPlaylists} from "../../api/spotify";
+import {useInfiniteQuery} from "@tanstack/react-query";
 
 interface SidebarPlaylistsProps {
   newPlaylist?: SpotifySimplifiedPlaylistObject | null,
 }
 
+const getPageParams = (href: string | null) => {
+  if (!href) return;
+  const url = new URL(href);
+  const offset = url.searchParams.get('offset') ?? undefined;
+  const limit = url.searchParams.get('limit') ?? undefined;
+  return {offset, limit};
+};
+
 const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
-  let history = useHistory();
-  const [playlists, setPlaylists] = useState<SpotifySimplifiedPlaylistObject[]>([]);
-  const [next, setNext] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    AxiosClient.get(
-      `http://localhost:8000/api/spotify/playlists`
-    ).then(res => {
-      const {items, next} = res.data;
-      setNext(next);
-      setPlaylists(items);
-    }).catch(err => console.log(err));
-  }, [])
+  const query = useInfiniteQuery({
+    queryKey: ['current-user-playlists'],
+    queryFn: async ({pageParam}) => {
+      const res = await getMyPlaylists(pageParam);
+      return res.data;
+    },
+    getNextPageParam: (lastPage) => {
+      return getPageParams(lastPage.next);
+    },
+    getPreviousPageParam: (firstPage) => {
+      return getPageParams(firstPage.previous);
+    },
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    if (newPlaylist) {
-      // whenever new playlist is created, update the list
-      setPlaylists(prevState => [newPlaylist, ...prevState]);
-    }
-  }, [newPlaylist])
+  const playlists = useMemo(() => {
+    if (!query.data) return [];
+    return query.data.pages.flatMap((page) => page.items);
+  }, [query.data]);
 
-  const loadMorePlaylists = (): void => {
-    if (next) {
-      loadMoreItems('http://localhost:8000/api/spotify/playlists', next)
-        .then(res => {
-          const {items, next} = res.data;
-          setNext(next);
-          setPlaylists(prevState => [...prevState, ...items]);
-        }).catch(err => console.log(err));
-    }
+  const loadMorePlaylists = async () => {
+    if (!query.hasNextPage) return;
+    await query.fetchNextPage();
   };
 
-  const goToPlaylistRoute = (playlist_id: string): void => {
-    history.push(`/playlists/${playlist_id}`);
-  }
+  const goToPlaylistRoute = (playlist_id: string) => {
+    navigate(`/playlists/${playlist_id}`);
+  };
 
   return (
     <Grid className="playlists" id="sidebar-playlists">
       <InfiniteScroll
         next={loadMorePlaylists}
-        hasMore={next != null}
+        hasMore={Boolean(query.hasNextPage)}
         loader={<p>Loading more playlists ...</p>}
         dataLength={playlists.length}
-        scrollableTarget='sidebar-playlists'
+        scrollableTarget="sidebar-playlists"
       >
-        {playlists && playlists.map(
+        {playlists.map(
           ({name, id, collaborative}, index) => (
-            <p className="playlist-item"
-               key={`playlist-item-${index}`}
-               onClick={() => goToPlaylistRoute(id)}
+            <p
+              className="playlist-item"
+              key={`playlist-item-${index}-${id}`}
+              onClick={() => goToPlaylistRoute(id)}
             >
               {name}
             </p>
@@ -68,7 +72,7 @@ const SidebarPlaylists: FC<SidebarPlaylistsProps> = ({newPlaylist}) => {
         )}
       </InfiniteScroll>
     </Grid>
-  )
-}
+  );
+};
 
 export default SidebarPlaylists;

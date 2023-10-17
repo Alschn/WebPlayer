@@ -2,8 +2,8 @@ name: WebPlayer Backend Tests
 
 on:
   push:
-    branches:
-      - dev
+    paths:
+      - 'backend/**'
 
   pull_request:
     branches:
@@ -16,33 +16,52 @@ defaults:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SECRET_KEY: github_actions
 
     services:
       postgres:
-        image: postgres:10.8
+        image: postgres:14.0
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Setup Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: "3.10"
+
       - name: psycopg2 prerequisites
         run: sudo apt-get install libpq-dev
-      - name: Install dependencies
+
+      - name: Install pipenv
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install psycopg2
+          python -m pip install --upgrade pipenv wheel
+      - id: cache-pipenv
+        uses: actions/cache@v1
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        run: |
+          pipenv install --deploy --dev
       - name: Django tests
-        run: coverage run manage.py test
-      - name: Tests coverage
-        run: coverage report
+        run: |
+          pipenv run coverage run manage.py test
+      - name: Code coverage
+        run: |
+          pipenv run coverage report -m

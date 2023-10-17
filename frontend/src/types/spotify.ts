@@ -11,7 +11,13 @@
  TuneableTrack
 */
 
-export type deviceType = 'computer' | 'smartphone' | 'speaker';
+export const DeviceTypes = {
+  COMPUTER: 'computer',
+  SMARTPHONE: 'smartphone',
+  SPEAKER: 'speaker',
+} as const
+
+export type DeviceType = typeof DeviceTypes[keyof typeof DeviceTypes];
 
 export interface SpotifyDeviceObject {
   id: string;
@@ -19,7 +25,7 @@ export interface SpotifyDeviceObject {
   is_private_session: boolean;
   is_restricted: boolean;
   name: string;
-  type: deviceType;
+  type: DeviceType;
   volume_percent: number;
 }
 

@@ -1,8 +1,8 @@
-import {Divider, ListItem, Popover} from "@material-ui/core";
-import {List} from "@material-ui/core";
-import React, {FC} from "react";
-import {useHistory} from "react-router-dom";
-import {performLogout} from "../../utils/api";
+import {Divider, List, ListItem, Popover} from "@mui/material";
+import {FC} from "react";
+import {useNavigate} from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import {performLogout} from "../../api/spotify";
 
 interface UserMenuProps {
   profileID: string | undefined,
@@ -11,20 +11,20 @@ interface UserMenuProps {
 }
 
 const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
-  let history = useHistory();
+  const {setToken} = useAuth();
+  const navigate = useNavigate();
 
   const goToAccount = () => window.location.replace('https://www.spotify.com/');
 
-  const goToProfile = () => history.push(`/profiles/${profileID}`);
+  const goToProfile = () => navigate(`/profiles/${profileID}`);
 
-  const goToSettings = () => history.push('/settings');
+  const goToSettings = () => navigate('/settings');
 
   const logout = () => {
-    performLogout().then(() => {
+    performLogout().finally(() => {
       localStorage.removeItem('token');
-      localStorage.removeItem('expirationDate');
-      history.push('/');
-    }).catch(err => console.log(err))
+      setToken(null);
+    }).catch(err => console.log(err));
   };
 
   const open = Boolean(anchorEl);
@@ -46,26 +46,26 @@ const UserMenu: FC<UserMenuProps> = ({profileID, anchorEl, handleClose}) => {
       }}
     >
       <List className="user-menu">
-        <ListItem button onClick={goToAccount}>
+        <ListItem onClick={goToAccount}>
           Account
         </ListItem>
 
-        <ListItem button onClick={goToProfile}>
+        <ListItem onClick={goToProfile}>
           Profile
         </ListItem>
 
-        <ListItem button onClick={goToSettings}>
+        <ListItem onClick={goToSettings}>
           Settings
         </ListItem>
 
         <Divider className="user-menu-divider"/>
 
-        <ListItem button onClick={logout}>
+        <ListItem onClick={logout}>
           Logout
         </ListItem>
       </List>
     </Popover>
   );
-}
+};
 
 export default UserMenu;

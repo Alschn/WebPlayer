@@ -1,0 +1,5 @@
+from .artists import ArtistsView
+from .artists_detail import ArtistsDetailView
+from .artists_detail_albums import ArtistsDetailAlbumsView
+from .artists_detail_related_artists import ArtistsDetailRelatedArtistsView
+from .artists_detail_tracks import ArtistsDetailTracks

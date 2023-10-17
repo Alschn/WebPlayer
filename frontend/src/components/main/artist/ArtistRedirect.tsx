@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {useParams} from "react-router-dom";
 import ArtistAlbums from "./Albums";
 import AppearsOn from "./AppearsOn";
@@ -7,27 +7,38 @@ import Compilations from "./Compilations";
 import ArtistSingles from "./Singles";
 import PageNotFound from "../../PageNotFound";
 
-type ArtistSubPageType = 'albums' | 'appears-on' | 'compilations' | 'singles' | 'related-artists';
+const ArtistSubPages = {
+  ALBUMS: 'albums',
+  APPEARS_ON: 'appears-on',
+  COMPILATIONS: 'compilations',
+  RELATED_ARTISTS: 'related-artists',
+  SINGLES: 'singles'
+} as const;
 
-interface Parameters {
-  id: string,
-  page: ArtistSubPageType;
-}
+type ArtistSubPage = typeof ArtistSubPages[keyof typeof ArtistSubPages];
 
 const ArtistSubPage: FC = () => {
-  let {id, page} = useParams<Parameters>();
+  let {artist_id, page} = useParams();
 
-  switch (page) {
-    case 'albums':
-      return <ArtistAlbums artistId={id}/>;
-    case 'appears-on':
-      return <AppearsOn artistId={id}/>;
-    case 'compilations':
-      return <Compilations artistId={id}/>;
-    case 'related-artists':
-      return <RelatedArtists artistId={id}/>;
-    case 'singles':
-      return <ArtistSingles artistId={id}/>;
+  const subpage = page as ArtistSubPage;
+  const artistId = artist_id as string;
+
+  switch (subpage) {
+    case ArtistSubPages.ALBUMS:
+      return <ArtistAlbums artistId={artistId}/>;
+
+    case ArtistSubPages.APPEARS_ON:
+      return <AppearsOn artistId={artistId}/>;
+
+    case ArtistSubPages.COMPILATIONS:
+      return <Compilations artistId={artistId}/>;
+
+    case ArtistSubPages.RELATED_ARTISTS:
+      return <RelatedArtists artistId={artistId}/>;
+
+    case ArtistSubPages.SINGLES:
+      return <ArtistSingles artistId={artistId}/>;
+
     default:
       return <PageNotFound/>;
   }

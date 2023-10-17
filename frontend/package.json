@@ -1,57 +1,40 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@material-ui/core": "^4.11.4",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/javascript-time-ago": "^2.0.2",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "axios": "^0.21.1",
-    "javascript-time-ago": "^2.3.6",
-    "node-sass": "^4.14.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-infinite-scroll-component": "^6.1.0",
-    "react-router-dom": "^5.2.0",
-    "react-script-hook": "^1.4.1",
-    "react-scripts": "4.0.3",
-    "react-spotify-web-playback-sdk": "^2.0.0",
-    "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.15",
+    "@mui/lab": "^5.0.0-alpha.109",
+    "@mui/material": "^5.10.15",
+    "@mui/styles": "^5.10.15",
+    "@tanstack/react-query": "^4.16.1",
+    "axios": "^1.2.0",
+    "javascript-time-ago": "^2.5.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-router-dom": "^6.4.3",
+    "react-spotify-web-playback-sdk": "^3.0.2",
+    "sass": "^1.56.1"
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.1.7"
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.2.3",
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^2.2.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3"
   }
 }

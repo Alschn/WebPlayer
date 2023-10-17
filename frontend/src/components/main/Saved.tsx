@@ -1,50 +1,43 @@
-import React, {FC, useContext, useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {FC, useMemo} from "react";
+import {Grid} from "@mui/material";
 import {Link} from "react-router-dom";
-import UserContext from "../../context/userContext";
-import AxiosClient from "../../utils/axiosClient";
-import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import SpotifyTable from "../layout/SpotifyTable";
-
-interface SpotifyPlaylistTrack {
-  added_at: string,
-  added_by: any, // to be replaced - object
-  is_local: boolean,
-  primary_color?: string,
-  track: any, // to be replaced with SpotifyTrack
-  video_thumbnail?: any,
-}
+import {getSavedTracks} from "../../api/spotify";
+import {useInfiniteQuery} from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
+import {getNextPageLimitOffsetParam} from "../../utils/tanstack-query";
 
 const SavedTracks: FC = () => {
-  const {imageURL, username, id} = useContext(UserContext);
+  const {user} = useAuth();
 
-  const [tracks, setTracks] = useState<SpotifyPlaylistTrack[]>([]);
-  const [totalCount, setTotalCount] = useState<number | null>(null);
-  const [next, setNext] = useState<string | null>(null);
+  const {
+    isLoading,
+    data,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['saved-tracks'],
+    queryFn: async ({pageParam = {limit: undefined, offset: undefined}}) => {
+      const res = await getSavedTracks(pageParam);
+      return res.data;
+    },
+    getNextPageParam: getNextPageLimitOffsetParam
+  });
 
-  useEffect(() => {
-    AxiosClient.get(`http://localhost:8000/api/spotify/saved`).then(res => {
-      const {data: {items, next, total}} = res;
-      setTracks(items);
-      setNext(next);
-      setTotalCount(total);
-    }).catch(
-      err => console.log(err)
-    )
-  }, []);
+  const tracks = useMemo(() => {
+    if (!data) return [];
+    return data.pages.flatMap(page => page.items);
+  }, [data]);
 
-  const loadMoreTracks = (): void => {
-    if (next) {
-      AxiosClient.put(`http://localhost:8000/api/spotify/saved`, {
-        next: next,
-      }).then(res => {
-        const {data: {items, next}} = res;
-        setTracks(prevState => [...prevState, ...items]);
-        setNext(next);
-      }).catch(
-        err => console.log(err)
-      )
-    }
+  const total = useMemo(() => {
+    if (!data) return null;
+    return data.pages[0]?.total ?? null;
+  }, [data]);
+
+  const loadMoreTracks = () => {
+    if (!hasNextPage) return;
+    void fetchNextPage();
   };
 
   return (
@@ -59,10 +52,15 @@ const SavedTracks: FC = () => {
         <Grid item className="playlist__info-right">
           <h4>PLAYLIST</h4>
           <h1 id="favourite-tracks-title">Favourite tracks</h1>
-          <p className="playlist__info-right__stats">
-            <img src={imageURL} alt="user-avatar"/>
-            <Link to={`/profiles/${id}`}>{username}</Link> · {totalCount} tracks
-          </p>
+          {user && (
+            <p className="playlist__info-right__stats">
+              <img src={user.images[0].url} alt=""/>
+              <Link to={`/profiles/${user.id}`}>
+                {user.display_name}
+              </Link>
+              · {total} tracks
+            </p>
+          )}
         </Grid>
       </Grid>
 
@@ -70,7 +68,7 @@ const SavedTracks: FC = () => {
         <SpotifyTable
           tableType="playlist"
           tracks={tracks}
-          next={next}
+          hasNextPage={Boolean(hasNextPage)}
           loadMore={loadMoreTracks}
         />
       </Grid>

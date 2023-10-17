@@ -1,5 +1,5 @@
-import {Grid} from "@material-ui/core";
-import React, {FC, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const Albums: FC = () => {

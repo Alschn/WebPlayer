@@ -1,14 +1,22 @@
-import React, {PureComponent} from "react";
+import {PureComponent} from "react";
+import {Box, Typography} from "@mui/material";
 
 class PageNotFound extends PureComponent<any, any> {
   render() {
     return (
-      <div>
-        <h1>Page not found</h1>
-      </div>
-    )
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+        bgcolor={"#191414"}
+      >
+        <Typography variant="h2" color="white">
+          Page not found
+        </Typography>
+      </Box>
+    );
   }
-
 }
 
 export default PageNotFound;

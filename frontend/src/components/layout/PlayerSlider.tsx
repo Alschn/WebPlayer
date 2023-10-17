@@ -1,13 +1,12 @@
-import React, {FC, useEffect, useState} from 'react';
-import Grid from '@material-ui/core/Grid';
+import {FC, useEffect, useState} from 'react';
+import {Grid} from '@mui/material';
 import {getMsToTime} from "../../utils/dataFormat";
 import SpotifySlider from './SpotifySlider';
-import axiosClient from "../../utils/axiosClient";
 import {useSpotifyPlayer} from "react-spotify-web-playback-sdk";
 
 interface PlayerSliderProps {
-  position: number | undefined;
-  duration: number | undefined;
+  position?: number;
+  duration?: number;
 }
 
 
@@ -15,26 +14,32 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
   const [value, setValue] = useState(0);
   const player = useSpotifyPlayer();
 
-  const pos = position !== undefined ? position : 0;
-  const dur = duration !== undefined ? duration : 0;
+  const pos = position ?? 0;
+  const dur = duration ?? 0;
 
   useEffect(() => {
-    dur === 0 ? setValue(0) : setValue(100 * pos / dur);
-  }, [pos, dur])
+    const newValue = dur === 0 ? 0 : 100 * pos / dur;
+    setValue(newValue);
+  }, [pos, dur]);
 
-  const handleChange = (event: any, newValue: any): void => {
+  const handleChange = (_event: unknown, newValue: any): void => {
+    if (!player) return;
     const positionToSeek = Math.floor((newValue * dur) / 100);
-    player?.seek(positionToSeek).then(() => setValue(newValue))
+    player.seek(positionToSeek).then(() => setValue(newValue));
   };
 
   return (
-    <Grid container className="player-slider" justify="center">
+    <Grid container className="player-slider" justifyContent="center">
       <Grid item>
         {getMsToTime(pos, true)}
       </Grid>
 
       <Grid item xs className="player-slider__root">
-        <SpotifySlider value={value} onChange={handleChange} aria-labelledby="player-slider-slider"/>
+        <SpotifySlider
+          value={value}
+          onChange={handleChange}
+          aria-labelledby="player-slider-slider"
+        />
       </Grid>
 
       <Grid item>
@@ -42,6 +47,6 @@ const PlayerSlider: FC<PlayerSliderProps> = ({position, duration}) => {
       </Grid>
     </Grid>
   );
-}
+};
 
 export default PlayerSlider;

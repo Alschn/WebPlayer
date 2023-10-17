@@ -1,23 +1,22 @@
-import React, {FC, Fragment} from 'react';
-import './App.scss';
-import {AuthContextProvider} from "./context/authContext";
-import Router from "./routes";
-import {UserContextProvider} from "./context/userContext";
+import {type FC} from 'react';
+import {AuthContextProvider} from "./context/AuthContext";
 import WebPlayback from "./components/player/WebPlayback";
+import Router from "./routing/Router";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 
 const App: FC = () => {
   return (
-    <Fragment>
+    <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <UserContextProvider>
-          <WebPlayback>
-            <Router/>
-          </WebPlayback>
-        </UserContextProvider>
+        {/* @ts-ignore */}
+        <WebPlayback>
+          <Router/>
+        </WebPlayback>
       </AuthContextProvider>
-    </Fragment>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;

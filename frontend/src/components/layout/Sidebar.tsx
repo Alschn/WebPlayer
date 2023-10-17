@@ -1,39 +1,50 @@
-import React, {FC, useState} from "react";
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import LibraryMusicOutlinedIcon from '@material-ui/icons/LibraryMusicOutlined';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import AddIcon from '@material-ui/icons/Add';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import {Grid} from "@material-ui/core";
-import {useHistory} from "react-router-dom";
+import {FC, useState} from "react";
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import LibraryMusicOutlinedIcon from '@mui/icons-material/LibraryMusicOutlined';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddIcon from '@mui/icons-material/Add';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import {Grid} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import SidebarPlaylists from "./Playlists";
-import useUserData from "../../hooks/useUserData";
-import {createNewPlaylist} from "../../utils/api";
-import {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
+import type {SpotifySimplifiedPlaylistObject} from "../../types/spotify";
+import {createNewPlaylist} from "../../api/spotify";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
 
 
 const Sidebar: FC = () => {
-  let history = useHistory();
-  const {id: user_id} = useUserData();
+  const navigate = useNavigate();
+  const {user} = useAuth();
 
   const [newPlaylist, setNewPlaylist] = useState<SpotifySimplifiedPlaylistObject | null>(null);
 
-  const handleSettingsOnClick = (): void => {
+  const client = useQueryClient();
+
+  const createPlaylistMutation = useMutation({
+    mutationFn: (user_id: string) => createNewPlaylist(user_id),
+    onSuccess: async (res) => {
+      const data = res.data;
+      setNewPlaylist(data);
+      await client.invalidateQueries(['playlists']);
+      navigate(`/playlists/${data.id}`);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleSettingsOnClick = () => {
+    alert('todo: settings on click');
   };
 
-  const handleGoToRoute = (route: string): void => history.push(route);
+  const handleGoToRoute = (route: string) => navigate(route);
 
-  const handleCreatePlaylist = (): void => {
-    if (user_id) {
-      createNewPlaylist(user_id).then(
-        ({data}) => {
-          setNewPlaylist(data);
-          const {id} = data;
-          history.push(`/playlists/${id}`);
-        }
-      ).catch(err => console.log(err))
-    }
+  const handleCreatePlaylist = () => {
+    if (!user) return;
+
+    createPlaylistMutation.mutate(user.id);
   };
 
   return (
@@ -42,8 +53,9 @@ const Sidebar: FC = () => {
         <p className="sidebar-settings">
           <MoreHorizIcon onClick={handleSettingsOnClick}/>
         </p>
-        <Grid container className="sidebar-navtab"
-              key="/home" onClick={() => handleGoToRoute("/home")}
+        <Grid
+          container className="sidebar-navtab"
+          key="/home" onClick={() => handleGoToRoute("/home")}
         >
           <Grid item xs={2}>
             <HomeOutlinedIcon/>
@@ -54,8 +66,9 @@ const Sidebar: FC = () => {
           </Grid>
         </Grid>
 
-        <Grid container className="sidebar-navtab"
-              key="/search" onClick={() => handleGoToRoute("/search")}
+        <Grid
+          container className="sidebar-navtab"
+          key="/search" onClick={() => handleGoToRoute("/search")}
         >
           <Grid item xs={2}>
             <SearchOutlinedIcon/>
@@ -66,8 +79,9 @@ const Sidebar: FC = () => {
           </Grid>
         </Grid>
 
-        <Grid container className="sidebar-navtab"
-              key="/library" onClick={() => handleGoToRoute("/library/playlists")}
+        <Grid
+          container className="sidebar-navtab"
+          key="/library" onClick={() => handleGoToRoute("/library/playlists")}
         >
           <Grid item xs={2}>
             <LibraryMusicOutlinedIcon/>
@@ -80,8 +94,9 @@ const Sidebar: FC = () => {
 
         <div style={{marginTop: '20px'}}/>
 
-        <Grid container className="sidebar-tab"
-              key="/new-playlist" onClick={() => handleCreatePlaylist()}
+        <Grid
+          container className="sidebar-tab"
+          key="/new-playlist" onClick={() => handleCreatePlaylist()}
         >
           <Grid item xs={2} className="icon-add-bg">
             <AddIcon className="icon-add"/>
@@ -92,8 +107,9 @@ const Sidebar: FC = () => {
           </Grid>
         </Grid>
 
-        <Grid container className="sidebar-tab"
-              key="/favourites" onClick={() => handleGoToRoute("/saved")}
+        <Grid
+          container className="sidebar-tab"
+          key="/favourites" onClick={() => handleGoToRoute("/saved")}
         >
           <Grid item xs={2}>
             <Grid item className="icon-fav-bg icon-fav-box">
