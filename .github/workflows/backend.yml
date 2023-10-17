@@ -2,6 +2,8 @@ name: WebPlayer Backend Tests
 
 on:
   push:
+    paths:
+      - 'backend/**'
 
   pull_request:
     branches:
