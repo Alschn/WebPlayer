@@ -5,10 +5,11 @@ import NextLink from "next/link";
 import type { Image } from "~/api/types";
 import { useAuth } from "~/context/auth";
 
-type UserLike = { images?: Image[]; display_name: string; id: string };
+type UserLike = { images?: Image[]; display_name?: string; name?: string, id: string };
 
 export const UserDisplay = ({ user }: { user: UserLike }) => {
   const imageUrl = user.images?.[0]?.url ?? "";
+  const username = user.display_name ?? user.name ?? "";
 
   return (
     <>
@@ -23,7 +24,7 @@ export const UserDisplay = ({ user }: { user: UserLike }) => {
       </div>
       <NextLink href={`/profiles/${user.id}`}>
         <span className="font-semibold hover:underline dark:text-white">
-          {user.display_name}
+          {username}
         </span>
       </NextLink>
     </>
