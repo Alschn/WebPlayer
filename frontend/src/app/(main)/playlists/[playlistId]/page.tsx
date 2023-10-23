@@ -4,6 +4,7 @@ import { UserDisplay } from "~/components/other/UserDisplay";
 import PlaylistTracksTable from "~/components/tables/PlaylistTracksTable";
 import { env } from "~/env.mjs";
 import fetcher from "~/lib/fetcher";
+import { getMsToTimeString } from "~/lib/format";
 
 interface ProfilesDetailPageProps {
   params: { playlistId: string };
@@ -20,6 +21,11 @@ export default async function PlaylistsDetailPage({
 }: ProfilesDetailPageProps) {
   const res = await getPlaylist(params.playlistId);
   const data = (await res.json()) as PlaylistDetail;
+
+  const playlistLength = data.tracks.items.reduce(
+    (acc, curr) => acc + curr.track.duration_ms,
+    0,
+  );
 
   return (
     <div>
@@ -39,7 +45,8 @@ export default async function PlaylistsDetailPage({
           <div className="flex flex-row items-center gap-1 text-sm">
             <UserDisplay user={data.owner} />
             <span className="font-bold">·</span>
-            <span>{data.tracks.total} tracks</span>
+            <span>{data.tracks.total} tracks,</span>
+            <span>{getMsToTimeString(playlistLength)}</span>
           </div>
         </div>
       </section>

@@ -23,7 +23,7 @@ const SavedTracksTable = ({ initialData }: SavedTracksTableProps) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>#</TableHead>
+          <TableHead className="w-[40px]">#</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Album</TableHead>
           <TableHead>Date Added</TableHead>
