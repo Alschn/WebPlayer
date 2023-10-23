@@ -1,7 +1,7 @@
 import NextImage from "next/image";
 import type { PlaylistDetail } from "~/api/types";
 import { UserDisplay } from "~/components/other/UserDisplay";
-import TracksTable from "~/components/tables/SavedTracksTable";
+import PlaylistTracksTable from "~/components/tables/PlaylistTracksTable";
 import { env } from "~/env.mjs";
 import fetcher from "~/lib/fetcher";
 
@@ -29,6 +29,7 @@ export default async function PlaylistsDetailPage({
           height={250}
           alt="Playlist Image"
           src={data.images[0]?.url ?? ""}
+          className="h-[250px] w-[250px]"
         />
         <div className="flex flex-col justify-end">
           <h2 className="mb-2 text-sm">
@@ -46,10 +47,7 @@ export default async function PlaylistsDetailPage({
         className="h-full overflow-auto"
         id="playlist-tracks-table-container"
       >
-        <TracksTable
-          // @ts-ignore
-          initialData={data.tracks}
-        />
+        <PlaylistTracksTable initialData={data.tracks} />
       </section>
     </div>
   );

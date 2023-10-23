@@ -44,6 +44,27 @@ export type Track = {
 
 export type TracksPage = Page<Track>;
 
+export type PlaylistTrack = {
+  added_at: string;
+  added_by: {
+    external_urls: {
+      spotify: string;
+    };
+    href: string;
+    id: string;
+    type: string;
+    uri: string;
+  };
+  is_local: boolean;
+  primary_color: string | null;
+  track: Track;
+  video_thumbnail: {
+    url: string | null;
+  };
+};
+
+export type PlaylistTracksPage = Page<PlaylistTrack>;
+
 export type PlaylistDetail = {
   collaborative: boolean;
   description: string;
@@ -71,7 +92,7 @@ export type PlaylistDetail = {
   primary_color: string | null;
   public: boolean;
   snapshot_id: string;
-  tracks: TracksPage;
+  tracks: PlaylistTracksPage;
   type: "playlist";
   uri: string;
 };
