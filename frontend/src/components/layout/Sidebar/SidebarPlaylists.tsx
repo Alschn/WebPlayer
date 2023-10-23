@@ -1,19 +1,13 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import NextImage from "next/image";
-import NextLink from "next/link";
 import { useMemo } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { axiosClient } from "~/api/AxiosClient";
 import type { PlaylistsPage } from "~/api/types";
-import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/tailwind";
 import "~/styles/globals.css";
-
-function getPlaylistDescription(owner: { display_name: string }) {
-  return `Playlist • ${owner.display_name}`;
-}
+import SidebarPlaylistButtonLink from "./SidebarPlaylistButtonLink";
 
 const SidebarPlaylists = ({
   initialData,
@@ -70,33 +64,10 @@ const SidebarPlaylists = ({
         className={cn("flex flex-col pb-3", className)}
       >
         {allPlaylists.map((p) => (
-          <NextLink
-            href={`/playlists/${p.id}`}
-            passHref
+          <SidebarPlaylistButtonLink
+            playlist={p}
             key={"sidebar-playlist-" + p.id}
-          >
-            <Button
-              variant="ghost"
-              className={cn(
-                `flex h-[64px] w-full flex-row items-center justify-start gap-3`,
-              )}
-            >
-              <div>
-                <NextImage
-                  src={p.images[0]?.url ?? ""}
-                  alt={p.name}
-                  width={48}
-                  height={48}
-                />
-              </div>
-              <div className="flex flex-col text-left">
-                <p className="text-sm">{p.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {getPlaylistDescription(p.owner)}
-                </p>
-              </div>
-            </Button>
-          </NextLink>
+          />
         ))}
       </div>
     </InfiniteScroll>
