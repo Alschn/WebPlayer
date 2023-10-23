@@ -5,17 +5,19 @@ import NextLink from "next/link";
 import type { Image } from "~/api/types";
 import { useAuth } from "~/context/auth";
 
-type UserLike = { images: Image[]; display_name: string; id: string };
+type UserLike = { images?: Image[]; display_name: string; id: string };
 
 export const UserDisplay = ({ user }: { user: UserLike }) => {
+  const imageUrl = user.images?.[0]?.url ?? "";
+
   return (
     <>
       <div>
         <NextImage
-          src={user.images[0]?.url ?? ""}
+          src={imageUrl}
           height={20}
           width={20}
-          alt=""
+          alt="Profile image"
           className="rounded-full"
         />
       </div>

@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/table";
 import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
 import DropdownMoreHorizMenu from "./DropdownMoreHorizMenu";
+import NextLink from "next/link";
 
 interface SavedTracksTableProps {
   initialData: SavedTracksPage;
@@ -44,19 +45,41 @@ const SavedTracksTable = ({ initialData }: SavedTracksTableProps) => {
                   height={48}
                 />
                 <div className="flex flex-col justify-center">
-                  <span className="text-base">{item.track.name}</span>
-                  <span>
-                    {item.track.artists.map((artist) => artist.name).join(", ")}
-                  </span>
+                  <span className="text-base dark:text-white">{item.track.name}</span>
+                  <div>
+                    {item.track.artists.map((artist, index, array) => (
+                      <div
+                        key={`track-${item.track.id}-artist-${artist.id}`}
+                        className="inline-block"
+                      >
+                        <NextLink
+                          href={`/artists/${artist.id}/`}
+                          className="dark:text-gray-400 hover:underline dark:hover:text-white"
+                        >
+                          {artist.name}
+                        </NextLink>
+                        {index !== array.length - 1 && (
+                          <span className="dark:text-gray-400 mr-1">{", "}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </TableCell>
-            <TableCell>{item.track.album.name}</TableCell>
             <TableCell>
+              <NextLink
+                href={`/albums/${item.track.album.id}/`}
+                className="dark:text-gray-400 hover:underline dark:hover:text-white"
+              >
+                {item.track.album.name}
+              </NextLink>
+            </TableCell>
+            <TableCell className="dark:text-gray-400">
               {relativeTimeFromDates(new Date(item.added_at))}
             </TableCell>
             <TableCell></TableCell>
-            <TableCell>
+            <TableCell className="dark:text-gray-400">
               {getMsToTimeString(item.track.duration_ms, true)}
             </TableCell>
             <TableCell>

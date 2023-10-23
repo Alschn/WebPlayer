@@ -78,7 +78,7 @@ const SidebarPlaylists = ({
             <Button
               variant="ghost"
               className={cn(
-                "flex h-[64px] w-full flex-row items-center justify-start gap-3 hover:bg-gray-200",
+                `flex h-[64px] w-full flex-row items-center justify-start gap-3`,
               )}
             >
               <div>

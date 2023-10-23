@@ -14,7 +14,7 @@ const SidebarButtonLink = ({
     <Button
       variant="ghost"
       className={cn(
-        "flex w-full flex-row items-center justify-start gap-4 hover:bg-gray-200",
+        `flex w-full flex-row items-center justify-start gap-4 `,
         className,
       )}
       {...rest}
