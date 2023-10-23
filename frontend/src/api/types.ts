@@ -96,3 +96,33 @@ export type PlaylistDetail = {
   type: "playlist";
   uri: string;
 };
+
+export type AlbumDetail = {
+  album_type: string;
+  artists: {
+    external_urls: {
+      spotify: string;
+    };
+    href: string;
+    id: string;
+    name: string;
+    type: string;
+    uri: string;
+  }[];
+  available_markets: string[];
+  external_urls: {
+    spotify: string;
+  };
+  href: string;
+  id: string;
+  images: Image[];
+  label: string;
+  name: string;
+  popularity: number;
+  release_date: string;
+  release_date_precision: string;
+  total_tracks: number;
+  tracks: TracksPage;
+  type: string;
+  uri: string;
+};
