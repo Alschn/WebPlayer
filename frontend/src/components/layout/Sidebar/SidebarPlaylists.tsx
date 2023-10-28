@@ -35,7 +35,13 @@ const SidebarPlaylists = ({
       pageParams: [initialPageParams],
     },
     getNextPageParam: (lastPage) => {
-      return { limit: lastPage.limit, offset: lastPage.offset };
+      const next = lastPage.next;
+      if (!next) return;
+      const nextUrl = new URL(next);
+      const offset = nextUrl.searchParams.get("offset");
+      const limit = nextUrl.searchParams.get("limit");
+      if (!offset || !limit) return;
+      return { limit: Number(limit), offset: Number(offset) };
     },
   });
 
@@ -48,20 +54,16 @@ const SidebarPlaylists = ({
     void query.fetchNextPage();
   };
 
-  // todo: fix broken infinite scroll
-
   return (
-    <InfiniteScroll
-      dataLength={allPlaylists.length}
-      next={handleFetchNextPage}
-      hasMore={Boolean(query.hasNextPage)}
-      loader={<h4>Loading...</h4>}
-      scrollThreshold={0.9}
-      scrollableTarget="sidebar-playlists"
-    >
-      <div
-        id="sidebar-playlists"
-        className={cn("flex flex-col pb-3", className)}
+    <div className={cn("flex flex-col pb-3", className)}>
+      <InfiniteScroll
+        dataLength={allPlaylists.length}
+        next={handleFetchNextPage}
+        hasMore={Boolean(query.hasNextPage)}
+        // todo: loader
+        loader={null}
+        scrollThreshold={0.9}
+        scrollableTarget="sidebar-playlists"
       >
         {allPlaylists.map((p) => (
           <SidebarPlaylistButtonLink
@@ -69,8 +71,8 @@ const SidebarPlaylists = ({
             key={"sidebar-playlist-" + p.id}
           />
         ))}
-      </div>
-    </InfiniteScroll>
+      </InfiniteScroll>
+    </div>
   );
 };
 

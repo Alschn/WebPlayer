@@ -41,7 +41,12 @@ const Sidebar = ({ className, children }: SidebarProps) => {
           </NextLink>
         </div>
         <Separator className="my-2" />
-        <div className="h-[calc(100vh-400px)] overflow-auto">{children}</div>
+        <div
+          id="sidebar-playlists"
+          className="h-[calc(100vh-400px)] overflow-auto"
+        >
+          {children}
+        </div>
       </Card>
     </aside>
   );
