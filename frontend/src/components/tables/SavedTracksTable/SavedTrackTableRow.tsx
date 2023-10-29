@@ -22,6 +22,7 @@ export default function SavedTrackTableRow({
             alt={item.track.album.name}
             width={48}
             height={48}
+            className="h-[48px] w-[48px]"
           />
           <div className="flex flex-col justify-center">
             <span className="line-clamp-1 text-base dark:text-white">
