@@ -1,63 +1,45 @@
 "use client";
 
-import { Tooltip } from "@radix-ui/react-tooltip";
-import {
-  ListMusicIcon,
-  MonitorSpeakerIcon,
-  PauseCircleIcon,
-  PlayCircleIcon,
-  PlaySquareIcon,
-  Repeat1Icon,
-  Repeat2Icon,
-  RepeatIcon,
-  ShuffleIcon,
-  SkipBackIcon,
-  SkipForwardIcon,
-  VolumeIcon,
-  Volume2Icon,
-  Volume1Icon,
-  VolumeXIcon,
-} from "lucide-react";
-import NextImage from "next/image";
 import NextLink from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   usePlaybackState,
   useSpotifyPlayer,
 } from "react-spotify-web-playback-sdk";
-import { Button } from "~/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+import { setPlayerRepeatMode, setPlayerShuffle } from "~/api/player";
 import { Slider } from "~/components/ui/slider";
-import {
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
 import { getMsToTimeString, uriToId } from "~/lib/format";
 import { cn } from "~/lib/tailwind";
 import "~/styles/globals.css";
+import DevicesButton from "./DevicesButton";
+import FooterImage from "./FooterImage";
+import NowPlayingButton from "./NowPlayingButton";
+import PauseButton from "./PauseButton";
+import PlayButton from "./PlayButton";
+import QueueButtonLink from "./QueueButtonLink";
+import RepeatModeButton from "./RepeatModeButton";
+import ShuffleOffButton from "./ShuffleOffButton";
+import ShuffleOnButton from "./ShuffleOnButton";
+import SkipBackButton from "./SkipBackButton";
+import SkipForwardButton from "./SkipForwardButton";
+import VolumeButton from "./VolumeButton";
 
 interface FooterProps {
   className?: string;
-}
-
-function VolumeIconSwitch({ volume }: { volume: number }) {
-  if (0.7 <= volume) return <Volume2Icon />;
-  else if (0.1 < volume) return <Volume1Icon />;
-  else if (0 < volume && volume <= 0.1) return <VolumeIcon />;
-  else return <VolumeXIcon />;
 }
 
 function Footer({ className }: FooterProps) {
   const player = useSpotifyPlayer();
   const state = usePlaybackState();
 
-  const [trackPos, setTrackPos] = useState<[number]>([0]);
+  const [trackPos, setTrackPos] = useState<[number]>([state?.position ?? 0]);
   const [volume, setVolume] = useState<[number]>([0.3]);
+  const prevVolume = useRef<number>(volume[0]);
+
+  useEffect(() => {
+    if (!state) return;
+    setTrackPos([state.position]);
+  }, [state]);
 
   if (!player || !state) return null;
 
@@ -74,12 +56,13 @@ function Footer({ className }: FooterProps) {
   };
 
   const handleVolumeCommit = async (values: [number]) => {
+    prevVolume.current = volume[0];
     const value = values[0];
     await player.setVolume(value).then(() => setVolume(values));
   };
 
-  const handleShuffleClick = () => {
-    alert("Todo: shuffle");
+  const handleShuffleClick = async () => {
+    await setPlayerShuffle(!isShuffled);
   };
 
   const handlePrevClick = async () => {
@@ -94,16 +77,23 @@ function Footer({ className }: FooterProps) {
     await player.nextTrack();
   };
 
-  const handleRepeatClick = () => {
-    alert("Todo: repeat mode");
+  const handleRepeatClick = async () => {
+    let nextMode = repeatMode + 1;
+    if (nextMode > 2) nextMode = 0;
+    await setPlayerRepeatMode(nextMode as Spotify.PlaybackState["repeat_mode"]);
   };
 
-  const handleMute = async () => {
-    await player.setVolume(0).then(() => setVolume([0]));
-  };
+  const handleToggleMute = async () => {
+    const currentVolume = volume[0];
 
-  const handleUnmute = async () => {
-    await player.setVolume(0.3).then(() => setVolume([0.3]));
+    if (currentVolume > 0) {
+      prevVolume.current = currentVolume;
+      await player.setVolume(0).then(() => setVolume([0]));
+    } else {
+      await player
+        .setVolume(prevVolume.current)
+        .then(() => setVolume([prevVolume.current]));
+    }
   };
 
   return (
@@ -117,18 +107,7 @@ function Footer({ className }: FooterProps) {
         id="footer-left"
         className="flex items-center justify-start gap-3 md:col-span-3"
       >
-        <Popover>
-          <PopoverTrigger asChild>
-            <NextImage
-              src={track.album.images[0]?.url ?? ""}
-              alt={track.name}
-              width={64}
-              height={64}
-              className="cursor-pointer"
-            />
-          </PopoverTrigger>
-          <PopoverContent>TODO</PopoverContent>
-        </Popover>
+        <FooterImage track={track} />
         <div className="flex flex-col">
           <NextLink href={`/tracks/${track.id}/`}>
             <h1 className="text-base hover:underline">{track.name}</h1>
@@ -154,47 +133,18 @@ function Footer({ className }: FooterProps) {
         >
           <div className="align-center flex">
             {isShuffled ? (
-              <Button variant="ghost" size="icon" onClick={handleShuffleClick}>
-                <ShuffleIcon className="absolute text-green-500" />
-                <span className="relative bottom-[-10px] right-0 text-lg font-bold text-green-500">
-                  .
-                </span>
-              </Button>
+              <ShuffleOnButton onClick={handleShuffleClick} />
             ) : (
-              <Button variant="ghost" size="icon" onClick={handleShuffleClick}>
-                <ShuffleIcon />
-              </Button>
+              <ShuffleOffButton onClick={handleShuffleClick} />
             )}
-            <Button variant="ghost" size="icon" onClick={handlePrevClick}>
-              <SkipBackIcon />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handlePausePlayClick}>
-              {isPaused ? <PlayCircleIcon /> : <PauseCircleIcon />}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={handleNextClick}>
-              <SkipForwardIcon />
-            </Button>
-            {repeatMode === 0 && (
-              <Button variant="ghost" size="icon" onClick={handleRepeatClick}>
-                <RepeatIcon />
-              </Button>
+            <SkipBackButton onClick={handlePrevClick} />
+            {isPaused ? (
+              <PlayButton onClick={handlePausePlayClick} />
+            ) : (
+              <PauseButton onClick={handlePausePlayClick} />
             )}
-            {repeatMode === 1 && (
-              <Button variant="ghost" size="icon" onClick={handleRepeatClick}>
-                <Repeat2Icon className="absolute text-green-500" />
-                <span className="relative bottom-[-10px] right-0 text-lg font-bold text-green-500">
-                  .
-                </span>
-              </Button>
-            )}
-            {repeatMode === 2 && (
-              <Button variant="ghost" size="icon" onClick={handleRepeatClick}>
-                <Repeat1Icon className="absolute text-green-500" />
-                <span className="relative bottom-[-10px] right-0 text-lg font-bold text-green-500">
-                  .
-                </span>
-              </Button>
-            )}
+            <SkipForwardButton onClick={handleNextClick} />
+            <RepeatModeButton mode={repeatMode} onClick={handleRepeatClick} />
           </div>
         </div>
         <div className="flex flex-row items-center justify-center gap-2">
@@ -215,51 +165,10 @@ function Footer({ className }: FooterProps) {
         className="flex items-center justify-end md:col-span-3"
       >
         <div className="flex">
-          <Popover>
-            <PopoverTrigger asChild>
-              <div>
-                <Button variant="ghost" size="icon">
-                  <PlaySquareIcon />
-                </Button>
-              </div>
-            </PopoverTrigger>
-            <PopoverContent>TODO</PopoverContent>
-          </Popover>
-          <NextLink href="/queue" passHref>
-            <Button variant="ghost" size="icon">
-              <ListMusicIcon />
-            </Button>
-          </NextLink>
-          <Popover>
-            <PopoverTrigger asChild>
-              <div>
-                <Button variant="ghost" size="icon">
-                  <MonitorSpeakerIcon />
-                </Button>
-              </div>
-            </PopoverTrigger>
-            <PopoverContent>TODO</PopoverContent>
-          </Popover>
-          <div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {volume[0] > 0 ? (
-                    <Button variant="ghost" size="icon" onClick={handleMute}>
-                      <VolumeIconSwitch volume={volume[0]} />
-                    </Button>
-                  ) : (
-                    <Button variant="ghost" size="icon" onClick={handleUnmute}>
-                      <VolumeIconSwitch volume={0} />
-                    </Button>
-                  )}
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{volume[0] > 0 ? "Mute" : "Unmute"}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <NowPlayingButton />
+          <QueueButtonLink />
+          <DevicesButton />
+          <VolumeButton value={volume[0]} onClick={handleToggleMute} />
           <Slider
             className="min-w-[100px] max-w-[150px]"
             min={0.0}
