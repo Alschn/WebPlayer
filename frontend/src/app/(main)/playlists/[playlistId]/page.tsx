@@ -1,10 +1,10 @@
 import NextImage from "next/image";
 import type { PlaylistDetail } from "~/api/types";
 import { UserDisplay } from "~/components/other/UserDisplay";
-import PlaylistTracksTable from "~/components/tables/PlaylistTracksTable";
 import { env } from "~/env.mjs";
 import fetcher from "~/lib/fetcher";
 import { getMsToTimeString } from "~/lib/format";
+import PlaylistTracks from "./PlaylistTracks";
 
 interface ProfilesDetailPageProps {
   params: { playlistId: string };
@@ -50,12 +50,7 @@ export default async function PlaylistsDetailPage({
           </div>
         </div>
       </section>
-      <section
-        className="h-full overflow-auto"
-        id="playlist-tracks-table-container"
-      >
-        <PlaylistTracksTable initialData={data.tracks} />
-      </section>
+      <PlaylistTracks playlistId={params.playlistId} initialData={data.tracks}/>
     </div>
   );
 }

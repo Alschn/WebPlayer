@@ -1,6 +1,6 @@
 import Image from "next/image";
 import NextLink from "next/link";
-import type { PlaylistTracksPage } from "~/api/types";
+import type { PlaylistTrack } from "~/api/types";
 import {
   Table,
   TableBody,
@@ -13,12 +13,10 @@ import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
 import DropdownMoreHorizMenu from "../SavedTracksTable/DropdownMoreHorizMenu";
 
 interface PlaylistTracksTableProps {
-  initialData: PlaylistTracksPage;
+  data: PlaylistTrack[];
 }
 
-const PlaylistTracksTable = ({ initialData }: PlaylistTracksTableProps) => {
-  const items = initialData.items;
-
+const PlaylistTracksTable = ({ data }: PlaylistTracksTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -33,7 +31,7 @@ const PlaylistTracksTable = ({ initialData }: PlaylistTracksTableProps) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {items.map((item, index) => (
+        {data.map((item, index) => (
           <TableRow key={`item` + item.track.id + index}>
             <TableCell>{index + 1}</TableCell>
             <TableCell>
