@@ -29,7 +29,7 @@ export default async function PlaylistsDetailPage({
 
   return (
     <div>
-      <section className="flex flex-row gap-4">
+      <section className="flex flex-col gap-4 sm:flex-row">
         <NextImage
           width={250}
           height={250}
@@ -50,7 +50,10 @@ export default async function PlaylistsDetailPage({
           </div>
         </div>
       </section>
-      <PlaylistTracks playlistId={params.playlistId} initialData={data.tracks}/>
+      <PlaylistTracks
+        playlistId={params.playlistId}
+        initialData={data.tracks}
+      />
     </div>
   );
 }
