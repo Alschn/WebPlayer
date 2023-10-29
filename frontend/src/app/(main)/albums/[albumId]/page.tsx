@@ -4,7 +4,7 @@ import fetcher from "~/lib/fetcher";
 import NextImage from "next/image";
 import { UserDisplay } from "~/components/other/UserDisplay";
 import { getMsToTimeString } from "~/lib/format";
-import AlbumTracksTable from "~/components/tables/AlbumTracksTable";
+import AlbumTracks from "./AlbumTracks";
 
 interface AlbumsDetailPageProps {
   params: { albumId: string };
@@ -49,12 +49,7 @@ export default async function AlbumsDetailPage({
           </div>
         </div>
       </section>
-      <section
-        className="h-full overflow-auto"
-        id="album-tracks-table-container"
-      >
-        <AlbumTracksTable initialData={data.tracks} />
-      </section>
+      <AlbumTracks albumId={params.albumId} initialData={data.tracks} />
     </div>
   );
 }
