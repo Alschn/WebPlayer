@@ -1,9 +1,8 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { cn } from "~/lib/tailwind";
 import "~/styles/globals.css";
 import CurrentUserDropdown from "./CurrentUserDropdown";
+import { HistoryBackButton, HistoryForwardButton } from "./HistoryButtons";
 
 interface ContentProps {
   children: React.ReactNode;
@@ -20,20 +19,8 @@ const Content = ({ children, className }: ContentProps) => {
     >
       <div className="mb-4 flex">
         <nav className="flex gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full border-0"
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full border-0"
-          >
-            <ChevronRight />
-          </Button>
+          <HistoryBackButton />
+          <HistoryForwardButton />
         </nav>
         <div id="nav-portal"></div>
         <div className="flex-grow-1 flex w-full"></div>
