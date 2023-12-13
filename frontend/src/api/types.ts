@@ -40,6 +40,7 @@ export type Track = {
   uri: string;
   disc_number: number;
   duration_ms: number;
+  explicit: boolean;
 };
 
 export type TracksPage = Page<Track>;
@@ -125,4 +126,26 @@ export type AlbumDetail = {
   tracks: TracksPage;
   type: string;
   uri: string;
+};
+
+export type ArtistDetail = {
+  external_urls: {
+    spotify: string;
+  };
+  followers: {
+    href: string | null;
+    total: number;
+  };
+  genres: string[];
+  href: string;
+  id: string;
+  images: Image[];
+  name: string;
+  popularity: number;
+  type: string;
+  uri: string;
+};
+
+export type ArtistTopTracks = {
+  tracks: Track[];
 };
