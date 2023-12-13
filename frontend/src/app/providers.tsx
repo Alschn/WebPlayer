@@ -10,7 +10,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <TanstackQueryClientProvider>
       <AuthContextProvider>
-        <SpotifyWebPlaybackSDKScript />
+        {/* <SpotifyWebPlaybackSDKScript /> */}
         <WebPlaybackProvider>{children}</WebPlaybackProvider>
       </AuthContextProvider>
     </TanstackQueryClientProvider>
