@@ -105,7 +105,7 @@ const CurrentUserDropdown = (props: CurrentUserDropdownProps) => {
             <span>Account</span>
           </DropdownMenuItem>
         </NextLink>
-        <NextLink href="/profile" passHref>
+        <NextLink href={`/profiles/${user.id}`} passHref>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
