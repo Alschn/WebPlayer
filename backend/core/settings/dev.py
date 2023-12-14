@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
 
     # apps
-    # 'accounts',
+    'accounts',
     'spotify_adapter',
     'spotify_auth',
 ]
@@ -236,12 +236,12 @@ REST_FRAMEWORK = {
 # https://docs.allauth.org/en/latest/account/configuration.html
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 
-# ACCOUNT_ADAPTER = 'accounts.adapters.AccountAdapter'
+ACCOUNT_ADAPTER = 'accounts.adapters.AccountAdapter'
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # do not send email confirmation
 
-# SOCIALACCOUNT_ADAPTER = 'accounts.adapters.SocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'accounts.adapters.SocialAccountAdapter'
 
 # dj-rest-auth settings
 # https://dj-rest-auth.readthedocs.io/en/latest/configuration.html#configuration
