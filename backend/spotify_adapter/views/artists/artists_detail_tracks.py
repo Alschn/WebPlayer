@@ -11,13 +11,14 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class ArtistsDetailTracksParamsSerializer(serializers.Serializer):
-    market = serializers.CharField(required=False)
+    market = serializers.CharField(required=False, default='US')
 
 
 class ArtistsDetailTracks(APIView):
     """
-    GET     /api/spotify/artists/<str:artist_id>/tracks/ - Get Spotify catalog information about an artist's top tracks
-    by country.
+    GET     /api/spotify/artists/<str:artist_id>/top-tracks/
+
+    Get Spotify catalog information about an artist's top tracks by country.
 
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-an-artists-top-tracks

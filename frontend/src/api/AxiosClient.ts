@@ -1,20 +1,21 @@
-import axios, {AxiosRequestConfig} from "axios";
-import {API_URL} from "../config";
+import axios, { type AxiosRequestConfig } from "axios";
+import { env } from "~/env.mjs";
 
-export const axiosConfig: AxiosRequestConfig = {
-  headers: {'Content-Type': 'application/json'},
-  baseURL: API_URL,
-};
+const axiosConfig = {
+  headers: { "Content-Type": "application/json" },
+  baseURL: env.NEXT_PUBLIC_API_URL,
+} satisfies AxiosRequestConfig;
 
-const AxiosClient = axios.create(axiosConfig);
+const axiosClient = axios.create(axiosConfig);
 
-// before sending request attach auth token
-AxiosClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    config.headers!.Authorization = token ? `Token ${token}` : '';
-    return config;
-  },
-);
+axiosClient.interceptors.request.use((config) => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token"))
+    ?.split("=")[1];
 
-export default AxiosClient;
+  config.headers.Authorization = `Token ${token ?? ""}`;
+  return config;
+});
+
+export { axiosClient };
