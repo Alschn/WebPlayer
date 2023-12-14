@@ -280,8 +280,8 @@ SITE_ID = 1
 # Spotify API related settings
 # https://developer.spotify.com/documentation/general/guides/authorization-guide/
 
-SPOTIFY_REDIRECT_URI = env('SPOTIFY_REDIRECT_URI')
+SPOTIFY_REDIRECT_URI = env('SPOTIFY_REDIRECT_URI', default=None)
 
-SPOTIFY_CLIENT_ID = env('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_ID = env('SPOTIFY_CLIENT_ID', default=None)
 
-SPOTIFY_CLIENT_SECRET = env('SPOTIFY_CLIENT_SECRET')
+SPOTIFY_CLIENT_SECRET = env('SPOTIFY_CLIENT_SECRET', default=None)
