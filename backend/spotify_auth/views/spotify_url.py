@@ -52,8 +52,8 @@ def build_spotify_authorize_url(scopes: list[str]) -> str:
         params={
             'scope': scope,
             'response_type': 'code',
-            'redirect_uri': settings.REDIRECT_URI,
-            'client_id': settings.CLIENT_ID
+            'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
+            'client_id': settings.SPOTIFY_CLIENT_ID
         }
     ).prepare()
     return request_obj.url
