@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os
 from pathlib import Path
 
 from environ import Env
@@ -18,8 +17,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = Env()
 env.read_env(BASE_DIR / '.env')
-
-ROOT_DIR = BASE_DIR.parent
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -194,8 +191,10 @@ AUTH_USER_MODEL = 'accounts.User'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATIC_ROOT = os.path.join(ROOT_DIR, 'staticfiles')
+MEDIA_URL = '/uploads/'
+MEDIA_ROOT = BASE_DIR / 'uploads'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
