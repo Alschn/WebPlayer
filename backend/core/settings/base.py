@@ -118,6 +118,8 @@ if IS_GITHUB_WORKFLOW:
     }
 
 elif DATABASE_URL:
+    import dj_database_url
+
     db_from_env = dj_database_url.config(
         default=DATABASE_URL,
         conn_max_age=500,
