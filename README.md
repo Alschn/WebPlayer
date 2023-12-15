@@ -56,10 +56,14 @@ pipenv install
 Create `.env` file in `backend` directory and set following variables in plain text
 
 ```shell script
-CLIENT_ID='id from spotify dashboard'
-CLIENT_SECRET='secret from spotify dashboard'
-REDIRECT_URI='redirect uri set in spotify dashboard (port 8000)'
-REDIRECT_URI_DEV='other direct uri for development (port 3000)'
+SECRET_KEY=your_secret_key
+DEBUG=True
+USE_LOCAL_SQLITE_DB=True
+CORS_ALLOW_ALL_ORIGINS=True
+
+SPOTIFY_CLIENT_ID='id from spotify dashboard'
+SPOTIFY_CLIENT_SECRET='secret from spotify dashboard'
+SPOTIFY_REDIRECT_URI='redirect uri set in spotify dashboard (port 3000)'
 ```
 
 Run migrations and create superuser:

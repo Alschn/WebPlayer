@@ -70,8 +70,8 @@ def send_spotify_token_request(code: str) -> requests.Response:
         data={
             'grant_type': 'authorization_code',
             'code': code,
-            'redirect_uri': settings.REDIRECT_URI,
-            'client_id': settings.CLIENT_ID,
-            'client_secret': settings.CLIENT_SECRET
+            'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
+            'client_id': settings.SPOTIFY_CLIENT_ID,
+            'client_secret': settings.SPOTIFY_CLIENT_SECRET
         }
     )

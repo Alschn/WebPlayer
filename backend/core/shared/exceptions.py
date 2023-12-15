@@ -15,8 +15,8 @@ class ExceptionHandlerContext(TypedDict):
 
 
 def exception_handler(exc: Any, context: ExceptionHandlerContext) -> Response | None:
-    if type(exc) == SpotifyException:
-        spotipy_exc: SpotifyException = exc
+    if isinstance(exc, SpotifyException):
+        spotipy_exc = exc
         response = Response(
             {
                 'status_code': spotipy_exc.http_status,
