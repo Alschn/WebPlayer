@@ -11,15 +11,17 @@ django-cors-headers = "*"
 django-allauth = "*"
 dj-rest-auth = "*"
 django-filter = "*"
-python-dotenv = "*"
+django-environ = "*"
+psycopg = {extras = ["binary"], version = "*"}
 requests = "*"
-psycopg2 = "*"
 gunicorn = "*"
 whitenoise = "*"
 spotipy = "*"
 drf-spectacular = "*"
+dj-database-url = "*"
 
 [dev-packages]
+factory-boy = "*"
 coverage = "*"
 mypy = "*"
 django-stubs = {extras = ["compatible-mypy"], version = "*"}

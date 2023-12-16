@@ -56,8 +56,8 @@ def send_spotify_refresh_request(refresh_token: str) -> requests.Response:
         data={
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
-            'client_id': settings.CLIENT_ID,
-            'client_secret': settings.CLIENT_SECRET
+            'client_id': settings.SPOTIFY_CLIENT_ID,
+            'client_secret': settings.SPOTIFY_CLIENT_SECRET
         }
     )
 

@@ -14,33 +14,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include, re_path
-from django.views.generic import TemplateView
+from django.urls import path, include
 
 from core.schema.views import (
     SchemaAPIView,
     SchemaRedocView,
     SchemaSwaggerView
 )
-from spotify_auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # applications
+    path('api/', include('accounts.urls')),
     path('api/spotify/', include('spotify_adapter.urls')),
     path('api/auth/spotify/', include('spotify_auth.urls')),
-    path('api/auth/logout/', LogoutView.as_view(), name='logout'),
-
-    # docs
-    path('schema/', SchemaAPIView.as_view(), name='schema'),
-    path('schema/swagger/', SchemaSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('schema/redoc/', SchemaRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
-if not settings.DEBUG:
-    # react static files
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
     urlpatterns += [
-        re_path('.*', TemplateView.as_view(template_name='index.html'))
+        # docs
+        path('schema/', SchemaAPIView.as_view(), name='schema'),
+        path('schema/swagger/', SchemaSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        path('schema/redoc/', SchemaRedocView.as_view(url_name='schema'), name='redoc'),
     ]
