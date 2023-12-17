@@ -27,3 +27,18 @@ export const setPlayerShuffle = (shuffle: boolean) => {
     state: shuffle,
   });
 };
+
+export const playSong = ({
+  uri,
+  context_uri,
+}: {
+  uri?: string;
+  context_uri?: string;
+}) => {
+  const uris = uri ? [uri] : undefined;
+
+  return axiosClient.put<Record<string, never>>("/api/spotify/me/player/play/", {
+    uris: uris,
+    context_uri,
+  });
+};

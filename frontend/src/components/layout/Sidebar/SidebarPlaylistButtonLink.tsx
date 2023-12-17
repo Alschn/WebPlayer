@@ -36,7 +36,7 @@ const SidebarPlaylistButtonLink = ({
         </div>
         <div className="flex flex-col text-left">
           <p className="text-sm">{playlist.name}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-stone-400">
             {getPlaylistDescription(playlist.owner)}
           </p>
         </div>

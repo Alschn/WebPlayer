@@ -7,14 +7,21 @@ import NextLink from "next/link";
 interface AlbumTracksTableRowProps {
   item: Track;
   index: number;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
 export default function AlbumTracksTableRow({
   item,
   index,
+  isSelected,
+  onClick,
 }: AlbumTracksTableRowProps) {
   return (
-    <TableRow>
+    <TableRow
+      onClick={() => onClick?.()}
+      data-state={isSelected ? "selected" : "idle"}
+    >
       <TableCell>{index + 1}</TableCell>
       <TableCell>
         <div className="align-center flex flex-row gap-2">
@@ -28,12 +35,12 @@ export default function AlbumTracksTableRow({
                 >
                   <NextLink
                     href={`/artists/${artist.id}/`}
-                    className="hover:underline dark:text-gray-400 dark:hover:text-white"
+                    className="hover:underline dark:text-stone-400 dark:hover:text-white"
                   >
                     {artist.name}
                   </NextLink>
                   {index !== array.length - 1 && (
-                    <span className="mr-1 dark:text-gray-400">{", "}</span>
+                    <span className="mr-1 dark:text-stone-400">{", "}</span>
                   )}
                 </div>
               ))}
@@ -42,7 +49,7 @@ export default function AlbumTracksTableRow({
         </div>
       </TableCell>
       <TableCell></TableCell>
-      <TableCell className="dark:text-gray-400">
+      <TableCell className="dark:text-stone-400">
         {getMsToTimeString(item.duration_ms, true)}
       </TableCell>
       <TableCell>
