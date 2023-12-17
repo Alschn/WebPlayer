@@ -37,12 +37,12 @@ const PlaylistTracksTableRow = ({
                 >
                   <NextLink
                     href={`/artists/${artist.id}/`}
-                    className="hover:underline dark:text-gray-400 dark:hover:text-white"
+                    className="hover:underline dark:text-stone-400 dark:hover:text-white"
                   >
                     {artist.name}
                   </NextLink>
                   {index !== array.length - 1 && (
-                    <span className="mr-1 dark:text-gray-400">{", "}</span>
+                    <span className="mr-1 dark:text-stone-400">{", "}</span>
                   )}
                 </div>
               ))}
@@ -53,16 +53,16 @@ const PlaylistTracksTableRow = ({
       <TableCell>
         <NextLink
           href={`/albums/${item.track.album.id}/`}
-          className="line-clamp-1 hover:underline dark:text-gray-400 dark:hover:text-white"
+          className="line-clamp-1 hover:underline dark:text-stone-400 dark:hover:text-white"
         >
           {item.track.album.name}
         </NextLink>
       </TableCell>
-      <TableCell className="dark:text-gray-400">
+      <TableCell className="dark:text-stone-400">
         {relativeTimeFromDates(new Date(item.added_at))}
       </TableCell>
       <TableCell></TableCell>
-      <TableCell className="dark:text-gray-400">
+      <TableCell className="dark:text-stone-400">
         {getMsToTimeString(item.track.duration_ms, true)}
       </TableCell>
       <TableCell>
