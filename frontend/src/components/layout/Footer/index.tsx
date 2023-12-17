@@ -108,20 +108,26 @@ function Footer({ className }: FooterProps) {
         className="flex items-center justify-start gap-3 md:col-span-3"
       >
         <FooterImage track={track} />
-        <div className="flex flex-col">
+        <div className="flex flex-col overflow-auto max-h-[64px]">
           <NextLink href={`/tracks/${track.id}/`}>
             <h1 className="text-base hover:underline">{track.name}</h1>
           </NextLink>
-          <div className="flex flex-row gap-1">
-            {track.artists.map((a) => (
-              <NextLink
-                href={`/artists/${uriToId(a.uri)}/`}
-                key={"footer-artist-" + a.uri}
-              >
-                <h2 className="text-sm text-gray-600 hover:underline dark:text-gray-400">
-                  {a.name}
-                </h2>
-              </NextLink>
+          <div>
+            {track.artists.map((a, index, array) => (
+              <div key={`artist-${a.uri}`} className="inline-block">
+                <NextLink
+                  href={`/artists/${uriToId(a.uri)}/`}
+                  key={"footer-artist-" + a.uri}
+                  className="inline-block hover:underline dark:text-stone-400 dark:hover:text-white"
+                >
+                  <h2 className="text-xs text-gray-600 hover:underline dark:text-stone-400">
+                    {a.name}
+                  </h2>
+                </NextLink>
+                {index !== array.length - 1 && (
+                  <span className="mr-1 dark:text-stone-400">{", "}</span>
+                )}
+              </div>
             ))}
           </div>
         </div>
