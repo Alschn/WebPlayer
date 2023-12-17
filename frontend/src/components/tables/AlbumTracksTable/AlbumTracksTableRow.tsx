@@ -7,14 +7,21 @@ import NextLink from "next/link";
 interface AlbumTracksTableRowProps {
   item: Track;
   index: number;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
 export default function AlbumTracksTableRow({
   item,
   index,
+  isSelected,
+  onClick,
 }: AlbumTracksTableRowProps) {
   return (
-    <TableRow>
+    <TableRow
+      onClick={() => onClick?.()}
+      data-state={isSelected ? "selected" : "idle"}
+    >
       <TableCell>{index + 1}</TableCell>
       <TableCell>
         <div className="align-center flex flex-row gap-2">

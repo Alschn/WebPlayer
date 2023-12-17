@@ -8,14 +8,21 @@ import DropdownMoreHorizMenu from "../SavedTracksTable/DropdownMoreHorizMenu";
 interface PlaylistTracksTableRowProps {
   item: PlaylistTrack;
   index: number;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
 const PlaylistTracksTableRow = ({
   item,
   index,
+  isSelected,
+  onClick,
 }: PlaylistTracksTableRowProps) => {
   return (
-    <TableRow key={`item` + item.track.id + index}>
+    <TableRow
+      onClick={() => onClick?.()}
+      data-state={isSelected ? "selected" : "idle"}
+    >
       <TableCell>{index + 1}</TableCell>
       <TableCell>
         <div className="align-center flex flex-row gap-2">
