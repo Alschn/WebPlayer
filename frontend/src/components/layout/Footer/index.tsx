@@ -24,13 +24,15 @@ import SkipBackButton from "./SkipBackButton";
 import SkipForwardButton from "./SkipForwardButton";
 import VolumeButton from "./VolumeButton";
 
+const PLAYBACK_STATE_POLL_INTERVAL = 5000;
+
 interface FooterProps {
   className?: string;
 }
 
 function Footer({ className }: FooterProps) {
   const player = useSpotifyPlayer();
-  const state = usePlaybackState();
+  const state = usePlaybackState(true, PLAYBACK_STATE_POLL_INTERVAL);
 
   const [trackPos, setTrackPos] = useState<[number]>([state?.position ?? 0]);
   const [volume, setVolume] = useState<[number]>([0.3]);
@@ -108,16 +110,15 @@ function Footer({ className }: FooterProps) {
         className="flex items-center justify-start gap-3 md:col-span-3"
       >
         <FooterImage track={track} />
-        <div className="flex flex-col overflow-auto max-h-[64px]">
+        <div className="flex max-h-[64px] flex-col overflow-auto">
           <NextLink href={`/tracks/${track.id}/`}>
             <h1 className="text-base hover:underline">{track.name}</h1>
           </NextLink>
           <div>
             {track.artists.map((a, index, array) => (
-              <div key={`artist-${a.uri}`} className="inline-block">
+              <div key={`footer-artist-${a.uri}`} className="inline-block">
                 <NextLink
                   href={`/artists/${uriToId(a.uri)}/`}
-                  key={"footer-artist-" + a.uri}
                   className="inline-block hover:underline dark:text-stone-400 dark:hover:text-white"
                 >
                   <h2 className="text-xs text-gray-600 hover:underline dark:text-stone-400">
