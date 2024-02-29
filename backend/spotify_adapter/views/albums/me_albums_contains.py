@@ -7,12 +7,18 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.spotify import AlbumIdsField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserAlbumsContainsParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(), allow_empty=False)
+    ids = AlbumIdsField(required=True)
+
+
+class CurrentUserAlbumsContainsResponseSerializer(serializers.ListSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, child=serializers.BooleanField(), max_length=20, **kwargs)
 
 
 class CurrentUserAlbumsContainsView(APIView):
@@ -28,7 +34,7 @@ class CurrentUserAlbumsContainsView(APIView):
 
     @extend_schema(
         parameters=[CurrentUserAlbumsContainsParamsSerializer],
-        # todo: response serializer
+        responses={status.HTTP_200_OK: CurrentUserAlbumsContainsResponseSerializer}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserAlbumsContainsParamsSerializer(data=request.query_params)

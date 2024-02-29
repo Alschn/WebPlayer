@@ -7,22 +7,23 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from spotify_adapter.serializers.spotify import AlbumSerializer
+from spotify_adapter.serializers.albums import AlbumSerializer
+from spotify_adapter.serializers.spotify import AlbumIdsField, LimitField, OffsetField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserAlbumsParamsSerializer(serializers.Serializer):
-    limit = serializers.IntegerField(required=False, min_value=0, max_value=50)
-    offset = serializers.IntegerField(required=False, min_value=0)
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class CurrentUserAlbumsSaveDataSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(), allow_empty=False)
+    ids = AlbumIdsField()
 
 
 class CurrentUserAlbumsDeleteParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(), allow_empty=False)
+    ids = AlbumIdsField()
 
 
 class CurrentUserAlbumsView(APIView):
@@ -57,7 +58,6 @@ class CurrentUserAlbumsView(APIView):
 
     @extend_schema(
         parameters=[CurrentUserAlbumsParamsSerializer],
-        # todo: response
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserAlbumsSaveDataSerializer(data=request.data)
@@ -69,7 +69,6 @@ class CurrentUserAlbumsView(APIView):
 
     @extend_schema(
         parameters=[CurrentUserAlbumsParamsSerializer],
-        # todo: response
     )
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserAlbumsDeleteParamsSerializer(data=request.data)

@@ -7,15 +7,20 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from spotify_adapter.serializers.spotify import NewReleasesSerializer
+from spotify_adapter.serializers.new_releases import NewReleasesSerializer
+from spotify_adapter.serializers.spotify import LimitField, OffsetField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class NewReleasesParamsSerializer(serializers.Serializer):
-    country = serializers.CharField(max_length=2, required=False)
-    limit = serializers.IntegerField(min_value=1, max_value=50, required=False)
-    offset = serializers.IntegerField(min_value=0, required=False)
+    country = serializers.CharField(
+        max_length=2,
+        required=False,
+        help_text='Undocumented in Spotify API, available in Spotipy client.',
+    )
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class NewReleasesView(APIView):

@@ -7,14 +7,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from spotify_adapter.serializers.spotify import AlbumSerializer
+from spotify_adapter.serializers.albums import AlbumSerializer
+from spotify_adapter.serializers.spotify import MarketField, AlbumIdsField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class AlbumsParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(), allow_empty=False)
-    market = serializers.CharField(required=False)
+    ids = AlbumIdsField()
+    market = MarketField(required=False)
 
 
 class AlbumsView(APIView):
