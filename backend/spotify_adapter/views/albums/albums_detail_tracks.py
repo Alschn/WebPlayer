@@ -7,14 +7,16 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.albums import AlbumTracksPageSerializer
+from spotify_adapter.serializers.spotify import MarketField, LimitField, OffsetField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class AlbumsDetailTracksParamsSerializer(serializers.Serializer):
-    market = serializers.CharField(required=False)
-    limit = serializers.IntegerField(required=False, min_value=0, max_value=50)
-    offset = serializers.IntegerField(required=False, min_value=0)
+    market = MarketField(required=False)
+    limit = LimitField(required=False)
+    offset = OffsetField(required=False)
 
 
 class AlbumsDetailTracksView(APIView):
@@ -27,11 +29,9 @@ class AlbumsDetailTracksView(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    # todo: response serializer
-
     @extend_schema(
         parameters=[AlbumsDetailTracksParamsSerializer],
-        # responses={status.HTTP_200_OK: None},
+        responses={status.HTTP_200_OK: AlbumTracksPageSerializer},
     )
     def get(self, request: Request, album_id: str, *args: Any, **kwargs: Any) -> Response:
         serializer = AlbumsDetailTracksParamsSerializer(data=request.query_params)
