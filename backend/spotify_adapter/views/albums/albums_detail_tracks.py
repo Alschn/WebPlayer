@@ -15,8 +15,8 @@ from spotify_auth.permissions import HasSpotifyToken
 
 class AlbumsDetailTracksParamsSerializer(serializers.Serializer):
     market = MarketField(required=False)
-    limit = LimitField(required=False)
-    offset = OffsetField(required=False)
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class AlbumsDetailTracksView(APIView):

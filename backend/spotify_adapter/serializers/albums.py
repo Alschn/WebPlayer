@@ -95,12 +95,12 @@ class AlbumTracksPageSerializer(serializers.Serializer):
     href = serializers.URLField(
         help_text=_('A link to the Web API endpoint returning the full result of the request.')
     )
-    limit = LimitField(required=True)
+    limit = LimitField()
     next = serializers.URLField(
         allow_null=True,
         help_text=_('The URL to the next page of items. (null if none)')
     )
-    offset = OffsetField(required=True)
+    offset = OffsetField()
     previous = serializers.URLField(
         allow_null=True,
         help_text=_('The URL to the previous page of items. (null if none)')

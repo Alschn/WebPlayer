@@ -14,8 +14,8 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserAlbumsParamsSerializer(serializers.Serializer):
-    limit = LimitField(required=False)
-    offset = OffsetField(required=False)
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class CurrentUserAlbumsSaveDataSerializer(serializers.Serializer):

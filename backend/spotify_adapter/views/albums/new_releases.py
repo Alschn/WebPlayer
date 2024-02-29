@@ -19,8 +19,8 @@ class NewReleasesParamsSerializer(serializers.Serializer):
         required=False,
         help_text='Undocumented in Spotify API, available in Spotipy client.',
     )
-    limit = LimitField(required=False)
-    offset = OffsetField(required=False)
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class NewReleasesView(APIView):

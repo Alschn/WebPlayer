@@ -113,7 +113,7 @@ class LimitField(serializers.IntegerField):
     spotify_help_text = _('The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.')
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('required', False)
+        kwargs.pop('required', None)
         kwargs['min_value'] = 0
         kwargs['max_value'] = 50
         kwargs['default'] = 20
@@ -128,7 +128,7 @@ class OffsetField(serializers.IntegerField):
     )
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('required', False)
+        kwargs.pop('required', None)
         kwargs['min_value'] = 0
         kwargs['max_value'] = 50
         kwargs['default'] = 0
