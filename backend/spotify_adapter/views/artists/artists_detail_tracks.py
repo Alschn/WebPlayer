@@ -1,17 +1,20 @@
 from typing import Any
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.artists import ArtistTopTracksPageSerializer
+from spotify_adapter.serializers.spotify import MarketField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class ArtistsDetailTracksParamsSerializer(serializers.Serializer):
-    market = serializers.CharField(required=False, default='US')
+    market = MarketField()
 
 
 class ArtistsDetailTracks(APIView):
@@ -26,6 +29,10 @@ class ArtistsDetailTracks(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
+    @extend_schema(
+        parameters=[ArtistsDetailTracksParamsSerializer],
+        responses={status.HTTP_200_OK: ArtistTopTracksPageSerializer},
+    )
     def get(self, request: Request, artist_id: str, *args: Any, **kwargs: Any) -> Response:
         serializer = ArtistsDetailTracksParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
