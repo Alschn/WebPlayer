@@ -146,3 +146,36 @@ class AlbumIdsField(serializers.ListField):
         kwargs['max_length'] = 20
         kwargs['help_text'] = self.spotify_help_text
         super().__init__(*args, **kwargs)
+
+
+class ArtistIdsField(serializers.ListField):
+    spotify_help_text = _('A comma-separated list of the Spotify IDs for the artists. Maximum: 50 IDs.')
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('required', True)
+        kwargs['child'] = serializers.CharField()
+        kwargs['allow_empty'] = False
+        kwargs['max_length'] = 50
+        kwargs['help_text'] = self.spotify_help_text
+        super().__init__(*args, **kwargs)
+
+
+class PageSerializer(serializers.Serializer):
+    href = serializers.URLField(
+        help_text=_('A link to the Web API endpoint returning the full result of the request.')
+    )
+    limit = LimitField()
+    next = serializers.URLField(
+        allow_null=True,
+        help_text=_('The URL to the next page of items. (null if none)')
+    )
+    offset = OffsetField()
+    previous = serializers.URLField(
+        allow_null=True,
+        help_text=_('The URL to the previous page of items. (null if none)')
+    )
+    total = serializers.IntegerField(
+        min_value=0,
+        help_text=_('The total number of items available to return.')
+    )
+    items = None

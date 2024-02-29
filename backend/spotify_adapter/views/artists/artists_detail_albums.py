@@ -1,20 +1,31 @@
 from typing import Any
 
+from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.artists import ArtistAlbumsPageSerializer
+from spotify_adapter.serializers.spotify import MarketField, LimitField, OffsetField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class ArtistsDetailAlbumsParamsSerializer(serializers.Serializer):
-    include_groups = serializers.CharField(required=False)
-    market = serializers.CharField(required=False)
-    limit = serializers.IntegerField(required=False)
-    offset = serializers.IntegerField(required=False)
+    include_groups = serializers.MultipleChoiceField(
+        required=False,
+        choices=['album', 'single', 'appears_on', 'compilation'],
+        help_text=_(
+            'A comma-separated list of keywords that will be used to filter the response. '
+            'If not supplied, all album types will be returned.'
+        )
+    )
+    market = MarketField()
+    limit = LimitField()
+    offset = OffsetField()
 
 
 class ArtistsDetailAlbumsView(APIView):
@@ -26,8 +37,10 @@ class ArtistsDetailAlbumsView(APIView):
     """
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    # todo: response serializer
-
+    @extend_schema(
+        parameters=[ArtistsDetailAlbumsParamsSerializer],
+        responses={status.HTTP_200_OK: ArtistAlbumsPageSerializer},
+    )
     def get(self, request: Request, artist_id: str, *args: Any, **kwargs: Any) -> Response:
         serializer = ArtistsDetailAlbumsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)

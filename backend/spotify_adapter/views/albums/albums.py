@@ -31,7 +31,7 @@ class AlbumsView(APIView):
 
     @extend_schema(
         parameters=[AlbumsParamsSerializer],
-        responses={status.HTTP_200_OK: AlbumSerializer},
+        responses={status.HTTP_200_OK: AlbumSerializer(many=True)},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = AlbumsParamsSerializer(data=request.query_params)
