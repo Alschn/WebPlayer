@@ -23,6 +23,7 @@ dj-database-url = "*"
 [dev-packages]
 factory-boy = "*"
 coverage = "*"
+ruff = "*"
 mypy = "*"
 django-stubs = {extras = ["compatible-mypy"], version = "*"}
 djangorestframework-stubs = {extras = ["compatible-mypy"], version = "*"}

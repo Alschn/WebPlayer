@@ -1,0 +1,5 @@
+[lint]
+ignore = ["F401"]
+
+[format]
+ignore = ["F401"]

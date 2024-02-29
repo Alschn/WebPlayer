@@ -80,6 +80,22 @@ Run server, go to admin page and log in with superuser's credentials.
 Create new Social Account with **Provider** - Spotify, any **Name**,
 **client_id** from Spotify Dashboard and select default **Site**.
 
+#### Linting and formatting
+
+```shell
+ruff check <path>
+```
+
+```shell
+ruff format <path>
+```
+
+#### Type checking
+
+```shell
+mypy <path>
+```
+
 ### Frontend Setup
 
 Install all dependencies:
