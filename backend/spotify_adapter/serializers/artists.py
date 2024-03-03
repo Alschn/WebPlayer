@@ -5,9 +5,9 @@ from spotify_adapter.serializers.albums import SimplifiedAlbumSerializer
 from spotify_adapter.serializers.spotify import (
     ExternalURLSerializer,
     ImageSerializer,
-    PageSerializer
+    PageSerializer,
+    SimplifiedTrackSerializer,
 )
-from spotify_adapter.serializers.tracks import SimplifiedTrackSerializer
 
 
 class FollowersSerializer(serializers.Serializer):

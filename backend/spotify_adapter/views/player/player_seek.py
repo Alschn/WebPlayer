@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
@@ -12,8 +13,22 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class PlayerSeekPositionDataSerializer(serializers.Serializer):
-    position_ms = serializers.IntegerField(min_value=0)
-    device_id = serializers.CharField(required=False, allow_null=True, default=None)
+    position_ms = serializers.IntegerField(
+        min_value=0,
+        help_text=_(
+            'The position in milliseconds to seek to. '
+            'Must be a positive number. Passing in a position that is greater than the length of the track '
+            'will cause the player to start playing the next song.'
+        )
+    )
+    device_id = serializers.CharField(
+        allow_null=True,
+        default=None,
+        help_text=_(
+            "The id of the device this command is targeting. "
+            "If not supplied, the user's currently active device is the target."
+        )
+    )
 
 
 class PlayerSeekPositionView(APIView):
@@ -26,10 +41,9 @@ class PlayerSeekPositionView(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    # todo: response serializer
-
     @extend_schema(
         request=PlayerSeekPositionDataSerializer,
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerSeekPositionDataSerializer(data=request.data)
@@ -39,5 +53,5 @@ class PlayerSeekPositionView(APIView):
         device_id = serializer.validated_data['device_id']
 
         client = get_spotify_client(request.user)
-        data = client.seek_track(position_ms=position_ms, device_id=device_id)
-        return Response(data, status=status.HTTP_200_OK)
+        client.seek_track(position_ms=position_ms, device_id=device_id)
+        return Response({}, status=status.HTTP_200_OK)

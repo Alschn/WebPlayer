@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
@@ -7,20 +8,38 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.spotify import LimitField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class PlayerRecentlyPlayedParamsSerializer(serializers.Serializer):
-    limit = serializers.IntegerField(
-        required=False, allow_null=True, default=None
-    )
+    limit = LimitField()
     after = serializers.IntegerField(
-        required=False, allow_null=True, default=None
+        default=None,
+        help_text=_(
+            'A Unix timestamp in milliseconds. '
+            'Returns all items after (but not including) this cursor position. '
+            'If after is specified, before must not be specified.'
+        )
     )
     before = serializers.IntegerField(
-        required=False, allow_null=True, default=None
+        default=None,
+        help_text=_(
+            'A Unix timestamp in milliseconds. '
+            'Returns all items before (but not including) this cursor position. '
+            'If before is specified, after must not be specified.'
+        )
     )
+
+    def validate(self, attrs: dict) -> dict:
+        after = attrs.get('after')
+        before = attrs.get('before')
+
+        if after is not None and before is not None:
+            raise serializers.ValidationError("You can't specify both `after` and `before`")
+
+        return attrs
 
 
 class PlayerRecentlyPlayedView(APIView):
@@ -35,10 +54,10 @@ class PlayerRecentlyPlayedView(APIView):
     """
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    # todo: response serializer
-
     @extend_schema(
-        parameters=[PlayerRecentlyPlayedParamsSerializer]
+        parameters=[PlayerRecentlyPlayedParamsSerializer],
+        # todo: response serializer
+        responses={status.HTTP_200_OK: None}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerRecentlyPlayedParamsSerializer(data=request.query_params)

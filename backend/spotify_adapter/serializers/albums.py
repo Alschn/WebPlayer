@@ -9,8 +9,8 @@ from .spotify import (
     CopyrightSerializer,
     ExternalIdsSerializer,
     PageSerializer,
+    SimplifiedTrackSerializer
 )
-from .tracks import SimplifiedTrackSerializer
 
 
 class AlbumTracksPageSerializer(PageSerializer):
