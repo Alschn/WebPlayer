@@ -10,16 +10,25 @@ from rest_framework.views import APIView
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
+from django.utils.translation import gettext_lazy as _
+
 
 class PlayerRepeatDataSerializer(serializers.Serializer):
     state = serializers.ChoiceField(
         choices=[
-            ('off', 'Repeat off'),
-            ('track', 'Repeat the current track'),
-            ('context', 'Repeat the current context'),
+            ('off', _('Repeat off')),
+            ('track', _('Repeat the current track')),
+            ('context', _('Repeat the current context')),
         ],
     )
-    device_id = serializers.CharField(required=False, allow_null=True, default=None)
+    device_id = serializers.CharField(
+        allow_null=True,
+        default=None,
+        help_text=_(
+            "The id of the device this command is targeting. "
+            "If not supplied, the user's currently active device is the target."
+        )
+    )
 
 
 class PlayerRepeatView(APIView):
@@ -32,10 +41,10 @@ class PlayerRepeatView(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    # todo: response serializer
-
     @extend_schema(
         request=PlayerRepeatDataSerializer,
+        # todo: response serializer
+        responses={status.HTTP_200_OK: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerRepeatDataSerializer(data=request.data)
