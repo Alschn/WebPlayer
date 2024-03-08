@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
@@ -9,8 +10,6 @@ from rest_framework.views import APIView
 
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
-
-from django.utils.translation import gettext_lazy as _
 
 
 class PlayerRepeatDataSerializer(serializers.Serializer):
@@ -43,8 +42,7 @@ class PlayerRepeatView(APIView):
 
     @extend_schema(
         request=PlayerRepeatDataSerializer,
-        # todo: response serializer
-        responses={status.HTTP_200_OK: None},
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerRepeatDataSerializer(data=request.data)
@@ -55,4 +53,4 @@ class PlayerRepeatView(APIView):
 
         client = get_spotify_client(request.user)
         client.repeat(state=state, device_id=device_id)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
