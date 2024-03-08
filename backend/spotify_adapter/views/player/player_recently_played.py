@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.player import RecentlyPlayedTracksSerializer
 from spotify_adapter.serializers.spotify import LimitField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
@@ -56,8 +57,7 @@ class PlayerRecentlyPlayedView(APIView):
 
     @extend_schema(
         parameters=[PlayerRecentlyPlayedParamsSerializer],
-        # todo: response serializer
-        responses={status.HTTP_200_OK: None}
+        responses={status.HTTP_200_OK: RecentlyPlayedTracksSerializer}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerRecentlyPlayedParamsSerializer(data=request.query_params)
