@@ -7,20 +7,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.audio_analysis import AudioFeaturesSerializer
+from spotify_adapter.serializers.spotify import TrackIdsField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class AudioFeaturesParamsSerializers(serializers.Serializer):
-    ids = serializers.ListField(
-        child=serializers.CharField(max_length=22),
-        allow_empty=False,
-        max_length=100,
-        help_text=(
-            "A comma-separated list of the Spotify IDs for the tracks. "
-            "Maximum: 100 IDs."
-        )
-    )
+    ids = TrackIdsField(max_length=100)
 
 
 class AudioFeaturesView(APIView):
@@ -36,7 +30,7 @@ class AudioFeaturesView(APIView):
 
     @extend_schema(
         parameters=[AudioFeaturesParamsSerializers],
-        # todo: add response serializer
+        responses={status.HTTP_200_OK: AudioFeaturesSerializer}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = AudioFeaturesParamsSerializers(data=request.query_params)
