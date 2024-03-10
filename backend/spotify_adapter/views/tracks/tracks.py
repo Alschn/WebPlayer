@@ -7,12 +7,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.spotify import TrackIdsField
+from spotify_adapter.serializers.tracks import TracksSerializer
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class TracksParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(max_length=22), required=True)
+    ids = TrackIdsField()
     market = serializers.CharField(required=False)
 
 
@@ -29,7 +31,7 @@ class TracksView(APIView):
 
     @extend_schema(
         parameters=[TracksParamsSerializer],
-        # todo: add response schema
+        responses={status.HTTP_200_OK: TracksSerializer}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = TracksParamsSerializer(data=request.query_params)

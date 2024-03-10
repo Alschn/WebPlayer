@@ -214,26 +214,47 @@ class OffsetField(serializers.IntegerField):
 
 
 class AlbumIdsField(serializers.ListField):
-    spotify_help_text = _('A comma-separated list of the Spotify IDs for the albums. Maximum: 20 IDs.')
+    spotify_help_text = _(
+        'A comma-separated list of the Spotify IDs for the albums. Maximum: %(max_length)s IDs.'
+    )
 
     def __init__(self, *args, **kwargs):
+        max_length = kwargs.pop('max_length', 20)
         kwargs.setdefault('required', True)
         kwargs['child'] = serializers.CharField()
         kwargs['allow_empty'] = False
-        kwargs['max_length'] = 20
-        kwargs['help_text'] = self.spotify_help_text
+        kwargs['max_length'] = max_length
+        kwargs['help_text'] = self.spotify_help_text % {'max_length': max_length}
         super().__init__(*args, **kwargs)
 
 
 class ArtistIdsField(serializers.ListField):
-    spotify_help_text = _('A comma-separated list of the Spotify IDs for the artists. Maximum: 50 IDs.')
+    spotify_help_text = _(
+        'A comma-separated list of the Spotify IDs for the artists. Maximum: %(max_length)s IDs.'
+    )
 
     def __init__(self, *args, **kwargs):
+        max_length = kwargs.pop('max_length', 50)
         kwargs.setdefault('required', True)
         kwargs['child'] = serializers.CharField()
         kwargs['allow_empty'] = False
-        kwargs['max_length'] = 50
-        kwargs['help_text'] = self.spotify_help_text
+        kwargs['max_length'] = max_length
+        kwargs['help_text'] = self.spotify_help_text % {'max_length': max_length}
+        super().__init__(*args, **kwargs)
+
+
+class TrackIdsField(serializers.ListField):
+    spotify_help_text = _(
+        'A comma-separated list of the Spotify IDs for the tracks. Maximum: %(max_length)s IDs.'
+    )
+
+    def __init__(self, *args, **kwargs):
+        max_length = kwargs.pop('max_length', 100)
+        kwargs.setdefault('required', True)
+        kwargs['child'] = serializers.CharField(max_length=22)
+        kwargs['allow_empty'] = False
+        kwargs['max_length'] = max_length
+        kwargs['help_text'] = self.spotify_help_text % {'max_length': max_length}
         super().__init__(*args, **kwargs)
 
 
