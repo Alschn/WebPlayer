@@ -1,33 +1,30 @@
 from typing import Any
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.spotify import OffsetField, MarketField, LimitField, TrackIdsField
+from spotify_adapter.serializers.tracks import TracksPageSerializer
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserSavedTracksParamsSerializer(serializers.Serializer):
-    limit = serializers.IntegerField(required=False, default=30)
-    offset = serializers.IntegerField(required=False)
-    market = serializers.CharField(required=False)
+    limit = LimitField()
+    offset = OffsetField()
+    market = MarketField(required=False)
 
 
 class CurrentUserSavedTracksAddDataSerializer(serializers.Serializer):
-    ids = serializers.ListField(
-        child=serializers.CharField(max_length=22),
-        allow_empty=False
-    )
+    ids = TrackIdsField(max_length=50)
 
 
 class CurrentUserSavedTracksDeleteDataSerializer(serializers.Serializer):
-    ids = serializers.ListField(
-        child=serializers.CharField(max_length=22),
-        allow_empty=False
-    )
+    ids = TrackIdsField(max_length=50)
 
 
 class CurrentUserSavedTracksView(APIView):
@@ -53,6 +50,10 @@ class CurrentUserSavedTracksView(APIView):
     """
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
+    @extend_schema(
+        parameters=[CurrentUserSavedTracksParamsSerializer],
+        responses={status.HTTP_200_OK: TracksPageSerializer}
+    )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserSavedTracksParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -65,6 +66,10 @@ class CurrentUserSavedTracksView(APIView):
         data = client.current_user_saved_tracks(limit=limit, offset=offset, market=market)
         return Response(data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=CurrentUserSavedTracksAddDataSerializer,
+        responses={status.HTTP_200_OK: None}
+    )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserSavedTracksAddDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -72,9 +77,13 @@ class CurrentUserSavedTracksView(APIView):
         ids = serializer.validated_data['ids']
 
         client = get_spotify_client(request.user)
-        data = client.current_user_saved_tracks_add(tracks=ids)
-        return Response(data, status=status.HTTP_201_CREATED)
+        client.current_user_saved_tracks_add(tracks=ids)
+        return Response({}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=CurrentUserSavedTracksDeleteDataSerializer,
+        responses={status.HTTP_200_OK: None}
+    )
     def delete(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = CurrentUserSavedTracksDeleteDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -82,5 +91,5 @@ class CurrentUserSavedTracksView(APIView):
         ids = serializer.validated_data['ids']
 
         client = get_spotify_client(request.user)
-        data = client.current_user_saved_tracks_delete(tracks=ids)
-        return Response(data, status=status.HTTP_200_OK)
+        client.current_user_saved_tracks_delete(tracks=ids)
+        return Response({}, status=status.HTTP_200_OK)

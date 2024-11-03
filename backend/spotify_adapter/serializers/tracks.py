@@ -6,7 +6,7 @@ from .artists import ArtistSerializer
 from .spotify import (
     ExternalURLSerializer,
     RestrictionsSerializer,
-    LinkedFromSerializer,
+    LinkedFromSerializer, PageSerializer,
 )
 
 
@@ -105,3 +105,11 @@ class TrackSerializer(serializers.Serializer):
     is_local = serializers.BooleanField(
         help_text=_('Whether or not the track is from a local file.')
     )
+
+
+class TracksSerializer(serializers.Serializer):
+    tracks = TrackSerializer(many=True)
+
+
+class TracksPageSerializer(PageSerializer):
+    items = TrackSerializer(many=True)

@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
@@ -7,16 +8,21 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from spotify_adapter.serializers.spotify import TrackIdsField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 
 
 class MeTracksContainsParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(
-        child=serializers.CharField(max_length=22),
-        max_length=50,
-        allow_empty=False,
-    )
+    ids = TrackIdsField()
+
+
+class MeTracksContainsResponseSerializer(serializers.ListSerializer):
+    def __init__(self, *args, **kwargs):
+        kwargs['child'] = serializers.BooleanField()
+        kwargs['max_length'] = 20
+        kwargs['help_text'] = _('Array of boolean')
+        super().__init__(*args, **kwargs)
 
 
 class MeTracksContainsView(APIView):
@@ -32,7 +38,7 @@ class MeTracksContainsView(APIView):
 
     @extend_schema(
         parameters=[MeTracksContainsParamsSerializer],
-        # todo: response serializer
+        responses={status.HTTP_200_OK: MeTracksContainsResponseSerializer}
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = MeTracksContainsParamsSerializer(data=request.query_params)
