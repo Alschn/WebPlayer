@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp
+from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from allauth.socialaccount.providers.spotify.views import SpotifyOAuth2Adapter
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from dj_rest_auth.registration.views import SocialLoginView

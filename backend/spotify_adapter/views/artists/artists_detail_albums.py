@@ -2,14 +2,14 @@ from typing import Any
 
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
-from rest_framework import status, serializers
+from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from spotify_adapter.serializers.artists import ArtistAlbumsPageSerializer
-from spotify_adapter.serializers.spotify import MarketField, LimitField, OffsetField
+from spotify_adapter.serializers.spotify import LimitField, MarketField, OffsetField
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
 

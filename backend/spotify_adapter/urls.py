@@ -1,63 +1,63 @@
 from django.urls import path
 
 from spotify_adapter.views.albums import (
-    AlbumsDetailView,
     AlbumsDetailTracksView,
+    AlbumsDetailView,
     AlbumsView,
-    CurrentUserAlbumsView,
     CurrentUserAlbumsContainsView,
+    CurrentUserAlbumsView,
     NewReleasesView,
 )
 from spotify_adapter.views.artists import (
-    ArtistsView,
-    ArtistsDetailView,
     ArtistsDetailAlbumsView,
     ArtistsDetailRelatedArtistsView,
     ArtistsDetailTracks,
+    ArtistsDetailView,
+    ArtistsView,
 )
 from spotify_adapter.views.player import (
-    PlayerView,
-    PlayerRecentlyPlayedView,
     PlayerCurrentlyPlayingView,
     PlayerDevices,
-    PlayerSkipToNextView,
     PlayerPausePlaybackView,
-    PlayerStartResumePlayback,
-    PlayerSkipToPreviousView,
     PlayerQueueView,
+    PlayerRecentlyPlayedView,
     PlayerRepeatView,
     PlayerSeekPositionView,
     PlayerShuffleView,
+    PlayerSkipToNextView,
+    PlayerSkipToPreviousView,
+    PlayerStartResumePlayback,
+    PlayerView,
     PlayerVolumeView,
 )
 from spotify_adapter.views.playlists import (
     CategoriesDetailPlaylistsView,
+    CurrentUserPlaylistsView,
     FeaturedPlaylistsView,
+    PlaylistDetailView,
     PlaylistsDetailImagesView,
     PlaylistsDetailTracksView,
     UsersPlaylistsView,
-    PlaylistDetailView,
-    CurrentUserPlaylistsView,
 )
 from spotify_adapter.views.search import SearchView
 from spotify_adapter.views.tracks import (
-    TrackDetailView,
-    TracksView,
-    MeTracksContainsView,
+    AudioAnalysisDetailView,
     AudioFeaturesDetailView,
     AudioFeaturesView,
-    AudioAnalysisDetailView,
-    RecommendationsView,
     CurrentUserSavedTracksView,
+    MeTracksContainsView,
+    RecommendationsView,
+    TrackDetailView,
+    TracksView,
 )
 from spotify_adapter.views.users import (
     CurrentUserFollowing,
     CurrentUserFollowingContainsView,
-    UsersDetailView,
-    CurrentUserView,
     CurrentUserTopTracksView,
+    CurrentUserView,
     PlaylistDetailFollowersContainsView,
     PlaylistDetailFollowersView,
+    UsersDetailView,
 )
 from spotify_adapter.views.users.me_top_artists import CurrentUserTopArtistsView
 

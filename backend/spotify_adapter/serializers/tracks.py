@@ -5,9 +5,9 @@ from .albums import AlbumSerializer
 from .artists import ArtistSerializer
 from .spotify import (
     ExternalURLSerializer,
-    RestrictionsSerializer,
     LinkedFromSerializer,
     PageSerializer,
+    RestrictionsSerializer,
 )
 
 

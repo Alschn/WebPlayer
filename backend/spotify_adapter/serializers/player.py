@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from spotify_adapter.serializers.spotify import LimitField, ExternalURLSerializer
+from spotify_adapter.serializers.spotify import ExternalURLSerializer, LimitField
 from spotify_adapter.serializers.tracks import TrackSerializer
 
 
