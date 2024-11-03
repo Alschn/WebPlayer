@@ -19,6 +19,7 @@ class PlayerCurrentlyPlayingView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
     serializer_class = PlayerPlaybackStateSerializer
 

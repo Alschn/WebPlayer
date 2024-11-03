@@ -33,11 +33,13 @@ class ArtistsDetailTracks(APIView):
         parameters=[ArtistsDetailTracksParamsSerializer],
         responses={status.HTTP_200_OK: ArtistTopTracksPageSerializer},
     )
-    def get(self, request: Request, artist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, artist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = ArtistsDetailTracksParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        market = serializer.validated_data.get('market')
+        market = serializer.validated_data.get("market")
 
         client = get_spotify_client(request.user)
         data = client.artist_top_tracks(artist_id, country=market)

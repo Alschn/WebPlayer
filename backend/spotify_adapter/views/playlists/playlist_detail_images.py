@@ -25,19 +25,23 @@ class PlaylistsDetailImagesView(APIView):
 
     https://developer.spotify.com/documentation/web-api/reference/upload-custom-playlist-cover
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     # todo: response, request serializers
 
-    def get(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.playlist_cover_image(playlist_id=playlist_id)
         return Response(data, status=status.HTTP_200_OK)
 
-    def put(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def put(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.playlist_upload_cover_image(
-            playlist_id=playlist_id,
-            image_b64=request.data
+            playlist_id=playlist_id, image_b64=request.data
         )
         return Response(data, status=status.HTTP_202_ACCEPTED)

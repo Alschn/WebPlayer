@@ -2,10 +2,11 @@
 Open API schema generation related code.
 https://drf-spectacular.readthedocs.io/en/latest/
 """
+
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
-    SpectacularSwaggerView
+    SpectacularSwaggerView,
 )
 
 

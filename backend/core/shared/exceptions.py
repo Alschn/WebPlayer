@@ -19,12 +19,12 @@ def exception_handler(exc: Any, context: ExceptionHandlerContext) -> Response | 
         spotipy_exc = exc
         response = Response(
             {
-                'status_code': spotipy_exc.http_status,
-                'code': spotipy_exc.code,
-                'message': spotipy_exc.msg,
-                'reason': spotipy_exc.reason,
+                "status_code": spotipy_exc.http_status,
+                "code": spotipy_exc.code,
+                "message": spotipy_exc.msg,
+                "reason": spotipy_exc.reason,
             },
-            status=status.HTTP_503_SERVICE_UNAVAILABLE
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
         )
         return response
 

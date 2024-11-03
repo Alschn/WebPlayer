@@ -17,11 +17,11 @@ from spotify_auth.permissions import HasSpotifyToken
 class ArtistsDetailAlbumsParamsSerializer(serializers.Serializer):
     include_groups = serializers.MultipleChoiceField(
         required=False,
-        choices=['album', 'single', 'appears_on', 'compilation'],
+        choices=["album", "single", "appears_on", "compilation"],
         help_text=_(
-            'A comma-separated list of keywords that will be used to filter the response. '
-            'If not supplied, all album types will be returned.'
-        )
+            "A comma-separated list of keywords that will be used to filter the response. "
+            "If not supplied, all album types will be returned."
+        ),
     )
     market = MarketField()
     limit = LimitField()
@@ -35,27 +35,26 @@ class ArtistsDetailAlbumsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-an-artists-albums
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[ArtistsDetailAlbumsParamsSerializer],
         responses={status.HTTP_200_OK: ArtistAlbumsPageSerializer},
     )
-    def get(self, request: Request, artist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, artist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = ArtistsDetailAlbumsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        album_type = serializer.validated_data.get('include_groups')
-        market = serializer.validated_data.get('market')
-        limit = serializer.validated_data.get('limit')
-        offset = serializer.validated_data.get('offset')
+        album_type = serializer.validated_data.get("include_groups")
+        market = serializer.validated_data.get("market")
+        limit = serializer.validated_data.get("limit")
+        offset = serializer.validated_data.get("offset")
 
         client = get_spotify_client(request.user)
         data = client.artist_albums(
-            artist_id,
-            album_type=album_type,
-            country=market,
-            limit=limit,
-            offset=offset
+            artist_id, album_type=album_type, country=market, limit=limit, offset=offset
         )
         return Response(data, status=status.HTTP_200_OK)

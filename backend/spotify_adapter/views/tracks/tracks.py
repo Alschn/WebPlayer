@@ -27,18 +27,19 @@ class TracksView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[TracksParamsSerializer],
-        responses={status.HTTP_200_OK: TracksSerializer}
+        responses={status.HTTP_200_OK: TracksSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = TracksParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data.get('ids')
-        market = serializer.validated_data.get('market')
+        ids = serializer.validated_data.get("ids")
+        market = serializer.validated_data.get("market")
 
         client = get_spotify_client(request.user)
         data = client.tracks(tracks=ids, market=market)

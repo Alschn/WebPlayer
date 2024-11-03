@@ -35,7 +35,7 @@ class ArtistsView(APIView):
         serializer = ArtistsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data['ids']
+        ids = serializer.validated_data["ids"]
 
         client = get_spotify_client(request.user)
         data = client.artists(artists=ids)

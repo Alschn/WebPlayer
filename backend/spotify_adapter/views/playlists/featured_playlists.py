@@ -28,6 +28,7 @@ class FeaturedPlaylistsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-featured-playlists
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
@@ -38,11 +39,11 @@ class FeaturedPlaylistsView(APIView):
         serializer = FeaturedPlaylistsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        country = serializer.validated_data.get('country')
-        locale = serializer.validated_data.get('locale')
-        timestamp = serializer.validated_data.get('timestamp')
-        limit = serializer.validated_data.get('limit')
-        offset = serializer.validated_data.get('offset')
+        country = serializer.validated_data.get("country")
+        locale = serializer.validated_data.get("locale")
+        timestamp = serializer.validated_data.get("timestamp")
+        limit = serializer.validated_data.get("limit")
+        offset = serializer.validated_data.get("offset")
 
         client = get_spotify_client(request.user)
         data = client.featured_playlists(

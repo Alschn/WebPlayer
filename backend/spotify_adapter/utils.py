@@ -35,10 +35,7 @@ def is_spotify_authenticated(user: User) -> bool:
 
 
 def update_user_token(
-    user: User,
-    access_token: str,
-    expires_in: int,
-    refresh_token: str
+    user: User, access_token: str, expires_in: int, refresh_token: str
 ) -> None:
     token = get_user_token(user)
     if not token:
@@ -47,18 +44,18 @@ def update_user_token(
     token.token = access_token
     token.token_secret = refresh_token
     token.expires_at = timezone.now() + timedelta(seconds=expires_in)
-    token.save(update_fields=['token', 'token_secret', 'expires_at'])
+    token.save(update_fields=["token", "token_secret", "expires_at"])
 
 
 def send_spotify_refresh_request(refresh_token: str) -> requests.Response:
     return requests.post(
-        'https://accounts.spotify.com/api/token',
+        "https://accounts.spotify.com/api/token",
         data={
-            'grant_type': 'refresh_token',
-            'refresh_token': refresh_token,
-            'client_id': settings.SPOTIFY_CLIENT_ID,
-            'client_secret': settings.SPOTIFY_CLIENT_SECRET
-        }
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "client_id": settings.SPOTIFY_CLIENT_ID,
+            "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+        },
     )
 
 
@@ -72,7 +69,7 @@ def refresh_spotify_token(user: User) -> None:
     response = send_spotify_refresh_request(refresh_token)
     response_json = response.json()
 
-    access_token: str = response_json.get('access_token')
-    expires_in: int = response_json.get('expires_in')
+    access_token: str = response_json.get("access_token")
+    expires_in: int = response_json.get("expires_in")
 
     update_user_token(user, access_token, expires_in, refresh_token)

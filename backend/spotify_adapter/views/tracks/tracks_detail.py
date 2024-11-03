@@ -27,13 +27,16 @@ class TrackDetailView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-track
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[TrackParamsSerializer],
-        responses={status.HTTP_200_OK: TrackSerializer}
+        responses={status.HTTP_200_OK: TrackSerializer},
     )
-    def get(self, request: Request, track_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, track_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.track(track_id)
         return Response(data, status=status.HTTP_200_OK)

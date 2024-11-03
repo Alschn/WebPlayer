@@ -26,17 +26,18 @@ class SearchView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/search
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = SearchParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        search_param = serializer.validated_data['q']
-        type_param = serializer.validated_data['type']
-        limit = serializer.validated_data.get('limit')
-        offset = serializer.validated_data.get('offset')
-        market = serializer.validated_data.get('market')
+        search_param = serializer.validated_data["q"]
+        type_param = serializer.validated_data["type"]
+        limit = serializer.validated_data.get("limit")
+        offset = serializer.validated_data.get("offset")
+        market = serializer.validated_data.get("market")
 
         client = get_spotify_client(request.user)
         data = client.search(

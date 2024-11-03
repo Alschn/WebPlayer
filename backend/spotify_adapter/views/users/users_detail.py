@@ -22,7 +22,9 @@ class UsersDetailView(APIView):
 
     # todo: response serializer
 
-    def get(self, request: Request, user_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, user_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.user(user_id)
         return Response(data, status=status.HTTP_200_OK)

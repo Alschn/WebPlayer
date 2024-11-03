@@ -11,8 +11,12 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserTopTracksSerializer(serializers.Serializer):
-    time_range = serializers.CharField(max_length=20, required=False, default='short_term')
-    limit = serializers.IntegerField(required=False, min_value=1, max_value=50, default=20)
+    time_range = serializers.CharField(
+        max_length=20, required=False, default="short_term"
+    )
+    limit = serializers.IntegerField(
+        required=False, min_value=1, max_value=50, default=20
+    )
     offset = serializers.IntegerField(required=False, default=0)
 
 

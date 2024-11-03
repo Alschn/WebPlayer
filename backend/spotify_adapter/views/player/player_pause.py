@@ -19,7 +19,7 @@ class PlayerPausePlaybackDataSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -35,13 +35,13 @@ class PlayerPausePlaybackView(APIView):
 
     @extend_schema(
         request=PlayerPausePlaybackDataSerializer,
-        responses={status.HTTP_204_NO_CONTENT: None}
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerPausePlaybackDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        device_id = serializer.validated_data['device_id']
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.pause_playback(device_id=device_id)

@@ -18,7 +18,9 @@ class CurrentUserAlbumsContainsParamsSerializer(serializers.Serializer):
 
 class CurrentUserAlbumsContainsResponseSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, child=serializers.BooleanField(), max_length=20, **kwargs)
+        super().__init__(
+            *args, child=serializers.BooleanField(), max_length=20, **kwargs
+        )
 
 
 class CurrentUserAlbumsContainsView(APIView):
@@ -34,13 +36,15 @@ class CurrentUserAlbumsContainsView(APIView):
 
     @extend_schema(
         parameters=[CurrentUserAlbumsContainsParamsSerializer],
-        responses={status.HTTP_200_OK: CurrentUserAlbumsContainsResponseSerializer}
+        responses={status.HTTP_200_OK: CurrentUserAlbumsContainsResponseSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = CurrentUserAlbumsContainsParamsSerializer(data=request.query_params)
+        serializer = CurrentUserAlbumsContainsParamsSerializer(
+            data=request.query_params
+        )
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data['ids']
+        ids = serializer.validated_data["ids"]
 
         client = get_spotify_client(request.user)
         data = client.current_user_saved_albums_contains(albums=ids)

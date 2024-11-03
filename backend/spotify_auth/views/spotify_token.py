@@ -24,4 +24,4 @@ class GetCurrentSpotifyTokenView(APIView):
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         token = get_user_token(request.user)
-        return Response({'token': token.token}, status=status.HTTP_200_OK)
+        return Response({"token": token.token}, status=status.HTTP_200_OK)

@@ -16,14 +16,16 @@ from spotify_auth.permissions import HasSpotifyToken
 class TransferPlaybackDataSerializer(serializers.Serializer):
     device_id = serializers.CharField(
         required=True,
-        help_text=_('ID of the device on which playback should be started/transferred.')
+        help_text=_(
+            "ID of the device on which playback should be started/transferred."
+        ),
     )
     play = serializers.BooleanField(
         default=False,
         help_text=_(
-            'true: ensure playback happens on new device. '
-            'false or not provided: keep the current playback state.'
-        )
+            "true: ensure playback happens on new device. "
+            "false or not provided: keep the current playback state."
+        ),
     )
 
 
@@ -41,9 +43,7 @@ class PlayerDevices(APIView):
 
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    @extend_schema(
-        responses={status.HTTP_200_OK: DevicesResponseSerializer}
-    )
+    @extend_schema(responses={status.HTTP_200_OK: DevicesResponseSerializer})
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         client = get_spotify_client(request.user)
         data = client.devices()
@@ -51,18 +51,15 @@ class PlayerDevices(APIView):
 
     @extend_schema(
         request=TransferPlaybackDataSerializer,
-        responses={status.HTTP_204_NO_CONTENT: None}
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = TransferPlaybackDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        device_id = serializer.validated_data['device_id']
-        play = serializer.validated_data['play']
+        device_id = serializer.validated_data["device_id"]
+        play = serializer.validated_data["play"]
 
         client = get_spotify_client(request.user)
-        client.transfer_playback(
-            device_id=device_id,
-            force_play=play
-        )
+        client.transfer_playback(device_id=device_id, force_play=play)
         return Response({}, status=status.HTTP_204_NO_CONTENT)

@@ -11,8 +11,10 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserFollowingContainsParamsSerializer(serializers.Serializer):
-    ids = serializers.ListField(child=serializers.CharField(max_length=50), allow_empty=False)
-    type = serializers.CharField(max_length=20, required=False, default='artist')
+    ids = serializers.ListField(
+        child=serializers.CharField(max_length=50), allow_empty=False
+    )
+    type = serializers.CharField(max_length=20, required=False, default="artist")
 
 
 class CurrentUserFollowingContainsView(APIView):
@@ -24,20 +26,23 @@ class CurrentUserFollowingContainsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/check-current-user-follows
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     # todo: response serializer
 
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer = CurrentUserFollowingContainsParamsSerializer(data=request.query_params)
+        serializer = CurrentUserFollowingContainsParamsSerializer(
+            data=request.query_params
+        )
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data['ids']
-        type_param = serializer.validated_data.get('type')
+        ids = serializer.validated_data["ids"]
+        type_param = serializer.validated_data.get("type")
 
         client = get_spotify_client(request.user)
 
-        if type_param == 'artist':
+        if type_param == "artist":
             data = client.current_user_following_artists(ids)
         else:
             data = client.current_user_following_users(ids)

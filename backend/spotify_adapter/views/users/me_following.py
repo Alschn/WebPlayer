@@ -12,7 +12,9 @@ from spotify_auth.permissions import HasSpotifyToken
 
 class CurrentUserFollowingParamsSerializer(serializers.Serializer):
     after = serializers.CharField(max_length=50, required=False)
-    limit = serializers.IntegerField(required=False, min_value=1, max_value=50, default=20)
+    limit = serializers.IntegerField(
+        required=False, min_value=1, max_value=50, default=20
+    )
 
 
 class CurrentUserFollowing(APIView):
@@ -22,6 +24,7 @@ class CurrentUserFollowing(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-followed
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     # todo: response serializer
@@ -30,8 +33,8 @@ class CurrentUserFollowing(APIView):
         serializer = CurrentUserFollowingParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        after = serializer.validated_data.get('after')
-        limit = serializer.validated_data.get('limit')
+        after = serializer.validated_data.get("after")
+        limit = serializer.validated_data.get("limit")
 
         client = get_spotify_client(request.user)
         data = client.current_user_followed_artists(

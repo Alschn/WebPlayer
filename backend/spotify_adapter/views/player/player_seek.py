@@ -16,10 +16,10 @@ class PlayerSeekPositionDataSerializer(serializers.Serializer):
     position_ms = serializers.IntegerField(
         min_value=0,
         help_text=_(
-            'The position in milliseconds to seek to. '
-            'Must be a positive number. Passing in a position that is greater than the length of the track '
-            'will cause the player to start playing the next song.'
-        )
+            "The position in milliseconds to seek to. "
+            "Must be a positive number. Passing in a position that is greater than the length of the track "
+            "will cause the player to start playing the next song."
+        ),
     )
     device_id = serializers.CharField(
         allow_null=True,
@@ -27,7 +27,7 @@ class PlayerSeekPositionDataSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -49,8 +49,8 @@ class PlayerSeekPositionView(APIView):
         serializer = PlayerSeekPositionDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        position_ms = serializer.validated_data['position_ms']
-        device_id = serializer.validated_data['device_id']
+        position_ms = serializer.validated_data["position_ms"]
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.seek_track(position_ms=position_ms, device_id=device_id)

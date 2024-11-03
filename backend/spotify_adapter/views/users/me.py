@@ -35,7 +35,7 @@ class CurrentUserView(APIView):
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         social_account = SocialAccount.objects.filter(
             user=request.user,
-            provider='spotify',
+            provider="spotify",
         )
 
         if not social_account.exists():

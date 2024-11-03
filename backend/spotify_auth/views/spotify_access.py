@@ -10,23 +10,33 @@ from rest_framework.views import APIView
 
 SCOPES = [
     # listening history
-    'user-read-recently-played', 'user-top-read', 'user-read-playback-position',
+    "user-read-recently-played",
+    "user-top-read",
+    "user-read-playback-position",
     # spotify connect
-    "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing",
+    "user-read-playback-state",
+    "user-modify-playback-state",
+    "user-read-currently-playing",
     # playback
-    "app-remote-control", "streaming",
+    "app-remote-control",
+    "streaming",
     # playlists
-    "playlist-modify-public", "playlist-modify-private",
-    "playlist-read-private", "playlist-read-collaborative",
+    "playlist-modify-public",
+    "playlist-modify-private",
+    "playlist-read-private",
+    "playlist-read-collaborative",
     # follow
-    "user-follow-modify", "user-follow-read",
+    "user-follow-modify",
+    "user-follow-read",
     # library
-    "user-library-modify", "user-library-read",
+    "user-library-modify",
+    "user-library-read",
     # users
-    "user-read-email", "user-read-private",
+    "user-read-email",
+    "user-read-private",
 ]
 
-SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
+SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 
 
 class GetSpotifyAccessTokenDataSerializer(serializers.Serializer):
@@ -57,7 +67,7 @@ class GetSpotifyAccessTokenView(APIView):
         serializer = GetSpotifyAccessTokenDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        code = serializer.validated_data['code']
+        code = serializer.validated_data["code"]
 
         response = send_spotify_token_request(code)
         response_json = response.json()
@@ -68,10 +78,10 @@ def send_spotify_token_request(code: str) -> requests.Response:
     return requests.post(
         SPOTIFY_TOKEN_URL,
         data={
-            'grant_type': 'authorization_code',
-            'code': code,
-            'redirect_uri': settings.SPOTIFY_REDIRECT_URI,
-            'client_id': settings.SPOTIFY_CLIENT_ID,
-            'client_secret': settings.SPOTIFY_CLIENT_SECRET
-        }
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": settings.SPOTIFY_REDIRECT_URI,
+            "client_id": settings.SPOTIFY_CLIENT_ID,
+            "client_secret": settings.SPOTIFY_CLIENT_SECRET,
+        },
     )

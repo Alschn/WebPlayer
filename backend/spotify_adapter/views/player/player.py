@@ -17,16 +17,16 @@ from spotify_auth.permissions import HasSpotifyToken
 class PlayerParamsSerializer(serializers.Serializer):
     market = MarketField(required=False)
     additional_types = serializers.MultipleChoiceField(
-        choices=['track', 'episode'],
-        default={'track'},
+        choices=["track", "episode"],
+        default={"track"},
         required=False,
         help_text=_(
-            'A comma-separated list of item types that your client supports besides the default `track` type. '
-            'Note: This parameter was introduced to allow existing clients to maintain their current behaviour and '
-            'might be deprecated in the future.'
-            'In addition to providing this parameter, make sure that your client properly handles cases of new types '
-            'in the future by checking against the type field of each object.'
-        )
+            "A comma-separated list of item types that your client supports besides the default `track` type. "
+            "Note: This parameter was introduced to allow existing clients to maintain their current behaviour and "
+            "might be deprecated in the future."
+            "In addition to providing this parameter, make sure that your client properly handles cases of new types "
+            "in the future by checking against the type field of each object."
+        ),
     )
 
 
@@ -38,18 +38,19 @@ class PlayerView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[PlayerParamsSerializer],
-        responses={status.HTTP_200_OK: PlayerPlaybackStateSerializer}
+        responses={status.HTTP_200_OK: PlayerPlaybackStateSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        market = serializer.validated_data.get('market')
-        additional_types = serializer.validated_data.get('additional_types')
+        market = serializer.validated_data.get("market")
+        additional_types = serializer.validated_data.get("additional_types")
 
         client = get_spotify_client(request.user)
         state = client.current_playback(

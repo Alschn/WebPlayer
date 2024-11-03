@@ -21,10 +21,13 @@ class AudioAnalysisDetailView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-audio-analysis
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
     serializer_class = AudioAnalysisSerializer
 
-    def get(self, request: Request, track_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, track_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.audio_analysis(track_id)
         return Response(data, status=status.HTTP_200_OK)

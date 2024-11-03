@@ -12,21 +12,24 @@ from spotify_auth.permissions import HasSpotifyToken
 class PlaylistsDetailsTracksParamsSerializer(serializers.Serializer):
     market = serializers.CharField(required=False)
     fields = serializers.CharField(required=False)
-    limit = serializers.IntegerField(required=False, min_value=1, max_value=100, default=100)
+    limit = serializers.IntegerField(
+        required=False, min_value=1, max_value=100, default=100
+    )
     offset = serializers.IntegerField(required=False, min_value=0, default=0)
     additional_types = serializers.CharField(required=False)
 
 
 class PlaylistsDetailsTracksAddDataSerializer(serializers.Serializer):
     position = serializers.IntegerField(
-        required=False, min_value=0,
+        required=False,
+        min_value=0,
         help_text=(
             "The position to insert the items, a zero-based index. "
             "For example, to insert the items in the first position: position=0; "
             "to insert the items in the third position: position=2. "
             "If omitted, the items will be appended to the playlist. "
             "Items are added in the order they are listed in the query string or request body."
-        )
+        ),
     )
     uris = serializers.ListField(
         child=serializers.CharField(),
@@ -35,7 +38,7 @@ class PlaylistsDetailsTracksAddDataSerializer(serializers.Serializer):
             "A comma-separated list of Spotify URIs to add, can be track or episode URIs. "
             "For example: uris=spotify:track:4iV5W9uYEdYUVa79Axb7Rh,spotify:track:1301WleyT98MSxVHPZCA6M "
             "A maximum of 100 items can be added in one request."
-        )
+        ),
     )
 
 
@@ -90,6 +93,7 @@ class PlaylistsDetailTracksView(APIView):
 
     https://developer.spotify.com/documentation/web-api/reference/remove-tracks-playlist
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
@@ -124,14 +128,12 @@ class PlaylistsDetailTracksView(APIView):
         serializer = PlaylistsDetailsTracksUpdateDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        uris = serializer.validated_data.pop('uris', None)
+        uris = serializer.validated_data.pop("uris", None)
 
         client = get_spotify_client(request.user)
 
         if uris:
-            data = client.playlist_replace_items(
-                playlist_id, items=uris
-            )
+            data = client.playlist_replace_items(playlist_id, items=uris)
         else:
             data = client.playlist_reorder_items(
                 playlist_id, **serializer.validated_data

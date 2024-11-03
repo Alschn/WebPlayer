@@ -17,7 +17,7 @@ class NewReleasesParamsSerializer(serializers.Serializer):
     country = serializers.CharField(
         max_length=2,
         required=False,
-        help_text='Undocumented in Spotify API, available in Spotipy client.',
+        help_text="Undocumented in Spotify API, available in Spotipy client.",
     )
     limit = LimitField()
     offset = OffsetField()
@@ -31,6 +31,7 @@ class NewReleasesView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-new-releases
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
     serializer_class = NewReleasesSerializer
 

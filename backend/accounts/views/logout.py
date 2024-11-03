@@ -6,5 +6,6 @@ class LogoutAPIView(BaseLogoutView):
     """
     POST    /api/auth/logout/   - Logs out current user
     """
+
     permission_classes = [IsAuthenticated]
-    http_method_names = ('post',)
+    http_method_names = ("post",)

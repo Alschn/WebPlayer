@@ -20,10 +20,13 @@ class AudioFeaturesDetailView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-audio-features
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
     serializer_class = AudioFeatureSerializer
 
-    def get(self, request: Request, track_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, track_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.audio_features([track_id])
         return Response(data, status=status.HTTP_200_OK)

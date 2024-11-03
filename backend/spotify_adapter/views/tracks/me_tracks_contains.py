@@ -19,9 +19,9 @@ class MeTracksContainsParamsSerializer(serializers.Serializer):
 
 class MeTracksContainsResponseSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
-        kwargs['child'] = serializers.BooleanField()
-        kwargs['max_length'] = 20
-        kwargs['help_text'] = _('Array of boolean')
+        kwargs["child"] = serializers.BooleanField()
+        kwargs["max_length"] = 20
+        kwargs["help_text"] = _("Array of boolean")
         super().__init__(*args, **kwargs)
 
 
@@ -34,17 +34,18 @@ class MeTracksContainsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/check-users-saved-tracks
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[MeTracksContainsParamsSerializer],
-        responses={status.HTTP_200_OK: MeTracksContainsResponseSerializer}
+        responses={status.HTTP_200_OK: MeTracksContainsResponseSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = MeTracksContainsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        tracks_ids = serializer.validated_data['ids']
+        tracks_ids = serializer.validated_data["ids"]
 
         client = get_spotify_client(request.user)
         data = client.current_user_saved_tracks_contains(tracks_ids)

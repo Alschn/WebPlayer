@@ -19,26 +19,28 @@ class PlayerRecentlyPlayedParamsSerializer(serializers.Serializer):
     after = serializers.IntegerField(
         default=None,
         help_text=_(
-            'A Unix timestamp in milliseconds. '
-            'Returns all items after (but not including) this cursor position. '
-            'If after is specified, before must not be specified.'
-        )
+            "A Unix timestamp in milliseconds. "
+            "Returns all items after (but not including) this cursor position. "
+            "If after is specified, before must not be specified."
+        ),
     )
     before = serializers.IntegerField(
         default=None,
         help_text=_(
-            'A Unix timestamp in milliseconds. '
-            'Returns all items before (but not including) this cursor position. '
-            'If before is specified, after must not be specified.'
-        )
+            "A Unix timestamp in milliseconds. "
+            "Returns all items before (but not including) this cursor position. "
+            "If before is specified, after must not be specified."
+        ),
     )
 
     def validate(self, attrs: dict) -> dict:
-        after = attrs.get('after')
-        before = attrs.get('before')
+        after = attrs.get("after")
+        before = attrs.get("before")
 
         if after is not None and before is not None:
-            raise serializers.ValidationError("You can't specify both `after` and `before`")
+            raise serializers.ValidationError(
+                "You can't specify both `after` and `before`"
+            )
 
         return attrs
 
@@ -53,24 +55,23 @@ class PlayerRecentlyPlayedView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-recently-played
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[PlayerRecentlyPlayedParamsSerializer],
-        responses={status.HTTP_200_OK: RecentlyPlayedTracksSerializer}
+        responses={status.HTTP_200_OK: RecentlyPlayedTracksSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerRecentlyPlayedParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        limit = serializer.validated_data['limit']
-        after = serializer.validated_data['after']
-        before = serializer.validated_data['before']
+        limit = serializer.validated_data["limit"]
+        after = serializer.validated_data["after"]
+        before = serializer.validated_data["before"]
 
         client = get_spotify_client(request.user)
         data = client.current_user_recently_played(
-            limit=limit,
-            after=after,
-            before=before
+            limit=limit, after=after, before=before
         )
         return Response(data, status=status.HTTP_200_OK)

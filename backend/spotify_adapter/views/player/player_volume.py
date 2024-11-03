@@ -16,9 +16,7 @@ class PlayerVolumeDataSerializer(serializers.Serializer):
     volume_percent = serializers.IntegerField(
         min_value=0,
         max_value=100,
-        help_text=_(
-            'The volume to set. Must be a value from 0 to 100 inclusive.'
-        )
+        help_text=_("The volume to set. Must be a value from 0 to 100 inclusive."),
     )
     device_id = serializers.CharField(
         allow_null=True,
@@ -26,7 +24,7 @@ class PlayerVolumeDataSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -49,8 +47,8 @@ class PlayerVolumeView(APIView):
         serializer = PlayerVolumeDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        volume_percent = serializer.validated_data['volume_percent']
-        device_id = serializer.validated_data['device_id']
+        volume_percent = serializer.validated_data["volume_percent"]
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.volume(volume_percent=volume_percent, device_id=device_id)

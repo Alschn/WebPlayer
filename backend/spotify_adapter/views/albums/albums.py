@@ -37,8 +37,8 @@ class AlbumsView(APIView):
         serializer = AlbumsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data['ids']
-        market = serializer.validated_data.get('market')
+        ids = serializer.validated_data["ids"]
+        market = serializer.validated_data.get("market")
 
         client = get_spotify_client(request.user)
         data = client.albums(albums=ids, market=market)

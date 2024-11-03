@@ -23,7 +23,9 @@ class ArtistsDetailRelatedArtistsView(APIView):
     permission_classes = [IsAuthenticated, HasSpotifyToken]
     serializer_class = ArtistRelatedArtistsPageSerializer
 
-    def get(self, request: Request, artist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, artist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         data = client.artist_related_artists(artist_id)
         return Response(data, status=status.HTTP_200_OK)

@@ -26,17 +26,18 @@ class AudioFeaturesView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-audio-features
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[AudioFeaturesParamsSerializers],
-        responses={status.HTTP_200_OK: AudioFeaturesSerializer}
+        responses={status.HTTP_200_OK: AudioFeaturesSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = AudioFeaturesParamsSerializers(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        tracks_ids = serializer.validated_data['ids']
+        tracks_ids = serializer.validated_data["ids"]
 
         client = get_spotify_client(request.user)
         data = client.audio_features(tracks_ids)

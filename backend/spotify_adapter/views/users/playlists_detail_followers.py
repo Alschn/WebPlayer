@@ -21,14 +21,19 @@ class PlaylistDetailFollowersView(APIView):
 
     https://developer.spotify.com/documentation/web-api/reference/unfollow-playlist
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    def put(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def put(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         client.current_user_follow_playlist(playlist_id=playlist_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def delete(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def delete(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         client = get_spotify_client(request.user)
         client.current_user_unfollow_playlist(playlist_id=playlist_id)
         return Response(status=status.HTTP_204_NO_CONTENT)

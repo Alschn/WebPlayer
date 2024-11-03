@@ -20,7 +20,9 @@ class SpotifyLoginView(SocialLoginView):
     adapter_class = SpotifyOAuth2Adapter
     serializer_class = SocialLoginSerializer
 
-    def finalize_response(self, request: Request, response: Response, *args, **kwargs) -> Response:
+    def finalize_response(
+        self, request: Request, response: Response, *args, **kwargs
+    ) -> Response:
         """Create social token and update response data if response was successful."""
 
         if response.status_code != status.HTTP_200_OK:
@@ -28,30 +30,27 @@ class SpotifyLoginView(SocialLoginView):
 
         raw_response = response.data
 
-        access_token = request.data['access_token']
-        refresh_token = request.data['refresh_token']
-        expires_in = request.data['expires_in']
+        access_token = request.data["access_token"]
+        refresh_token = request.data["refresh_token"]
+        expires_in = request.data["expires_in"]
 
         social_account = SocialAccount.objects.get(user=request.user)
 
         SocialToken.objects.update_or_create(
-            app=SocialApp.objects.get(provider='spotify'),
+            app=SocialApp.objects.get(provider="spotify"),
             account=social_account,
             defaults={
-                'token': access_token,
-                'token_secret': refresh_token,
-                'expires_at': timezone.now() + timedelta(seconds=expires_in)
-            }
+                "token": access_token,
+                "token_secret": refresh_token,
+                "expires_at": timezone.now() + timedelta(seconds=expires_in),
+            },
         )
         response.status_code = status.HTTP_201_CREATED
-        response.data = {
-            'key': raw_response['key'],
-            'user': social_account.extra_data
-        }
+        response.data = {"key": raw_response["key"], "user": social_account.extra_data}
         return super().finalize_response(request, response, *args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
         # This fixes issue with login view in the latest version of drf
         serializer_class = self.get_serializer_class()
-        kwargs['context'] = self.get_serializer_context()
+        kwargs["context"] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)

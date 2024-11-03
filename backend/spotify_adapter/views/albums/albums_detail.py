@@ -31,7 +31,9 @@ class AlbumsDetailView(APIView):
         parameters=[AlbumDetailParamsSerializer],
         responses={status.HTTP_200_OK: AlbumSerializer},
     )
-    def get(self, request: Request, album_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, album_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = AlbumDetailParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 

@@ -19,7 +19,7 @@ class PlaylistDetailFollowersContainsParamsSerializer(serializers.Serializer):
             "A comma-separated list of Spotify User IDs ; "
             "the ids of the users that you want to check to see if they follow the playlist. "
             "Maximum: 5 ids."
-        )
+        ),
     )
 
 
@@ -32,18 +32,21 @@ class PlaylistDetailFollowersContainsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/check-if-user-follows-playlist
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     # todo: response serializer
 
-    @extend_schema(
-        parameters=[PlaylistDetailFollowersContainsParamsSerializer]
-    )
-    def get(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
-        serializer = PlaylistDetailFollowersContainsParamsSerializer(data=request.query_params)
+    @extend_schema(parameters=[PlaylistDetailFollowersContainsParamsSerializer])
+    def get(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
+        serializer = PlaylistDetailFollowersContainsParamsSerializer(
+            data=request.query_params
+        )
         serializer.is_valid(raise_exception=True)
 
-        ids = serializer.validated_data['ids']
+        ids = serializer.validated_data["ids"]
 
         client = get_spotify_client(request.user)
         data = client.playlist_is_following(playlist_id=playlist_id, user_ids=ids)

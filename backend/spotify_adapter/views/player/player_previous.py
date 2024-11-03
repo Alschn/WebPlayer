@@ -19,7 +19,7 @@ class PlayerSkipToPreviousParamsSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -41,7 +41,7 @@ class PlayerSkipToPreviousView(APIView):
         serializer = PlayerSkipToPreviousParamsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        device_id = serializer.validated_data['device_id']
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.previous_track(device_id=device_id)

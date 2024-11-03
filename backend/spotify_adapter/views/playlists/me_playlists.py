@@ -12,7 +12,9 @@ from spotify_auth.permissions import HasSpotifyToken
 
 
 class CurrentUserPlaylistsParamsSerializer(serializers.Serializer):
-    limit = serializers.IntegerField(required=False, min_value=1, max_value=50, default=20)
+    limit = serializers.IntegerField(
+        required=False, min_value=1, max_value=50, default=20
+    )
     offset = serializers.IntegerField(required=False)
 
 

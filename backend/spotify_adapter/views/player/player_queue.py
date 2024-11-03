@@ -16,8 +16,8 @@ from spotify_auth.permissions import HasSpotifyToken
 class PlayerAddToQueueDataSerializer(serializers.Serializer):
     uri = serializers.CharField(
         help_text=_(
-            'The uri of the item to add to the queue. '
-            'Must be a track or an episode uri.'
+            "The uri of the item to add to the queue. "
+            "Must be a track or an episode uri."
         )
     )
     device_id = serializers.CharField(
@@ -26,7 +26,7 @@ class PlayerAddToQueueDataSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -39,11 +39,10 @@ class PlayerQueueView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/player/get-queue/
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
-    @extend_schema(
-        responses={status.HTTP_200_OK: TracksQueueSerializer}
-    )
+    @extend_schema(responses={status.HTTP_200_OK: TracksQueueSerializer})
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         client = get_spotify_client(request.user)
         data = client.queue()
@@ -51,14 +50,14 @@ class PlayerQueueView(APIView):
 
     @extend_schema(
         request=PlayerAddToQueueDataSerializer,
-        responses={status.HTTP_204_NO_CONTENT: None}
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerAddToQueueDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        uri = serializer.validated_data['uri']
-        device_id = serializer.validated_data['device_id']
+        uri = serializer.validated_data["uri"]
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.add_to_queue(uri=uri, device_id=device_id)

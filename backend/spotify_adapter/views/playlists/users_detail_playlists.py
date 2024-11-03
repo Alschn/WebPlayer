@@ -20,7 +20,9 @@ class UserPlaylistCreateDataSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     public = serializers.BooleanField(default=True)
     collaborative = serializers.BooleanField(default=False)
-    description = serializers.CharField(max_length=300, allow_blank=True, required=False)
+    description = serializers.CharField(
+        max_length=300, allow_blank=True, required=False
+    )
 
 
 class UsersPlaylistsView(APIView):
@@ -46,7 +48,9 @@ class UsersPlaylistsView(APIView):
         parameters=[UserPlaylistsParamsSerializer],
         # todo: response
     )
-    def get(self, request: Request, user_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, user_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = UserPlaylistsParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
@@ -58,13 +62,12 @@ class UsersPlaylistsView(APIView):
         request=UserPlaylistCreateDataSerializer,
         # todo: response
     )
-    def post(self, request: Request, user_id: str, *args: Any, **kwargs: Any) -> Response:
+    def post(
+        self, request: Request, user_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = UserPlaylistCreateDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         client = get_spotify_client(request.user)
-        data = client.user_playlist_create(
-            user_id,
-            **serializer.validated_data
-        )
+        data = client.user_playlist_create(user_id, **serializer.validated_data)
         return Response(data, status=status.HTTP_201_CREATED)

@@ -6,41 +6,31 @@ from spotify_adapter.serializers.spotify import NormalizedFloatField
 
 class AnalyzerMetaSerializer(serializers.Serializer):
     analyzer_version = serializers.CharField(
-        help_text=_(
-            'The analyzer version that analyzed the track.'
-        )
+        help_text=_("The analyzer version that analyzed the track.")
     )
-    platform = serializers.CharField(
-        help_text=_(
-            'The platform the analyzer ran on.'
-        )
-    )
+    platform = serializers.CharField(help_text=_("The platform the analyzer ran on."))
     detailed_status = serializers.CharField(
         help_text=_(
-            'A detailed status code for this track. '
-            'If analysis data is missing, this code may explain why'
+            "A detailed status code for this track. "
+            "If analysis data is missing, this code may explain why"
         )
     )
     status_code = serializers.ChoiceField(
-        choices=[(0, 'success'), (1, 'error')],
+        choices=[(0, "success"), (1, "error")],
         help_text=_(
-            'The return code of the analyzer process. '
-            '0 if successful, 1 if any errors occurred.'
-        )
+            "The return code of the analyzer process. "
+            "0 if successful, 1 if any errors occurred."
+        ),
     )
     timestamp = serializers.IntegerField(
-        help_text=_(
-            'The Unix timestamp (in seconds) at which this track was analyzed.'
-        )
+        help_text=_("The Unix timestamp (in seconds) at which this track was analyzed.")
     )
     analysis_time = serializers.FloatField(
-        help_text=_(
-            'The Unix timestamp (in seconds) at which this track was analyzed.'
-        )
+        help_text=_("The Unix timestamp (in seconds) at which this track was analyzed.")
     )
     input_process = serializers.CharField(
         help_text=_(
-            'The method used to read the track\'s audio data. '
+            "The method used to read the track's audio data. "
             'Example: "libvorbisfile L+R 44100->22050"'
         )
     )
@@ -118,10 +108,10 @@ class TrackAnalysisSerializer(serializers.Serializer):
         min_value=3,
         max_value=7,
         help_text=_(
-            'An estimated time signature. The time signature (meter) is a notational convention '
-            'to specify how many beats are in each bar (or measure). '
+            "An estimated time signature. The time signature (meter) is a notational convention "
+            "to specify how many beats are in each bar (or measure). "
             'The time signature ranges from 3 to 7 indicating time signatures of "3/4", to "7/4".'
-        )
+        ),
     )
     time_signature_confidence = NormalizedFloatField(
         help_text=_(
@@ -136,20 +126,18 @@ class TrackAnalysisSerializer(serializers.Serializer):
             "Integers map to pitches using standard Pitch Class notation. "
             "E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. "
             "If no key was detected, the value is -1."
-        )
+        ),
     )
     key_confidence = serializers.FloatField(
-        help_text=_(
-            "The confidence, from 0.0 to 1.0, of the reliability of the `key`."
-        )
+        help_text=_("The confidence, from 0.0 to 1.0, of the reliability of the `key`.")
     )
     mode = serializers.ChoiceField(
-        choices={(0, 'minor'), (1, 'major')},
+        choices={(0, "minor"), (1, "major")},
         help_text=_(
             "Mode indicates the modality (major or minor) of a track, "
             "the type of scale from which its melodic content is derived. "
             "Major is represented by 1 and minor is 0."
-        )
+        ),
     )
     mode_confidence = NormalizedFloatField(
         help_text=_(
@@ -208,11 +196,10 @@ class TrackAnalysisSerializer(serializers.Serializer):
 class IntervalAnalysisSerializer(serializers.Serializer):
     start = serializers.FloatField(
         min_value=0.0,
-        help_text=_("The starting point (in seconds) of the time interval.")
+        help_text=_("The starting point (in seconds) of the time interval."),
     )
     duration = serializers.FloatField(
-        min_value=0.0,
-        help_text=_("The duration (in seconds) of the time interval.")
+        min_value=0.0, help_text=_("The duration (in seconds) of the time interval.")
     )
     confidence = NormalizedFloatField(
         help_text=_(
@@ -261,20 +248,18 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "Integers map to pitches using standard Pitch Class notation. "
             "E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. "
             "If no key was detected, the value is -1."
-        )
+        ),
     )
     key_confidence = NormalizedFloatField(
-        help_text=_(
-            "The confidence, from 0.0 to 1.0, of the reliability of the `key`."
-        )
+        help_text=_("The confidence, from 0.0 to 1.0, of the reliability of the `key`.")
     )
     mode = serializers.ChoiceField(
-        choices={(0, 'minor'), (1, 'major'), (-1, 'no result')},
+        choices={(0, "minor"), (1, "major"), (-1, "no result")},
         help_text=_(
             "Mode indicates the modality (major or minor) of a track, "
             "the type of scale from which its melodic content is derived. "
             "Major is represented by 1 and minor is 0."
-        )
+        ),
     )
     mode_confidence = NormalizedFloatField(
         help_text=_(
@@ -289,7 +274,7 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "The time signature (meter) is a notational convention to specify "
             "how many beats are in each bar (or measure). "
             "The time signature ranges from 3 to 7 indicating time signatures of `3/4`, to `7/4`."
-        )
+        ),
     )
     time_signature_confidence = NormalizedFloatField(
         help_text=_(
@@ -341,7 +326,7 @@ class SegmentSerializer(IntervalAnalysisSerializer):
             "As can be seen below, the 12 vector indices are a combination of low-power "
             "spectrum values at their respective pitch frequencies.\n"
             "![Pitch vector image](https://developer.spotify.com/assets/audio/Pitch_vector.png)"
-        )
+        ),
     )
     timbre = serializers.ListField(
         child=serializers.FloatField(),
@@ -362,7 +347,7 @@ class SegmentSerializer(IntervalAnalysisSerializer):
             "functions weighted by the coefficient values: timbre = c1 x b1 + c2 x b2 + ... + c12 x b12, "
             "where c1 to c12 represent the 12 coefficients and b1 to b12 the 12 basis functions as displayed below. "
             "Timbre vectors are best used in comparison with each other."
-        )
+        ),
     )
 
 
@@ -375,7 +360,7 @@ class AudioAnalysisSerializer(serializers.Serializer):
             "The time intervals of the bars throughout the track. "
             "A bar (or measure) is a segment of time defined "
             "as a given number of beats."
-        )
+        ),
     )
     beats = serializers.ListField(
         child=BeatSerializer(),
@@ -384,7 +369,7 @@ class AudioAnalysisSerializer(serializers.Serializer):
             "A beat is the basic time unit of a piece of music; "
             "for example, each tick of a metronome. "
             "Beats are typically multiples of tatums."
-        )
+        ),
     )
     sections = serializers.ListField(
         child=SectionSerializer(),
@@ -393,151 +378,147 @@ class AudioAnalysisSerializer(serializers.Serializer):
             "e.g. chorus, verse, bridge, guitar solo, etc. "
             "Each section contains its own descriptions of "
             "tempo, key, mode, time_signature, and loudness."
-        )
+        ),
     )
     segments = serializers.ListField(
         child=SegmentSerializer(),
-        help_text=_("Each segment contains a roughly consistent sound throughout its duration.")
+        help_text=_(
+            "Each segment contains a roughly consistent sound throughout its duration."
+        ),
     )
     tatums = serializers.ListField(
         child=TatumSerializer(),
         help_text=_(
             "A tatum represents the lowest regular pulse train that a listener intuitively infers "
             "from the timing of perceived musical events (segments)."
-        )
+        ),
     )
 
 
 class AudioFeatureSerializer(serializers.Serializer):
     acousticness = NormalizedFloatField(
         help_text=_(
-            'A confidence measure from 0.0 to 1.0 of whether the track is acoustic. '
-            '1.0 represents high confidence the track is acoustic.'
+            "A confidence measure from 0.0 to 1.0 of whether the track is acoustic. "
+            "1.0 represents high confidence the track is acoustic."
         ),
     )
     analysis_url = serializers.URLField(
         help_text=_(
-            'A URL to access the full audio analysis of this track. '
-            'An access token is required to access this data. '
+            "A URL to access the full audio analysis of this track. "
+            "An access token is required to access this data. "
             'Example: "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B"'
         ),
     )
     danceability = NormalizedFloatField(
         help_text=_(
-            'Danceability describes how suitable a track is for dancing based on a combination of musical elements '
-            'including tempo, rhythm stability, beat strength, and overall regularity. '
-            'A value of 0.0 is least danceable and 1.0 is most danceable.'
+            "Danceability describes how suitable a track is for dancing based on a combination of musical elements "
+            "including tempo, rhythm stability, beat strength, and overall regularity. "
+            "A value of 0.0 is least danceable and 1.0 is most danceable."
         ),
     )
     duration_ms = serializers.IntegerField(
         min_value=0,
-        help_text=_('The duration of the track in milliseconds.'),
+        help_text=_("The duration of the track in milliseconds."),
     )
     energy = NormalizedFloatField(
         help_text=_(
-            'Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. '
-            'Typically, energetic tracks feel fast, loud, and noisy. '
-            'For example, death metal has high energy, while a Bach prelude scores low on the scale. '
-            'Perceptual features contributing to this attribute include dynamic range, perceived loudness, '
-            'timbre, onset rate, and general entropy.'
+            "Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. "
+            "Typically, energetic tracks feel fast, loud, and noisy. "
+            "For example, death metal has high energy, while a Bach prelude scores low on the scale. "
+            "Perceptual features contributing to this attribute include dynamic range, perceived loudness, "
+            "timbre, onset rate, and general entropy."
         )
     )
-    id = serializers.CharField(
-        help_text=_('The Spotify ID for the track.')
-    )
+    id = serializers.CharField(help_text=_("The Spotify ID for the track."))
     instrumentalness = NormalizedFloatField(
         help_text=_(
-            'Predicts whether a track contains no vocals. '
-            'The closer the instrumentalness value is to 1.0, '
-            'the greater likelihood the track contains no vocal content. '
-            'Values above 0.5 are intended to represent instrumental tracks, '
-            'but confidence is higher as the value approaches 1.0.'
+            "Predicts whether a track contains no vocals. "
+            "The closer the instrumentalness value is to 1.0, "
+            "the greater likelihood the track contains no vocal content. "
+            "Values above 0.5 are intended to represent instrumental tracks, "
+            "but confidence is higher as the value approaches 1.0."
         )
     )
     key = serializers.IntegerField(
         min_value=-1,
         max_value=11,
         help_text=_(
-            'The key the track is in. '
-            'Integers map to pitches using standard Pitch Class notation. '
-            'E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on.'
-        )
+            "The key the track is in. "
+            "Integers map to pitches using standard Pitch Class notation. "
+            "E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on."
+        ),
     )
     liveness = NormalizedFloatField(
         help_text=_(
-            'Detects the presence of an audience in the recording. '
-            'Higher liveness values represent an increased probability that the track was performed live. '
-            'A value above 0.8 provides strong likelihood that the track is live.'
+            "Detects the presence of an audience in the recording. "
+            "Higher liveness values represent an increased probability that the track was performed live. "
+            "A value above 0.8 provides strong likelihood that the track is live."
         )
     )
     loudness = serializers.FloatField(
         help_text=_(
-            'The overall loudness of a track in decibels (dB). '
-            'Loudness values are averaged across the entire track and '
-            'are useful for comparing relative loudness of tracks. '
-            'Loudness is the quality of a sound that is the primary '
-            'psychological correlate of physical strength (amplitude). '
-            'Values typical range between -60 and 0 db.'
+            "The overall loudness of a track in decibels (dB). "
+            "Loudness values are averaged across the entire track and "
+            "are useful for comparing relative loudness of tracks. "
+            "Loudness is the quality of a sound that is the primary "
+            "psychological correlate of physical strength (amplitude). "
+            "Values typical range between -60 and 0 db."
         )
     )
     mode = serializers.IntegerField(
         min_value=0,
         max_value=1,
         help_text=_(
-            'Mode indicates the modality (major or minor) of a track, '
-            'the type of scale from which its melodic content is derived. '
-            'Major is represented by 1 and minor is 0.'
-        )
+            "Mode indicates the modality (major or minor) of a track, "
+            "the type of scale from which its melodic content is derived. "
+            "Major is represented by 1 and minor is 0."
+        ),
     )
     speechiness = NormalizedFloatField(
         help_text=_(
-            'Speechiness detects the presence of spoken words in a track. '
-            'The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), '
-            'the closer to 1.0 the attribute value. '
-            'Values above 0.66 describe tracks that are probably made entirely of spoken words, '
-            'values between 0.33 and 0.66 describe tracks that may contain both music and speech, '
-            'and values below 0.33 most likely represent music and other non-speech-like tracks.'
+            "Speechiness detects the presence of spoken words in a track. "
+            "The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), "
+            "the closer to 1.0 the attribute value. "
+            "Values above 0.66 describe tracks that are probably made entirely of spoken words, "
+            "values between 0.33 and 0.66 describe tracks that may contain both music and speech, "
+            "and values below 0.33 most likely represent music and other non-speech-like tracks."
         )
     )
     tempo = serializers.FloatField(
         help_text=_(
-            'The overall estimated tempo of a track in beats per minute (BPM). '
-            'In musical terminology, tempo is the speed or pace of a given piece '
-            'and derives directly from the average beat duration.'
+            "The overall estimated tempo of a track in beats per minute (BPM). "
+            "In musical terminology, tempo is the speed or pace of a given piece "
+            "and derives directly from the average beat duration."
         )
     )
     time_signature = serializers.IntegerField(
         min_value=3,
         max_value=7,
         help_text=_(
-            'An estimated time signature. The time signature (meter) is a notational convention '
-            'to specify how many beats are in each bar (or measure). '
+            "An estimated time signature. The time signature (meter) is a notational convention "
+            "to specify how many beats are in each bar (or measure). "
             'The time signature ranges from 3 to 7 indicating time signatures of "3/4", to "7/4".'
-        )
+        ),
     )
     track_href = serializers.URLField(
         help_text=_(
-            'A link to the Web API endpoint providing full details of the track.'
+            "A link to the Web API endpoint providing full details of the track."
         )
     )
     type = serializers.CharField(
-        default='audio_features',
-        help_text=_('The object type: "audio_features"')
+        default="audio_features", help_text=_('The object type: "audio_features"')
     )
-    uri = serializers.CharField(
-        help_text=_('The Spotify URI for the track.')
-    )
+    uri = serializers.CharField(help_text=_("The Spotify URI for the track."))
     valance = NormalizedFloatField(
         help_text=_(
-            'A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. '
-            'Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), '
-            'while tracks with low valence sound more negative (e.g. sad, depressed, angry).'
+            "A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. "
+            "Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), "
+            "while tracks with low valence sound more negative (e.g. sad, depressed, angry)."
         )
     )
 
 
 class AudioFeaturesSerializer(serializers.Serializer):
     audio_features = AudioFeatureSerializer(
-        help_text=_('A set of audio features'),
-        many=True
+        help_text=_("A set of audio features"), many=True
     )

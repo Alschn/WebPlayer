@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from spotify_adapter.serializers.recommendations import (
     RecommendationsParamsSerializer,
-    RecommendationsSerializer
+    RecommendationsSerializer,
 )
 from spotify_adapter.utils import get_spotify_client
 from spotify_auth.permissions import HasSpotifyToken
@@ -28,11 +28,12 @@ class RecommendationsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-recommendations
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[RecommendationsParamsSerializer],
-        responses={status.HTTP_200_OK: RecommendationsSerializer}
+        responses={status.HTTP_200_OK: RecommendationsSerializer},
     )
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = RecommendationsParamsSerializer(data=request.query_params)
@@ -42,8 +43,5 @@ class RecommendationsView(APIView):
         country = validated_data.pop("market", None)
 
         client = get_spotify_client(request.user)
-        data = client.recommendations(
-            country=country,
-            **validated_data
-        )
+        data = client.recommendations(country=country, **validated_data)
         return Response(data, status=status.HTTP_200_OK)

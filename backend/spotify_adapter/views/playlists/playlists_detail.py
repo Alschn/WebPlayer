@@ -46,7 +46,9 @@ class PlaylistDetailView(APIView):
         parameters=[PlaylistDetailParamsSerializer]
         # todo: response serializer
     )
-    def get(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = PlaylistDetailParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
@@ -61,7 +63,9 @@ class PlaylistDetailView(APIView):
         request=PlaylistDetailUpdateDataSerializer,
         # todo: response serializer
     )
-    def put(self, request: Request, playlist_id: str, *args: Any, **kwargs: Any) -> Response:
+    def put(
+        self, request: Request, playlist_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = PlaylistDetailUpdateDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

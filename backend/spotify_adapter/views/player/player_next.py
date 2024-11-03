@@ -19,7 +19,7 @@ class PlayerSkipToNextDataSerializer(serializers.Serializer):
         help_text=_(
             "The id of the device this command is targeting. "
             "If not supplied, the user's currently active device is the target."
-        )
+        ),
     )
 
 
@@ -35,13 +35,13 @@ class PlayerSkipToNextView(APIView):
 
     @extend_schema(
         request=PlayerSkipToNextDataSerializer,
-        responses={status.HTTP_204_NO_CONTENT: None}
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerSkipToNextDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        device_id = serializer.validated_data['device_id']
+        device_id = serializer.validated_data["device_id"]
 
         client = get_spotify_client(request.user)
         client.next_track(device_id=device_id)

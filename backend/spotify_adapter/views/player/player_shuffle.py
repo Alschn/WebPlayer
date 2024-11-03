@@ -15,17 +15,16 @@ from spotify_auth.permissions import HasSpotifyToken
 class PlayerShuffleDataSerializer(serializers.Serializer):
     state = serializers.BooleanField(
         help_text=_(
-            'true: Shuffle user’s playback. '
-            'false: Do not shuffle user’s playback.'
+            "true: Shuffle user’s playback. " "false: Do not shuffle user’s playback."
         )
     )
     device_id = serializers.CharField(
         allow_null=True,
         default=None,
         help_text=_(
-            'The id of the device this command is targeting. '
-            'If not supplied, the user’s currently active device is the target.'
-        )
+            "The id of the device this command is targeting. "
+            "If not supplied, the user’s currently active device is the target."
+        ),
     )
 
 
@@ -41,14 +40,14 @@ class PlayerShuffleView(APIView):
 
     @extend_schema(
         request=PlayerShuffleDataSerializer,
-        responses={status.HTTP_204_NO_CONTENT: None}
+        responses={status.HTTP_204_NO_CONTENT: None},
     )
     def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = PlayerShuffleDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        shuffle = serializer.validated_data['state']
+        shuffle = serializer.validated_data["state"]
 
         client = get_spotify_client(request.user)
-        client.shuffle(shuffle, device_id=serializer.validated_data['device_id'])
+        client.shuffle(shuffle, device_id=serializer.validated_data["device_id"])
         return Response({}, status=status.HTTP_204_NO_CONTENT)

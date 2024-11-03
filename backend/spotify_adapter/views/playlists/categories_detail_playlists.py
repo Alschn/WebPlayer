@@ -26,25 +26,25 @@ class CategoriesDetailPlaylistsView(APIView):
     Reference:
     https://developer.spotify.com/documentation/web-api/reference/get-a-categories-playlists
     """
+
     permission_classes = [IsAuthenticated, HasSpotifyToken]
 
     @extend_schema(
         parameters=[CategoriesDetailParamsSerializer],
         # todo: response serializer
     )
-    def get(self, request: Request, category_id: str, *args: Any, **kwargs: Any) -> Response:
+    def get(
+        self, request: Request, category_id: str, *args: Any, **kwargs: Any
+    ) -> Response:
         serializer = CategoriesDetailParamsSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        country = serializer.validated_data.get('country')
-        limit = serializer.validated_data.get('limit')
-        offset = serializer.validated_data.get('offset')
+        country = serializer.validated_data.get("country")
+        limit = serializer.validated_data.get("limit")
+        offset = serializer.validated_data.get("offset")
 
         client = get_spotify_client(request.user)
         data = client.category_playlists(
-            category_id,
-            country=country,
-            limit=limit,
-            offset=offset
+            category_id, country=country, limit=limit, offset=offset
         )
         return Response(data, status=status.HTTP_200_OK)
