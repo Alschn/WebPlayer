@@ -277,3 +277,11 @@ class PageSerializer(serializers.Serializer):
         help_text=_('The total number of items available to return.')
     )
     items = None
+
+
+class NormalizedFloatField(serializers.FloatField):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.min_value = 0.0
+        self.max_value = 1.0

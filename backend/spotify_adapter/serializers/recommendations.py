@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from spotify_adapter.serializers.spotify import LimitField, MarketField
+from spotify_adapter.serializers.spotify import LimitField, MarketField, NormalizedFloatField
 from spotify_adapter.serializers.tracks import TrackSerializer
 
 GENERIC_MIN_PARAM_HELP_TEXT = _(
@@ -21,14 +21,6 @@ GENERIC_TARGET_PARAM_HELP_TEXT = _(
     "For example, you might request `target_energy`=0.6 and `target_danceability`=0.8. "
     "All target values will be weighed equally in ranking results."
 )
-
-
-class NormalizedFloatField(serializers.FloatField):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.min_value = 0.0
-        self.max_value = 1.0
 
 
 class RecommendationsParamsSerializer(serializers.Serializer):

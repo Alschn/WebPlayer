@@ -1,6 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from spotify_adapter.serializers.spotify import NormalizedFloatField
+
 
 class AnalyzerMetaSerializer(serializers.Serializer):
     analyzer_version = serializers.CharField(
@@ -19,9 +21,8 @@ class AnalyzerMetaSerializer(serializers.Serializer):
             'If analysis data is missing, this code may explain why'
         )
     )
-    status_code = serializers.IntegerField(
-        min_value=0,
-        max_value=1,
+    status_code = serializers.ChoiceField(
+        choices=[(0, 'success'), (1, 'error')],
         help_text=_(
             'The return code of the analyzer process. '
             '0 if successful, 1 if any errors occurred.'
@@ -108,9 +109,7 @@ class TrackAnalysisSerializer(serializers.Serializer):
             "derives directly from the average beat duration."
         )
     )
-    tempo_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    tempo_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `tempo`."
         )
@@ -124,9 +123,7 @@ class TrackAnalysisSerializer(serializers.Serializer):
             'The time signature ranges from 3 to 7 indicating time signatures of "3/4", to "7/4".'
         )
     )
-    time_signature_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    time_signature_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `time_signature`."
         )
@@ -142,8 +139,6 @@ class TrackAnalysisSerializer(serializers.Serializer):
         )
     )
     key_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `key`."
         )
@@ -156,9 +151,7 @@ class TrackAnalysisSerializer(serializers.Serializer):
             "Major is represented by 1 and minor is 0."
         )
     )
-    mode_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    mode_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `mode`."
         )
@@ -221,9 +214,7 @@ class IntervalAnalysisSerializer(serializers.Serializer):
         min_value=0.0,
         help_text=_("The duration (in seconds) of the time interval.")
     )
-    confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the interval."
         )
@@ -257,9 +248,7 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "derives directly from the average beat duration."
         )
     )
-    tempo_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    tempo_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `tempo`."
         )
@@ -274,9 +263,7 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "If no key was detected, the value is -1."
         )
     )
-    key_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    key_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `key`."
         )
@@ -289,9 +276,7 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "Major is represented by 1 and minor is 0."
         )
     )
-    mode_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    mode_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `mode`."
         )
@@ -306,9 +291,7 @@ class SectionSerializer(IntervalAnalysisSerializer):
             "The time signature ranges from 3 to 7 indicating time signatures of `3/4`, to `7/4`."
         )
     )
-    time_signature_confidence = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    time_signature_confidence = NormalizedFloatField(
         help_text=_(
             "The confidence, from 0.0 to 1.0, of the reliability of the `time_signature`."
         )
@@ -426,9 +409,7 @@ class AudioAnalysisSerializer(serializers.Serializer):
 
 
 class AudioFeatureSerializer(serializers.Serializer):
-    acousticness = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    acousticness = NormalizedFloatField(
         help_text=_(
             'A confidence measure from 0.0 to 1.0 of whether the track is acoustic. '
             '1.0 represents high confidence the track is acoustic.'
@@ -441,9 +422,7 @@ class AudioFeatureSerializer(serializers.Serializer):
             'Example: "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B"'
         ),
     )
-    danceability = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    danceability = NormalizedFloatField(
         help_text=_(
             'Danceability describes how suitable a track is for dancing based on a combination of musical elements '
             'including tempo, rhythm stability, beat strength, and overall regularity. '
@@ -454,9 +433,7 @@ class AudioFeatureSerializer(serializers.Serializer):
         min_value=0,
         help_text=_('The duration of the track in milliseconds.'),
     )
-    energy = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    energy = NormalizedFloatField(
         help_text=_(
             'Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. '
             'Typically, energetic tracks feel fast, loud, and noisy. '
@@ -468,9 +445,7 @@ class AudioFeatureSerializer(serializers.Serializer):
     id = serializers.CharField(
         help_text=_('The Spotify ID for the track.')
     )
-    instrumentalness = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    instrumentalness = NormalizedFloatField(
         help_text=_(
             'Predicts whether a track contains no vocals. '
             'The closer the instrumentalness value is to 1.0, '
@@ -488,9 +463,7 @@ class AudioFeatureSerializer(serializers.Serializer):
             'E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on.'
         )
     )
-    liveness = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    liveness = NormalizedFloatField(
         help_text=_(
             'Detects the presence of an audience in the recording. '
             'Higher liveness values represent an increased probability that the track was performed live. '
@@ -516,9 +489,7 @@ class AudioFeatureSerializer(serializers.Serializer):
             'Major is represented by 1 and minor is 0.'
         )
     )
-    speechiness = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    speechiness = NormalizedFloatField(
         help_text=_(
             'Speechiness detects the presence of spoken words in a track. '
             'The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), '
@@ -556,9 +527,7 @@ class AudioFeatureSerializer(serializers.Serializer):
     uri = serializers.CharField(
         help_text=_('The Spotify URI for the track.')
     )
-    valance = serializers.FloatField(
-        min_value=0.0,
-        max_value=1.0,
+    valance = NormalizedFloatField(
         help_text=_(
             'A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. '
             'Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), '
