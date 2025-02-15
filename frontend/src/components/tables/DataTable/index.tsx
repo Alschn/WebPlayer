@@ -1,14 +1,14 @@
 "use client";
 
 import {
-  ColumnDef,
+  type ColumnDef,
+  type Row,
+  type RowSelectionState,
   flexRender,
   getCoreRowModel,
-  RowSelectionState,
   useReactTable,
-  type Row,
 } from "@tanstack/react-table";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   Table,
@@ -61,7 +61,7 @@ export default function DataTable<TData, TValue>({
       if (selectRowOnClick) {
         row.toggleSelected(true);
       }
-      onRowDoubleClick?.(row);
+      void onRowDoubleClick?.(row);
     },
   });
 

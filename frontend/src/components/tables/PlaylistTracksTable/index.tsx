@@ -1,9 +1,9 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import NextImage from "next/image";
 import NextLink from "next/link";
 import { useCallback } from "react";
 import { playSong } from "~/api/player";
-import { PlaylistTrack } from "~/api/types";
+import type { PlaylistTrack } from "~/api/types";
 import DataTable from "~/components/tables/DataTable";
 import { useToast } from "~/components/ui/use-toast";
 import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
@@ -93,16 +93,19 @@ const columns: ColumnDef<PlaylistTrack>[] = [
 const PlaylistTracksTable = ({ data }: PlaylistTracksTableProps) => {
   const { toast } = useToast();
 
-  const handleRowDoubleClick = useCallback(async (row: Row<PlaylistTrack>) => {
-    await playSong({ uri: row.original.track.uri }).catch(() => {
-      toast({
-        title: "Could not play song!",
-        description: "Something went wrong...",
-        variant: "destructive",
-        duration: 2000,
+  const handleRowDoubleClick = useCallback(
+    async (row: Row<PlaylistTrack>) => {
+      await playSong({ uri: row.original.track.uri }).catch(() => {
+        toast({
+          title: "Could not play song!",
+          description: "Something went wrong...",
+          variant: "destructive",
+          duration: 2000,
+        });
       });
-    });
-  }, []);
+    },
+    [toast],
+  );
 
   return (
     <DataTable
