@@ -1,36 +1,79 @@
 "use client";
 
-import type { SavedTrackItem } from "~/api/types";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import SavedTrackTableRow from "./SavedTrackTableRow";
-import { useSelectRow } from "~/hooks/useSelectedRow";
+import type { ColumnDef, Row } from "@tanstack/react-table";
+import NextLink from "next/link";
+import { useCallback } from "react";
 import { playSong } from "~/api/player";
-import { useRef } from "react";
-import { useClickOutside } from "~/hooks/useClickOutside";
+import type { SavedTrackItem } from "~/api/types";
+import DataTable from "~/components/tables/DataTable";
 import { useToast } from "~/components/ui/use-toast";
-// import { usePlaybackState } from "react-spotify-web-playback-sdk";
+import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
+import PlaylistTrackTitleColumn from "../PlaylistTracksTable/PlaylistTrackTitleColumn";
+import DropdownMoreHorizMenu from "../SavedTracksTable/DropdownMoreHorizMenu";
+import { Clock3Icon } from "lucide-react";
 
 interface SavedTracksTableProps {
   data: SavedTrackItem[];
 }
 
-export default function SavedTracksTable({ data }: SavedTracksTableProps) {
-  // const playbackState = usePlaybackState();
+const columns: ColumnDef<SavedTrackItem>[] = [
+  {
+    header: "#",
+    cell: ({ row }) => <span>{row.index + 1}</span>,
+    // later: show playing state normally and on hover
+  },
+  {
+    header: "Title",
+    cell: ({ row }) => <PlaylistTrackTitleColumn track={row.original.track} />,
+  },
+  {
+    header: "Album",
+    cell: ({ row }) => (
+      <NextLink
+        href={`/albums/${row.original.track.album.id}/`}
+        className="line-clamp-1 hover:underline dark:text-stone-400 dark:hover:text-white"
+      >
+        {row.original.track.album.name}
+      </NextLink>
+    ),
+  },
+  {
+    header: "Date Added",
+    accessorKey: "added_at",
+    cell: (props) => (
+      <span className="dark:text-stone-400">
+        {relativeTimeFromDates(new Date(props.getValue<string>()))}
+      </span>
+    ),
+  },
+  {
+    id: "add_to_favourites",
+    header: () => <></>,
+    // later: when row is hovered, show icon buttons
+  },
+  {
+    accessorKey: "track.duration_ms",
+    header: () => <Clock3Icon />,
+    cell: (props) => (
+      <span className="dark:text-stone-400">
+        {getMsToTimeString(props.getValue<number>(), true)}
+      </span>
+    ),
+  },
+  {
+    id: "actions",
+    // later: when column is hovered, show shevron down with columns selection
+    header: () => <></>,
+    cell: () => <DropdownMoreHorizMenu />,
+  },
+];
 
+export default function SavedTracksTable({ data }: SavedTracksTableProps) {
   const { toast } = useToast();
-  const {
-    selected: selectedRow,
-    handleClick: handleSelectRow,
-    resetSelected,
-  } = useSelectRow<string>({
-    onDoubleClick(item) {
-      void playSong({ uri: item }).catch(() => {
+
+  const handleRowDoubleClick = useCallback(
+    async (row: Row<SavedTrackItem>) => {
+      await playSong({ uri: row.original.track.uri }).catch(() => {
         toast({
           title: "Could not play song!",
           description: "Something went wrong...",
@@ -39,36 +82,16 @@ export default function SavedTracksTable({ data }: SavedTracksTableProps) {
         });
       });
     },
-  });
-
-  const tableRef = useRef<HTMLTableElement>(null);
-  useClickOutside(tableRef, resetSelected);
+    [toast],
+  );
 
   return (
-    <Table id="saved-tracks-table" ref={tableRef}>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[40px]">#</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead>Album</TableHead>
-          <TableHead>Date Added</TableHead>
-          <TableHead></TableHead>
-          <TableHead>Time</TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((item, index) => (
-          <SavedTrackTableRow
-            key={`saved-track-` + item.track.id + index}
-            item={item}
-            index={index}
-            isSelected={selectedRow === item.track.uri}
-            // isPlaying={playbackState?.track_window.current_track.uri === item.track.uri}
-            onClick={() => handleSelectRow(item.track.uri)}
-          />
-        ))}
-      </TableBody>
-    </Table>
+    <DataTable
+      data={data}
+      columns={columns}
+      resetRowSelectionOnClickOutside
+      selectRowOnClick
+      onRowDoubleClick={handleRowDoubleClick}
+    />
   );
 }
