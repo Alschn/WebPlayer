@@ -1,5 +1,4 @@
 import type { ColumnDef, Row } from "@tanstack/react-table";
-import NextImage from "next/image";
 import NextLink from "next/link";
 import { useCallback } from "react";
 import { playSong } from "~/api/player";
@@ -8,6 +7,7 @@ import DataTable from "~/components/tables/DataTable";
 import { useToast } from "~/components/ui/use-toast";
 import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
 import DropdownMoreHorizMenu from "../SavedTracksTable/DropdownMoreHorizMenu";
+import PlaylistTrackTitleColumn from "./PlaylistTrackTitleColumn";
 
 interface PlaylistTracksTableProps {
   data: PlaylistTrack[];
@@ -20,39 +20,7 @@ const columns: ColumnDef<PlaylistTrack>[] = [
   },
   {
     header: "Title",
-    cell: ({ row }) => (
-      <div className="align-center flex flex-row gap-2">
-        <NextImage
-          src={row.original.track.album.images?.[0]?.url ?? ""}
-          alt={row.original.track.album.name}
-          width={48}
-          height={48}
-        />
-        <div className="flex flex-col justify-center">
-          <span className="line-clamp-1 text-base dark:text-white">
-            {row.original.track.name}
-          </span>
-          <div>
-            {row.original.track.artists.map((artist, index, array) => (
-              <div
-                key={`track-${row.original.track.id}-artist-${artist.id}`}
-                className="inline-block"
-              >
-                <NextLink
-                  href={`/artists/${artist.id}/`}
-                  className="hover:underline dark:text-stone-400 dark:hover:text-white"
-                >
-                  {artist.name}
-                </NextLink>
-                {index !== array.length - 1 && (
-                  <span className="mr-1 dark:text-stone-400">{", "}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    ),
+    cell: ({ row }) => <PlaylistTrackTitleColumn track={row.original.track} />,
   },
   {
     header: "Album",
