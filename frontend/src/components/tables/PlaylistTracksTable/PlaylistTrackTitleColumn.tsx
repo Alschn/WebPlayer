@@ -1,12 +1,17 @@
 import NextImage from "next/image";
 import NextLink from "next/link";
-import type { PlaylistTrack } from "~/api/types";
+import type { Track } from "~/api/types";
+import { cn } from "~/lib/tailwind";
+// import { usePlaybackState } from "react-spotify-web-playback-sdk";
 
 interface PlaylistTitleColumnProps {
-  track: PlaylistTrack["track"];
+  track: Track;
 }
 
 const PlaylistTrackTitleColumn = ({ track }: PlaylistTitleColumnProps) => {
+  // playbackState?.track_window.current_track.uri === track.uri
+  const isPlaying = false;
+
   return (
     <div className="align-center flex flex-row gap-2">
       <NextImage
@@ -16,7 +21,12 @@ const PlaylistTrackTitleColumn = ({ track }: PlaylistTitleColumnProps) => {
         height={48}
       />
       <div className="flex flex-col justify-center">
-        <span className="line-clamp-1 text-base dark:text-white">
+        <span
+          className={cn(
+            "line-clamp-1 text-base dark:text-white",
+            isPlaying && "text-green-700 dark:text-green-400",
+          )}
+        >
           {track.name}
         </span>
         <div>

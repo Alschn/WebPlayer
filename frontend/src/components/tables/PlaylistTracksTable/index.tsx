@@ -8,6 +8,7 @@ import { useToast } from "~/components/ui/use-toast";
 import { getMsToTimeString, relativeTimeFromDates } from "~/lib/format";
 import DropdownMoreHorizMenu from "../SavedTracksTable/DropdownMoreHorizMenu";
 import PlaylistTrackTitleColumn from "./PlaylistTrackTitleColumn";
+import { Clock3Icon } from "lucide-react";
 
 interface PlaylistTracksTableProps {
   data: PlaylistTrack[];
@@ -17,6 +18,7 @@ const columns: ColumnDef<PlaylistTrack>[] = [
   {
     header: "#",
     cell: ({ row }) => <span>{row.index + 1}</span>,
+    // later: show playing state normally and on hover
   },
   {
     header: "Title",
@@ -43,8 +45,13 @@ const columns: ColumnDef<PlaylistTrack>[] = [
     ),
   },
   {
-    header: "Time",
+    id: "add_to_favourites",
+    header: () => <></>,
+    // later: when row is hovered, show icon buttons
+  },
+  {
     accessorKey: "track.duration_ms",
+    header: () => <Clock3Icon />,
     cell: (props) => (
       <span className="dark:text-stone-400">
         {getMsToTimeString(props.getValue<number>(), true)}
@@ -53,7 +60,8 @@ const columns: ColumnDef<PlaylistTrack>[] = [
   },
   {
     id: "actions",
-    header: "",
+    // later: when column is hovered, show shevron down with columns selection
+    header: () => <></>,
     cell: () => <DropdownMoreHorizMenu />,
   },
 ];

@@ -4,6 +4,7 @@ import {
   type ColumnDef,
   type Row,
   type RowSelectionState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -36,17 +37,21 @@ export default function DataTable<TData, TValue>({
   resetRowSelectionOnClickOutside,
   selectRowOnClick,
 }: DataTableProps<TData, TValue>) {
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    // column visibility
+    onColumnVisibilityChange: setColumnVisibility,
     // row selection
     enableMultiRowSelection: false,
     onRowSelectionChange: setRowSelection,
     // table state
     state: {
+      columnVisibility,
       rowSelection,
     },
   });
@@ -73,7 +78,7 @@ export default function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border">
+    <div>
       <Table ref={tableRef}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -102,6 +107,7 @@ export default function DataTable<TData, TValue>({
                 onClick={() => {
                   handleRowClick(row);
                 }}
+                className="group"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
